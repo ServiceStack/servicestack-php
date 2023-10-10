@@ -31,6 +31,16 @@ class DictionaryConverter implements Converter
 {
     function fromJson($o, TypeContext $ctx): mixed
     {
+        if (count($ctx->genericArgs) > 0) {
+            $keyType = new TypeContext($ctx->genericArgs[0]);
+            $valType = new TypeContext($ctx->genericArgs[1]);
+            $to = [];
+            foreach ($o as $key => $val) {
+                $to[JsonConverters::convert($keyType, $key)] = JsonConverters::convert($valType, $val);
+            }
+            return $to;
+        }
+
         return $o;
     }
 

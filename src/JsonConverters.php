@@ -24,6 +24,7 @@ class JsonConverters
             self::$instance = new self();
             self::$instance->converters = [
                 'string' => new StringConverter(),
+                'String' => new StringConverter(),
                 'int' => new IntConverter(),
                 'float' => new FloatConverter(),
                 'bool' => new BoolConverter(),
@@ -78,11 +79,23 @@ class JsonConverters
             return $converter->fromJson($from, $ctx);
         }
 
-        if (!method_exists($el, 'fromMap')) {
-            echo $el->getBackingValue();
+        if (str_starts_with($ctx->class, "List<")) {
+            $argType = substr($ctx->class,5,-1);
+            $to = JsonConverters::fromArray($argType, $from);
+            return $to;
+        }
+
+        if (str_starts_with($ctx->class, "Dictionary<")) {
+            $argTypes = explode(",", substr($ctx->class,11,-1));
+            $to = JsonConverters::from(JsonConverters::context('Dictionary',genericArgs:$argTypes), $from);
+            return $to;
+        }
+
+        if (!is_object($el) || !method_exists($el, 'fromMap')) {
             throw new Exception("fromMap does not exist on $ctx->class");
         }
         $el->fromMap($from);
+
         return $el;
     }
 
@@ -201,6 +214,11 @@ class JsonConverters
                 return $to;
             }
         }
+        if (str_starts_with($name, "List<"))
+            return [];
+        if (str_starts_with($name, "Dictionary<"))
+            return [];
+
         throw new Exception("Could not create instance of $name");
     }
 
