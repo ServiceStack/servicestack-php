@@ -1,0 +1,91 @@
+{
+    "name": "servicestack/client",
+    "description": "PHP ServiceStack Client",
+    "type": "library",
+    "license": "BSD-3-Clause-Attribution",
+    "autoload": {
+        "psr-4": {
+            "Servicestack\\": "src/"
+        },
+        "files": [
+            "src/Returns.php",
+            "src/Convertible.php",
+            "src/IReturn.php",
+            "src/ICreateDb.php",
+            "src/ICrud.php",
+            "src/IDelete.php",
+            "src/IDeleteDb.php",
+            "src/IGet.php",
+            "src/IHasBearerToken.php",
+            "src/IHasSessionId.php",
+            "src/IHasVersion.php",
+            "src/IMeta.php",
+            "src/IOptions.php",
+            "src/IPatch.php",
+            "src/IPatchDb.php",
+            "src/IPost.php",
+            "src/IPut.php",
+            "src/IReturn.php",
+            "src/IReturnVoid.php",
+            "src/ISaveDb.php",
+            "src/IUpdateDb.php",
+            "src/ResponseError.php",
+            "src/ResponseStatus.php",
+            "src/KeyValuePair2.php",
+            "src/Tuple2.php",
+            "src/Tuple3.php",
+            "src/AuditBase.php",
+            "src/QueryResponse.php",
+            "src/QueryBase.php",
+            "src/QueryDb.php",
+            "src/QueryDb2.php",
+            "src/QueryData.php",
+            "src/QueryData2.php",
+            "src/EmptyResponse.php",
+            "src/IdResponse.php",
+            "src/StringResponse.php",
+            "src/StringsResponse.php",
+            "src/TypeContext.php",
+            "src/Converter.php",
+            "src/JsonConverters.php",
+            "src/JsonServiceClient.php",
+            "src/Inspect.php",
+            "src/AssignRoles.php",
+            "src/AssignRolesResponse.php",
+            "src/Authenticate.php",
+            "src/AuthenticateResponse.php",
+            "src/CancelRequest.php",
+            "src/CancelRequestResponse.php",
+            "src/ConvertSessionToToken.php",
+            "src/ConvertSessionToTokenResponse.php",
+            "src/GetAccessToken.php",
+            "src/GetAccessTokenResponse.php",
+            "src/UserApiKey.php",
+            "src/GetApiKeys.php",
+            "src/GetApiKeysResponse.php",
+            "src/NavItem.php",
+            "src/GetNavItems.php",
+            "src/GetNavItemsResponse.php",
+            "src/RegenerateApiKeys.php",
+            "src/RegenerateApiKeysResponse.php",
+            "src/Register.php",
+            "src/RegisterResponse.php",
+            "src/UnAssignRoles.php",
+            "src/UnAssignRolesResponse.php",
+            "src/UpdateEventSubscriber.php",
+            "src/UpdateEventSubscriberResponse.php"
+        ]
+    },
+    "authors": [
+        {
+            "name": "ServiceStack, Inc.",
+            "email": "team@servicestack.net"
+        }
+    ],
+    "require": {
+        "php": ">=8.2.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "*"
+    }
+}

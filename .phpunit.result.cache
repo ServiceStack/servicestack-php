@@ -1,0 +1,1 @@
+{"version":1,"defects":{"InspectTest::testCanUseInspect":5,"ClientTests::testCanGetHello":7,"ClientTests::testHello":8,"ClientTests::testQsValue":8},"times":{"InspectTest::testCanUseInspect":1.118,"ClientTests::testHello":0.01,"ClientTests::testCanGetHello":1.211,"ClientTests::testQsValue":0.005}}
