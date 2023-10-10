@@ -4,6 +4,7 @@ namespace Servicestack;
 
 use Exception;
 use JsonSerializable;
+use ReflectionClass;
 use Stringable;
 use Throwable;
 
@@ -57,84 +58,23 @@ function resolveResponseType($request): mixed
     return $response;
 }
 
-function parseHeaders(array $headers): array
+function parseHeaders(?array $headers): array
 {
     $head = [];
-    foreach ($headers as $k => $v) {
-        $t = explode(':', $v, 2);
-        if (isset($t[1])) {
-            $head[trim($t[0])] = trim($t[1]);
-        } else {
-            $head[] = $v;
-            if (preg_match("#HTTP/[0-9\.]+\s+([0-9]+)#", $v, $out))
-                $head['statusCode'] = intval($out[1]);
+    if (isset($headers)) {
+        foreach ($headers as $k => $v) {
+            $t = explode(':', $v, 2);
+            if (isset($t[1])) {
+                $head[trim($t[0])] = trim($t[1]);
+            } else {
+                $head[] = $v;
+                if (preg_match("#HTTP/[0-9\.]+\s+([0-9]+)#", $v, $out))
+                    $head['statusCode'] = intval($out[1]);
+            }
         }
     }
     return $head;
 }
-
-$HttpStatusCodes = [
-    100 => "Continue",
-    101 => "Switching Protocols",
-    102 => "Processing",
-    200 => "OK",
-    201 => "Created",
-    202 => "Accepted",
-    203 => "Non-Authoritative Information",
-    204 => "No Content",
-    205 => "Reset Content",
-    206 => "Partial Content",
-    207 => "Multi-Status",
-    300 => "Multiple Choices",
-    301 => "Moved Permanently",
-    302 => "Found",
-    303 => "See Other",
-    304 => "Not Modified",
-    305 => "Use Proxy",
-    306 => "(Unused)",
-    307 => "Temporary Redirect",
-    308 => "Permanent Redirect",
-    400 => "Bad Request",
-    401 => "Unauthorized",
-    402 => "Payment Required",
-    403 => "Forbidden",
-    404 => "Not Found",
-    405 => "Method Not Allowed",
-    406 => "Not Acceptable",
-    407 => "Proxy Authentication Required",
-    408 => "Request Timeout",
-    409 => "Conflict",
-    410 => "Gone",
-    411 => "Length Required",
-    412 => "Precondition Failed",
-    413 => "Request Entity Too Large",
-    414 => "Request-URI Too Long",
-    415 => "Unsupported Media Type",
-    416 => "Requested Range Not Satisfiable",
-    417 => "Expectation Failed",
-    418 => "I'm a teapot",
-    419 => "Authentication Timeout",
-    420 => "Enhance Your Calm",
-    422 => "Unprocessable Entity",
-    423 => "Locked",
-    424 => "Failed Dependency",
-    425 => "Too Early",
-    426 => "Upgrade Required",
-    428 => "Precondition Required",
-    429 => "Too Many Requests",
-    431 => "Request Header Fields Too Large",
-    451 => "Unavailable For Legal Reasons",
-    500 => "Internal Server Error",
-    501 => "Not Implemented",
-    502 => "Bad Gateway",
-    503 => "Service Unavailable",
-    504 => "Gateway Timeout",
-    505 => "HTTP Version Not Supported",
-    506 => "Variant Also Negotiates",
-    507 => "Insufficient Storage",
-    508 => "Loop Detected",
-    510 => "Not Extended",
-    511 => "Network Authentication Required"];
 
 class HttpMethods
 {
@@ -196,7 +136,7 @@ class SendContext
         public IReturn|IReturnVoid|null $request = null,
         public ?string                  $url = null,
         public mixed                    $body = null,
-        public ?array                   $args = null,
+        public mixed                    $args = null,
         public ?string                  $bodyString = null,
         public mixed                    $responseAs = null,
         public ?RequestFilter           $requestFilter = null,
@@ -206,23 +146,47 @@ class SendContext
 
     public function exec(): array
     {
+        if (isset($this->request) && is_object($this->request)) {
+            JsonConverters::registerNamespace((new ReflectionClass(get_class($this->request)))->getNamespaceName());
+            if ($this->request instanceof IReturn) {
+                $to = $this->request->createResponse();
+                JsonConverters::registerNamespace((new ReflectionClass(get_class($to)))->getNamespaceName());
+            }
+        }
+        if (isset($this->body) && is_object($this->body)) {
+            JsonConverters::registerNamespace((new ReflectionClass(get_class($this->body)))->getNamespaceName());
+        }
+        if (isset($this->args) && is_object($this->args)) {
+            JsonConverters::registerNamespace((new ReflectionClass(get_class($this->args)))->getNamespaceName());
+        }
+
+        $headers = $this->headers;
         $opts = [
             "http" => [
                 'method' => $this->method,
-                "header" => $this->headers,
+                'ignore_errors' => true,
             ]
         ];
         if (hasRequestBody($this->method)) {
             if (!isset($headers["Content-Type"]))
                 $headers["Content-Type"] = "application/json";
-            $opts['http']['content'] = $this->body ?? $this->bodyString;
+            $json = isset($this->body)
+                ? $this->body instanceof JsonSerializable
+                    ? json_encode($this->body->jsonSerialize())
+                    : $this->body
+                : $this->bodyString;
+            $opts['http']['content'] = $json;
+            $headers["Content-Length"] = strlen($json);
         } else {
             if (isset($headers["Content-Type"]))
                 unset($headers["Content-Type"]);
         }
-
+        $opts['http']['header'] = implode("\r\n",
+            array_map(fn($key,$val):string => "$key: $val", array_keys($headers), $headers));
+        print_r($opts);
         $context = stream_context_create($opts);
         $response = file_get_contents($this->url, false, $context);
+        print_r($response);
         return [$response, parseHeaders($http_response_header)];
     }
 }
@@ -247,6 +211,70 @@ class JsonServiceClient
     public bool $useTokenCookie = false;
     public array $headers = [];
 
+    public static $HttpStatusCodes = [
+        100 => "Continue",
+        101 => "Switching Protocols",
+        102 => "Processing",
+        200 => "OK",
+        201 => "Created",
+        202 => "Accepted",
+        203 => "Non-Authoritative Information",
+        204 => "No Content",
+        205 => "Reset Content",
+        206 => "Partial Content",
+        207 => "Multi-Status",
+        300 => "Multiple Choices",
+        301 => "Moved Permanently",
+        302 => "Found",
+        303 => "See Other",
+        304 => "Not Modified",
+        305 => "Use Proxy",
+        306 => "(Unused)",
+        307 => "Temporary Redirect",
+        308 => "Permanent Redirect",
+        400 => "Bad Request",
+        401 => "Unauthorized",
+        402 => "Payment Required",
+        403 => "Forbidden",
+        404 => "Not Found",
+        405 => "Method Not Allowed",
+        406 => "Not Acceptable",
+        407 => "Proxy Authentication Required",
+        408 => "Request Timeout",
+        409 => "Conflict",
+        410 => "Gone",
+        411 => "Length Required",
+        412 => "Precondition Failed",
+        413 => "Request Entity Too Large",
+        414 => "Request-URI Too Long",
+        415 => "Unsupported Media Type",
+        416 => "Requested Range Not Satisfiable",
+        417 => "Expectation Failed",
+        418 => "I'm a teapot",
+        419 => "Authentication Timeout",
+        420 => "Enhance Your Calm",
+        422 => "Unprocessable Entity",
+        423 => "Locked",
+        424 => "Failed Dependency",
+        425 => "Too Early",
+        426 => "Upgrade Required",
+        428 => "Precondition Required",
+        429 => "Too Many Requests",
+        431 => "Request Header Fields Too Large",
+        451 => "Unavailable For Legal Reasons",
+        500 => "Internal Server Error",
+        501 => "Not Implemented",
+        502 => "Bad Gateway",
+        503 => "Service Unavailable",
+        504 => "Gateway Timeout",
+        505 => "HTTP Version Not Supported",
+        506 => "Variant Also Negotiates",
+        507 => "Insufficient Storage",
+        508 => "Loop Detected",
+        510 => "Not Extended",
+        511 => "Network Authentication Required"];
+
+
     public function __construct(
         string $baseUrl
     )
@@ -258,7 +286,7 @@ class JsonServiceClient
         $this->oneWayBaseUrl = combinePaths($this->baseUrl, 'json/oneway') . '/';
         $this->headers = [
             'Accept' => 'application/json',
-            'User-Agent' => 'servicestack-php',
+            'User-Agent' => 'servicestack/php',
         ];
     }
 
@@ -326,12 +354,46 @@ class JsonServiceClient
             : combinePaths($this->baseUrl, $relativeOrAbsoluteUrl);
     }
 
-    /**
-     * @throws Exception
-     */
+    /** @throws Exception */
     public function get(IReturn|string $request, ?array $args = null): mixed
     {
-        return $this->send($request, method:HttpMethods::GET, args:$args);
+        return $this->send($request, method: HttpMethods::GET, args: $args);
+    }
+
+    /** @throws Exception */
+    public function post(IReturn|string $request, ?array $args = null): mixed
+    {
+        return $this->send($request, method: HttpMethods::POST, args: $args);
+    }
+
+    /** @throws Exception */
+    public function put(IReturn|string $request, ?array $args = null): mixed
+    {
+        return $this->send($request, method: HttpMethods::PUT, args: $args);
+    }
+
+    /** @throws Exception */
+    public function patch(IReturn|string $request, ?array $args = null): mixed
+    {
+        return $this->send($request, method: HttpMethods::PATCH, args: $args);
+    }
+
+    /** @throws Exception */
+    public function delete(IReturn|string $request, ?array $args = null): mixed
+    {
+        return $this->send($request, method: HttpMethods::DELETE, args: $args);
+    }
+
+    /** @throws Exception */
+    public function getUrl(string $path, mixed $responseAs=null, mixed $args = null): mixed
+    {
+        return $this->sendUrl($path, method: HttpMethods::GET, responseAs:$responseAs, args:$args);
+    }
+
+    /** @throws Exception */
+    public function postUrl(string $path, mixed $responseAs=null, mixed $body=null, ?array $args = null): mixed
+    {
+        return $this->sendUrl($path, method: HttpMethods::POST, responseAs:$responseAs, body:$body, args:$args);
     }
 
     /**
@@ -370,9 +432,12 @@ class JsonServiceClient
         return urlencode("$arg");
     }
 
-    function appendQueryString(string $url, ?array $args): string
+    function appendQueryString(string $url, mixed $args): string
     {
         if (isset($args)) {
+            if ($args instanceof JsonSerializable)
+                $args = $args->jsonSerialize();
+
             foreach ($args as $key => $val) {
                 if ($val == null)
                     continue;
@@ -408,6 +473,24 @@ class JsonServiceClient
         );
 
         throw $this->raiseError($holdRes, $webEx);
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function sendUrl(string $path, ?string $method = null, mixed $responseAs = null, mixed $body = null, mixed $args = null): mixed
+    {
+        if (isset($body) && !isset($responseAs))
+            $responseAs = resolveResponseType($body);
+
+        return $this->sendRequest(new SendContext(
+            headers: array_replace([], $this->headers),
+            method: $method ?? resolveHttpMethod($body),
+            url: $this->toAbsoluteUrl($path),
+            body: $body,
+            args: $args,
+            responseAs: $responseAs,
+        ));
     }
 
     /**
@@ -460,8 +543,14 @@ class JsonServiceClient
         if (hasRequestBody($info->method)) {
             if (is_string($body))
                 $info->bodyString = $body;
-            else
-                $info->bodyString = json_encode(JsonConverters::to($body, get_class($body)));
+            else if (isset($body))
+                $info->bodyString = json_encode(JsonConverters::to(nameof($body), $body));
+            else if (isset($info->args))
+                $info->bodyString = ((is_object($info->args)
+                    ? json_encode(JsonConverters::to(nameof($info->args), $info->args))
+                    : is_array($info->args)) ? json_encode($info->args) : is_string($info->args))
+                        ? $info->args
+                        : null;
         }
         return $info;
     }
@@ -480,11 +569,13 @@ class JsonServiceClient
         if ($headers['statusCode'] >= 400) {
             $status = null;
             try {
-                $o = json_decode($response, associative:true);
+                $o = json_decode($response, associative: true);
                 $status = new ResponseStatus();
                 $status->fromMap($o);
-            } catch (Exception $ignore) {}
-            $desc = $HttpStatusCodes[$headers['statusCode']] ?? "Unknown Error";
+            } catch (Exception $ignore) {
+            }
+            $desc = JsonServiceClient::$HttpStatusCodes[$headers['statusCode']] ?? "Unknown Error";
+            echo "ERROR: " . $headers['statusCode'] . ": $desc\n" . (isset($status) ? json_encode($status) : "");
             throw $this->raiseError($headers, new WebServiceException(
                 statusCode: $headers['statusCode'],
                 statusDescription: $desc,
@@ -567,6 +658,7 @@ class JsonServiceClient
 
     /**
      * @throws WebServiceException
+     * @throws Exception
      */
     function createResponse(mixed $response, SendContext $info)
     {
@@ -585,7 +677,7 @@ class JsonServiceClient
 
         $json = $response;
 
-        $obj = json_decode($json, associative:true);
+        $obj = json_decode($json, associative: true);
 
         if (!isset($into))
             return $obj;
@@ -594,11 +686,14 @@ class JsonServiceClient
         if ($converter != null) {
             return $converter->fromJson($obj, $ctx);
         }
+        if (is_string($into)) {
+            $into = JsonConverters::createInstance($into);
+        }
         if (is_object($into) && method_exists($into, 'fromMap')) {
             $into->fromMap($obj);
             return $into;
         }
-        throw new WebServiceException("Failed to deserialize into '$ctx->class'");
+        throw new WebServiceException(message:"Failed to deserialize into '$ctx->class'");
     }
 
 }

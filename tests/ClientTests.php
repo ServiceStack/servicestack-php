@@ -3,7 +3,10 @@
 require_once __DIR__ . '/../vendor/autoload.php'; // Autoload files using Composer autoload
 require_once 'dtos.php';
 
+use dtos\HelloAllTypes;
+use dtos\HelloAllTypesResponse;
 use PHPUnit\Framework\TestCase;
+use Servicestack\ByteArray;
 use ServiceStack\JsonServiceClient;
 use dtos\Hello;
 use dtos\HelloResponse;
@@ -12,14 +15,31 @@ use dtos\AllTypes;
 use dtos\EchoComplexTypes;
 use dtos\Poco;
 use dtos\SubType;
+use Servicestack\RequestFilter;
+use Servicestack\ResponseFilter;
+use Servicestack\SendContext;
+use function Servicestack\isMultiByte;
 
 final class ClientTests extends TestCase
 {
     public JsonServiceClient $client;
+
     protected function setUp(): void
     {
-//        $this->client = new JsonServiceClient("https://localhost:5001");
-        $this->client = new JsonServiceClient("https://test.servicestack.net");
+        $this->client = $this->createTestClient();
+    }
+
+    public function createTestClient(): JsonServiceClient
+    {
+        return new JsonServiceClient("https://localhost:5001");
+//        return new JsonServiceClient("https://test.servicestack.net");
+    }
+
+    public function createHelloAllTypes()
+    {
+        return new HelloAllTypes(name:"name",
+            allTypes: $this->createAllTypes(),
+            allCollectionTypes: $this->createAllCollectionTypes());
     }
 
     public function createAllTypes(): AllTypes
@@ -53,10 +73,10 @@ final class ClientTests extends TestCase
     {
         return new AllCollectionTypes(
             intArray: [1, 2, 3],
-            intlist: [1, 2, 3],
+            intList: [1, 2, 3],
             stringArray: ["A", "B", "C"],
             stringList: ["D", "E", "F"],
-            byteArray: b"ABC",  # base64(ABC)
+            byteArray: new ByteArray(b"ABC"),  # base64(ABC)
             pocoArray: [$this->createPoco("pocoArray")],
             pocoList: [$this->createPoco("pocoArray")],
             pocoLookup: ["A" => [$this->createPoco("B"), $this->createPoco("C")]],
@@ -115,27 +135,137 @@ final class ClientTests extends TestCase
         $this->assertEquals([1, 2, 3], $dto->intList);
         $this->assertEquals(["A", "B", "C"], $dto->stringArray);
         $this->assertEquals(["D", "E", "F"], $dto->stringList);
-        $this->assertEquals(b"ABC", $dto->byteArray);
+        $this->assertEquals(new ByteArray(b"ABC"), $dto->byteArray);
         $this->assertEquals([$this->createPoco("pocoArray")], $dto->pocoArray);
         $this->assertEquals([$this->createPoco("pocoArray")], $dto->pocoList);
         $this->assertEquals(["A" => [$this->createPoco("B"), $this->createPoco("C")]], $dto->pocoLookup);
         $this->assertEquals(["A" => [["B" => $this->createPoco("C"), "D" => $this->createPoco("E")]]], $dto->pocoLookupMap);
     }
 
+    public function assertHelloAllTypesResponse(HelloAllTypesResponse $dto): void
+    {
+        $this->assertEquals($dto->result, "name");
+        $this->assertAllTypes($dto->allTypes);
+        $this->assertAllCollectionTypes($dto->allCollectionTypes);
+    }
+
     public function testQsValue()
     {
         $this->assertEquals("a", $this->client->qsValue('a'));
         $this->assertEquals("1", $this->client->qsValue(1));
-        $this->assertEquals("[1,2,3]", $this->client->qsValue([1,2,3]));
-        $this->assertEquals("[a,b,c]", $this->client->qsValue(['a','b','c']));
+        $this->assertEquals("[1,2,3]", $this->client->qsValue([1, 2, 3]));
+        $this->assertEquals("[a,b,c]", $this->client->qsValue(['a', 'b', 'c']));
         $this->assertEquals("{a:1,b:2}", $this->client->qsValue(['a' => 1, 'b' => 2]));
-        $this->assertEquals("{id:1,name:foo}", $this->client->qsValue(new SubType(id:1,name:"foo")));
+        $this->assertEquals("{id:1,name:foo}", $this->client->qsValue(new SubType(id: 1, name: "foo")));
     }
 
     public function testCanGetHello()
     {
         /** @var HelloResponse $response */
-        $response = $this->client->get(new Hello(name:"World"));
+        $response = $this->client->get(new Hello(name: "World"));
         $this->assertEquals("Hello, World!", $response->result);
     }
+
+    public function testCanPostHello()
+    {
+        /** @var HelloResponse $response */
+        $response = $this->client->post(new Hello(name: "World"));
+        $this->assertEquals("Hello, World!", $response->result);
+    }
+
+    public function testCanSendUmlauts()
+    {
+        /** @var HelloResponse $response */
+        $response = $this->client->post(new Hello(name: "üöäß"));
+        $this->assertEquals("Hello, üöäß!", $response->result);
+    }
+
+    public function testDoesFireRequestAndResponseFilters()
+    {
+        $client = $this->createTestClient();
+        $events = [];
+
+        JsonServiceClient::$globalRequestFilter = new class($events) implements RequestFilter {
+            public function __construct(public array &$events) {}
+            public function call(SendContext $ctx) {
+                $this->events[] = "globalRequestFilter";
+            }
+        };
+        JsonServiceClient::$globalResponseFilter = new class($events) implements ResponseFilter {
+            public function __construct(public array &$events) {}
+            public function call(mixed $response) {
+                $this->events[] = "globalResponseFilter";
+            }
+        };
+        $client->requestFilter = new class($events) implements RequestFilter {
+            public function __construct(public array &$events) {}
+            public function call(SendContext $ctx) {
+                $this->events[] = "requestFilter";
+            }
+        };
+        $client->responseFilter = new class($events) implements ResponseFilter {
+            public function __construct(public array &$events) {}
+            public function call(mixed $response) {
+                $this->events[] = "responseFilter";
+            }
+        };
+
+        $response = $client->get(new Hello(name: "World"));
+        $this->assertEquals("Hello, World!", $response->result);
+
+        $this->assertEquals([
+            "requestFilter",
+            "globalRequestFilter",
+            "responseFilter",
+            "globalResponseFilter"
+        ], $events);
+
+        JsonServiceClient::$globalRequestFilter = null;
+        JsonServiceClient::$globalResponseFilter = null;
+    }
+
+    public function testCanGetHelloWithCustomPath() {
+        $response = $this->client->getUrl("/hello/World", responseAs: new HelloResponse());
+        $this->assertEquals("Hello, World!", $response->result);
+    }
+
+    public function testCanGetHelloWithCustomPathAsRawTypes() {
+        $json = $this->client->getUrl("/hello", responseAs: 'string', args: ["name" => "World"]);
+        $this->assertEquals('{"result":"Hello, World!"}', $json);
+
+        $response = $this->client->getUrl("/hello", responseAs: new HelloResponse(), args: ["name" => "World"]);
+        $this->assertEquals("Hello, World!", $response->result);
+    }
+
+    public function testCanPostHelloWithCustomPath() {
+        $response = $this->client->postUrl("/hello", body:new Hello(name:"World"));
+        $this->assertEquals("Hello, World!", $response->result);
+    }
+
+    public function testCanPostHelloWithCustomPathJsonObject() {
+        $response = $this->client->postUrl("/hello", body:json_encode(new Hello(name:"World")));
+        $this->assertTrue(is_array($response));
+        $this->assertEquals("Hello, World!", $response['result']);
+    }
+
+    public function testCanSerializeAllTypes() {
+        $dto = $this->createAllTypes();
+        $json = json_encode($dto->jsonSerialize());
+        $this->assertNotEmpty($json);
+    }
+
+    public function testCanSerializeAllCollectionTypes() {
+        $dto = $this->createAllCollectionTypes();
+        $json = json_encode($dto->jsonSerialize());
+        echo $json . "\n";
+        $this->assertNotEmpty($json);
+    }
+
+    public function testCanPostHelloAllTypes() {
+        $request = $this->createHelloAllTypes();
+        /** @var HelloAllTypesResponse $response */
+        $response  = $this->client->post($request);
+        $this->assertHelloAllTypesResponse($response);
+    }
+
 }

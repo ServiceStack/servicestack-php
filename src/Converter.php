@@ -31,12 +31,12 @@ class DictionaryConverter implements Converter
 {
     function fromJson($o, TypeContext $ctx): mixed
     {
-        return "$o";
+        return $o;
     }
 
     function toJson($value, TypeContext $ctx): mixed
     {
-        return "$value";
+        return $value;
     }
 }
 
@@ -44,12 +44,25 @@ class StringConverter implements Converter
 {
     function fromJson($o, TypeContext $ctx): mixed
     {
-        return "$o";
+        return $o;
     }
 
     function toJson($value, TypeContext $ctx): mixed
     {
-        return "$value";
+        return $value;
+    }
+}
+
+class ByteArrayConverter implements Converter
+{
+    function fromJson($o, TypeContext $ctx): mixed
+    {
+        return new ByteArray($o);
+    }
+
+    function toJson($value, TypeContext $ctx): mixed
+    {
+        return $value->jsonSerialize();
     }
 }
 

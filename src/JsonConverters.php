@@ -31,6 +31,7 @@ class JsonConverters
                 'DateInterval' => new DateIntervalConverter(),
                 'List' => new ListConverter(),
                 'Dictionary' => new DictionaryConverter(),
+                'ByteArray' => new ByteArrayConverter(),
                 UnitEnum::class => new EnumConverter(),
             ];
         }

@@ -1,6 +1,6 @@
 <?php namespace dtos;
 /* Options:
-Date: 2023-10-10 01:20:40
+Date: 2023-10-11 02:19:09
 Version: 6.111
 Tip: To override a DTO option, remove "//" prefix before updating
 BaseUrl: https://localhost:5001
@@ -23,7 +23,7 @@ use DateInterval;
 use JsonSerializable;
 use ServiceStack\{IReturn,IReturnVoid,IGet,IPost,IPut,IDelete,IPatch,IMeta,IHasSessionId,IHasBearerToken,IHasVersion};
 use ServiceStack\{ICrud,ICreateDb,IUpdateDb,IPatchDb,IDeleteDb,ISaveDb,AuditBase,QueryDb,QueryDb2,QueryData,QueryData2,QueryResponse};
-use ServiceStack\{ResponseStatus,ResponseError,EmptyResponse,IdResponse,KeyValuePair2,StringResponse,StringsResponse,Tuple2,Tuple3};
+use ServiceStack\{ResponseStatus,ResponseError,EmptyResponse,IdResponse,KeyValuePair2,StringResponse,StringsResponse,Tuple2,Tuple3,ByteArray};
 use ServiceStack\{JsonConverters,Returns,TypeContext};
 
 
@@ -2591,8 +2591,8 @@ class Employee implements JsonSerializable
         public ?string $extension=null,
 
         // @DataMember(Order=17)
-        /** @var string|null */
-        public ?string $photo=null,
+        /** @var ByteArray|null */
+        public ?ByteArray $photo=null,
 
         // @DataMember(Order=18)
         /** @var string|null */
@@ -2618,7 +2618,7 @@ class Employee implements JsonSerializable
         if (isset($o['country'])) $this->country = $o['country'];
         if (isset($o['homePhone'])) $this->homePhone = $o['homePhone'];
         if (isset($o['extension'])) $this->extension = $o['extension'];
-        if (isset($o['photo'])) $this->photo = JsonConverters::from('string', $o['photo']);
+        if (isset($o['photo'])) $this->photo = JsonConverters::from('ByteArray', $o['photo']);
         if (isset($o['notes'])) $this->notes = $o['notes'];
     }
     
@@ -2642,7 +2642,7 @@ class Employee implements JsonSerializable
         if (isset($this->country)) $o['country'] = $this->country;
         if (isset($this->homePhone)) $o['homePhone'] = $this->homePhone;
         if (isset($this->extension)) $o['extension'] = $this->extension;
-        if (isset($this->photo)) $o['photo'] = JsonConverters::to('string', $this->photo);
+        if (isset($this->photo)) $o['photo'] = JsonConverters::to('ByteArray', $this->photo);
         if (isset($this->notes)) $o['notes'] = $this->notes;
         return $o;
     }
@@ -2931,15 +2931,15 @@ class Level implements JsonSerializable
     public function __construct(
         /** @var string */
         public string $id='',
-        /** @var string */
-        public string $data=''
+        /** @var ByteArray|null */
+        public ?ByteArray $data=null
     ) {
     }
 
     /** @throws Exception */
     public function fromMap($o): void {
         if (isset($o['id'])) $this->id = $o['id'];
-        if (isset($o['data'])) $this->data = JsonConverters::from('string', $o['data']);
+        if (isset($o['data'])) $this->data = JsonConverters::from('ByteArray', $o['data']);
     }
     
     /** @throws Exception */
@@ -2947,7 +2947,7 @@ class Level implements JsonSerializable
     {
         $o = [];
         if (isset($this->id)) $o['id'] = $this->id;
-        if (isset($this->data)) $o['data'] = JsonConverters::to('string', $this->data);
+        if (isset($this->data)) $o['data'] = JsonConverters::to('ByteArray', $this->data);
         return $o;
     }
 }
@@ -3459,8 +3459,8 @@ class AllCollectionTypes implements IReturn, JsonSerializable
         public array $floatArray=[],
         /** @var array<float>|null */
         public ?array $doubleList=null,
-        /** @var string */
-        public string $byteArray='',
+        /** @var ByteArray|null */
+        public ?ByteArray $byteArray=null,
         /** @var string[] */
         public array $charArray=[],
         /** @var array<float>|null */
@@ -3484,7 +3484,7 @@ class AllCollectionTypes implements IReturn, JsonSerializable
         if (isset($o['stringList'])) $this->stringList = JsonConverters::fromArray('string', $o['stringList']);
         if (isset($o['floatArray'])) $this->floatArray = JsonConverters::fromArray('float', $o['floatArray']);
         if (isset($o['doubleList'])) $this->doubleList = JsonConverters::fromArray('float', $o['doubleList']);
-        if (isset($o['byteArray'])) $this->byteArray = JsonConverters::from('string', $o['byteArray']);
+        if (isset($o['byteArray'])) $this->byteArray = JsonConverters::from('ByteArray', $o['byteArray']);
         if (isset($o['charArray'])) $this->charArray = JsonConverters::fromArray('string', $o['charArray']);
         if (isset($o['decimalList'])) $this->decimalList = JsonConverters::fromArray('float', $o['decimalList']);
         if (isset($o['pocoArray'])) $this->pocoArray = JsonConverters::fromArray('Poco', $o['pocoArray']);
@@ -3503,7 +3503,7 @@ class AllCollectionTypes implements IReturn, JsonSerializable
         if (isset($this->stringList)) $o['stringList'] = JsonConverters::toArray('string', $this->stringList);
         if (isset($this->floatArray)) $o['floatArray'] = JsonConverters::toArray('float', $this->floatArray);
         if (isset($this->doubleList)) $o['doubleList'] = JsonConverters::toArray('float', $this->doubleList);
-        if (isset($this->byteArray)) $o['byteArray'] = JsonConverters::to('string', $this->byteArray);
+        if (isset($this->byteArray)) $o['byteArray'] = JsonConverters::to('ByteArray', $this->byteArray);
         if (isset($this->charArray)) $o['charArray'] = JsonConverters::toArray('string', $this->charArray);
         if (isset($this->decimalList)) $o['decimalList'] = JsonConverters::toArray('float', $this->decimalList);
         if (isset($this->pocoArray)) $o['pocoArray'] = JsonConverters::toArray('Poco', $this->pocoArray);
@@ -3515,6 +3515,36 @@ class AllCollectionTypes implements IReturn, JsonSerializable
     public function getTypeName(): string { return 'AllCollectionTypes'; }
     public function getMethod(): string { return 'POST'; }
     public function createResponse(): mixed { return new AllCollectionTypes(); }
+}
+
+class HelloAllTypesResponse implements JsonSerializable
+{
+    public function __construct(
+        /** @var string */
+        public string $result='',
+        /** @var AllTypes|null */
+        public ?AllTypes $allTypes=null,
+        /** @var AllCollectionTypes|null */
+        public ?AllCollectionTypes $allCollectionTypes=null
+    ) {
+    }
+
+    /** @throws Exception */
+    public function fromMap($o): void {
+        if (isset($o['result'])) $this->result = $o['result'];
+        if (isset($o['allTypes'])) $this->allTypes = JsonConverters::from('AllTypes', $o['allTypes']);
+        if (isset($o['allCollectionTypes'])) $this->allCollectionTypes = JsonConverters::from('AllCollectionTypes', $o['allCollectionTypes']);
+    }
+    
+    /** @throws Exception */
+    public function jsonSerialize(): array
+    {
+        $o = [];
+        if (isset($this->result)) $o['result'] = $this->result;
+        if (isset($this->allTypes)) $o['allTypes'] = JsonConverters::to('AllTypes', $this->allTypes);
+        if (isset($this->allCollectionTypes)) $o['allCollectionTypes'] = JsonConverters::to('AllCollectionTypes', $this->allCollectionTypes);
+        return $o;
+    }
 }
 
 class ProfileGenResponse implements JsonSerializable
@@ -3885,7 +3915,7 @@ class Dummy implements JsonSerializable
 // @Route("/profile-image")
 // @Route("/profile-image/{Type}")
 // @Route("/profile-image/{Type}/{Size}")
-#[Returns('string')]
+#[Returns('ByteArray')]
 class GetProfileImage implements IReturn, JsonSerializable
 {
     public function __construct(
@@ -3912,7 +3942,7 @@ class GetProfileImage implements IReturn, JsonSerializable
     }
     public function getTypeName(): string { return 'GetProfileImage'; }
     public function getMethod(): string { return 'POST'; }
-    public function createResponse(): mixed { return ''; }
+    public function createResponse(): mixed { return new ByteArray(); }
 }
 
 #[Returns('Movie')]
@@ -4012,8 +4042,8 @@ class Greet implements IReturn, JsonSerializable
     public function createResponse(): mixed { return new HelloResponse(); }
 }
 
+// @Route("/hello")
 // @Route("/hello/{Name}")
-// @ValidateRequest(Validator="HasRole(`Employee`)")
 #[Returns('HelloResponse')]
 class Hello implements IReturn, JsonSerializable
 {
@@ -4036,7 +4066,7 @@ class Hello implements IReturn, JsonSerializable
         return $o;
     }
     public function getTypeName(): string { return 'Hello'; }
-    public function getMethod(): string { return 'GET'; }
+    public function getMethod(): string { return 'POST'; }
     public function createResponse(): mixed { return new HelloResponse(); }
 }
 
@@ -4133,6 +4163,40 @@ class HelloBookingList implements IReturn, JsonSerializable
     public function getTypeName(): string { return 'HelloBookingList'; }
     public function getMethod(): string { return 'POST'; }
     public function createResponse(): mixed { return []; }
+}
+
+#[Returns('HelloAllTypesResponse')]
+class HelloAllTypes implements IReturn, JsonSerializable
+{
+    public function __construct(
+        /** @var string */
+        public string $name='',
+        /** @var AllTypes|null */
+        public ?AllTypes $allTypes=null,
+        /** @var AllCollectionTypes|null */
+        public ?AllCollectionTypes $allCollectionTypes=null
+    ) {
+    }
+
+    /** @throws Exception */
+    public function fromMap($o): void {
+        if (isset($o['name'])) $this->name = $o['name'];
+        if (isset($o['allTypes'])) $this->allTypes = JsonConverters::from('AllTypes', $o['allTypes']);
+        if (isset($o['allCollectionTypes'])) $this->allCollectionTypes = JsonConverters::from('AllCollectionTypes', $o['allCollectionTypes']);
+    }
+    
+    /** @throws Exception */
+    public function jsonSerialize(): array
+    {
+        $o = [];
+        if (isset($this->name)) $o['name'] = $this->name;
+        if (isset($this->allTypes)) $o['allTypes'] = JsonConverters::to('AllTypes', $this->allTypes);
+        if (isset($this->allCollectionTypes)) $o['allCollectionTypes'] = JsonConverters::to('AllCollectionTypes', $this->allCollectionTypes);
+        return $o;
+    }
+    public function getTypeName(): string { return 'HelloAllTypes'; }
+    public function getMethod(): string { return 'POST'; }
+    public function createResponse(): mixed { return new HelloAllTypesResponse(); }
 }
 
 #[Returns('ProfileGenResponse')]
@@ -7161,8 +7225,8 @@ class UpdateEmployee implements IReturn, IPut, IUpdateDb, JsonSerializable
         public ?string $extension=null,
 
         // @DataMember(Order=15)
-        /** @var string|null */
-        public ?string $photo=null,
+        /** @var ByteArray|null */
+        public ?ByteArray $photo=null,
 
         // @DataMember(Order=16)
         /** @var string|null */
@@ -7194,7 +7258,7 @@ class UpdateEmployee implements IReturn, IPut, IUpdateDb, JsonSerializable
         if (isset($o['country'])) $this->country = $o['country'];
         if (isset($o['homePhone'])) $this->homePhone = $o['homePhone'];
         if (isset($o['extension'])) $this->extension = $o['extension'];
-        if (isset($o['photo'])) $this->photo = JsonConverters::from('string', $o['photo']);
+        if (isset($o['photo'])) $this->photo = JsonConverters::from('ByteArray', $o['photo']);
         if (isset($o['notes'])) $this->notes = $o['notes'];
         if (isset($o['reportsTo'])) $this->reportsTo = $o['reportsTo'];
         if (isset($o['photoPath'])) $this->photoPath = $o['photoPath'];
@@ -7218,7 +7282,7 @@ class UpdateEmployee implements IReturn, IPut, IUpdateDb, JsonSerializable
         if (isset($this->country)) $o['country'] = $this->country;
         if (isset($this->homePhone)) $o['homePhone'] = $this->homePhone;
         if (isset($this->extension)) $o['extension'] = $this->extension;
-        if (isset($this->photo)) $o['photo'] = JsonConverters::to('string', $this->photo);
+        if (isset($this->photo)) $o['photo'] = JsonConverters::to('ByteArray', $this->photo);
         if (isset($this->notes)) $o['notes'] = $this->notes;
         if (isset($this->reportsTo)) $o['reportsTo'] = $this->reportsTo;
         if (isset($this->photoPath)) $o['photoPath'] = $this->photoPath;
@@ -11707,8 +11771,8 @@ class CreateEmployee implements IReturn, IPost, ICreateDb, JsonSerializable
         public ?string $extension=null,
 
         // @DataMember(Order=15)
-        /** @var string|null */
-        public ?string $photo=null,
+        /** @var ByteArray|null */
+        public ?ByteArray $photo=null,
 
         // @DataMember(Order=16)
         /** @var string|null */
@@ -11740,7 +11804,7 @@ class CreateEmployee implements IReturn, IPost, ICreateDb, JsonSerializable
         if (isset($o['country'])) $this->country = $o['country'];
         if (isset($o['homePhone'])) $this->homePhone = $o['homePhone'];
         if (isset($o['extension'])) $this->extension = $o['extension'];
-        if (isset($o['photo'])) $this->photo = JsonConverters::from('string', $o['photo']);
+        if (isset($o['photo'])) $this->photo = JsonConverters::from('ByteArray', $o['photo']);
         if (isset($o['notes'])) $this->notes = $o['notes'];
         if (isset($o['reportsTo'])) $this->reportsTo = $o['reportsTo'];
         if (isset($o['photoPath'])) $this->photoPath = $o['photoPath'];
@@ -11764,7 +11828,7 @@ class CreateEmployee implements IReturn, IPost, ICreateDb, JsonSerializable
         if (isset($this->country)) $o['country'] = $this->country;
         if (isset($this->homePhone)) $o['homePhone'] = $this->homePhone;
         if (isset($this->extension)) $o['extension'] = $this->extension;
-        if (isset($this->photo)) $o['photo'] = JsonConverters::to('string', $this->photo);
+        if (isset($this->photo)) $o['photo'] = JsonConverters::to('ByteArray', $this->photo);
         if (isset($this->notes)) $o['notes'] = $this->notes;
         if (isset($this->reportsTo)) $o['reportsTo'] = $this->reportsTo;
         if (isset($this->photoPath)) $o['photoPath'] = $this->photoPath;
@@ -13767,8 +13831,8 @@ class PatchEmployee implements IReturn, IPatch, IPatchDb, JsonSerializable
         public ?string $extension=null,
 
         // @DataMember(Order=15)
-        /** @var string|null */
-        public ?string $photo=null,
+        /** @var ByteArray|null */
+        public ?ByteArray $photo=null,
 
         // @DataMember(Order=16)
         /** @var string|null */
@@ -13800,7 +13864,7 @@ class PatchEmployee implements IReturn, IPatch, IPatchDb, JsonSerializable
         if (isset($o['country'])) $this->country = $o['country'];
         if (isset($o['homePhone'])) $this->homePhone = $o['homePhone'];
         if (isset($o['extension'])) $this->extension = $o['extension'];
-        if (isset($o['photo'])) $this->photo = JsonConverters::from('string', $o['photo']);
+        if (isset($o['photo'])) $this->photo = JsonConverters::from('ByteArray', $o['photo']);
         if (isset($o['notes'])) $this->notes = $o['notes'];
         if (isset($o['reportsTo'])) $this->reportsTo = $o['reportsTo'];
         if (isset($o['photoPath'])) $this->photoPath = $o['photoPath'];
@@ -13824,7 +13888,7 @@ class PatchEmployee implements IReturn, IPatch, IPatchDb, JsonSerializable
         if (isset($this->country)) $o['country'] = $this->country;
         if (isset($this->homePhone)) $o['homePhone'] = $this->homePhone;
         if (isset($this->extension)) $o['extension'] = $this->extension;
-        if (isset($this->photo)) $o['photo'] = JsonConverters::to('string', $this->photo);
+        if (isset($this->photo)) $o['photo'] = JsonConverters::to('ByteArray', $this->photo);
         if (isset($this->notes)) $o['notes'] = $this->notes;
         if (isset($this->reportsTo)) $o['reportsTo'] = $this->reportsTo;
         if (isset($this->photoPath)) $o['photoPath'] = $this->photoPath;
