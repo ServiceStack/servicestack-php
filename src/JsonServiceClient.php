@@ -23,6 +23,8 @@ function nameof($request)
 {
     if (!isset($request))
         return null;
+    if (is_array($request))
+        return nameof($request[0]) . "[]";
     if (is_object($request) && method_exists($request, "getTypeName"))
         return $request->getTypeName();
     return get_class($request);
@@ -93,7 +95,7 @@ interface RequestFilter
 
 interface ResponseFilter
 {
-    public function call(mixed $response);
+    public function call(mixed $response, SendContext $ctx);
 }
 
 interface ExceptionFilter
@@ -131,16 +133,17 @@ class RefreshTokenException extends WebServiceException
 class SendContext
 {
     public function __construct(
-        public ?array                   $headers = [],
-        public ?string                  $method = "POST",
-        public IReturn|IReturnVoid|null $request = null,
-        public ?string                  $url = null,
-        public mixed                    $body = null,
-        public mixed                    $args = null,
-        public ?string                  $bodyString = null,
-        public mixed                    $responseAs = null,
-        public ?RequestFilter           $requestFilter = null,
-        public ?ResponseFilter          $responseFilter = null)
+        public ?array                         $headers = [],
+        public ?string                        $method = "POST",
+        public array|IReturn|IReturnVoid|null $request = null,
+        public ?string                        $url = null,
+        public mixed                          $body = null,
+        public mixed                          $args = null,
+        public ?string                        $bodyString = null,
+        public mixed                          $responseAs = null,
+        public ?array                         $responseHeaders = null,
+        public ?RequestFilter                 $requestFilter = null,
+        public ?ResponseFilter                $responseFilter = null)
     {
     }
 
@@ -150,7 +153,9 @@ class SendContext
             JsonConverters::registerNamespace((new ReflectionClass(get_class($this->request)))->getNamespaceName());
             if ($this->request instanceof IReturn) {
                 $to = $this->request->createResponse();
-                JsonConverters::registerNamespace((new ReflectionClass(get_class($to)))->getNamespaceName());
+                if (is_object($to)) {
+                    JsonConverters::registerNamespace((new ReflectionClass(get_class($to)))->getNamespaceName());
+                }
             }
         }
         if (isset($this->body) && is_object($this->body)) {
@@ -182,12 +187,22 @@ class SendContext
                 unset($headers["Content-Type"]);
         }
         $opts['http']['header'] = implode("\r\n",
-            array_map(fn($key,$val):string => "$key: $val", array_keys($headers), $headers));
-        print_r($opts);
+            array_map(fn($key, $val): string => "$key: $val", array_keys($headers), $headers));
+        Log::debug("REQUEST: " . $this->url);
+        Log::debug($opts);
         $context = stream_context_create($opts);
         $response = file_get_contents($this->url, false, $context);
-        print_r($response);
-        return [$response, parseHeaders($http_response_header)];
+        if ($response === false) {
+            throw new WebServiceException(statusCode:500, statusDescription:"Request Failed",
+                message:"Request to $this->url failed");
+        }
+        $responseHeaders = parseHeaders($http_response_header);
+        $this->responseHeaders = $responseHeaders;
+        Log::debug("RESPONSE HEADERS:");
+        Log::debug($responseHeaders);
+        Log::debug("RESPONSE: " . ($responseHeaders['statusCode'] ?? ""));
+        Log::debug($responseHeaders);
+        return [$response, $responseHeaders];
     }
 }
 
@@ -355,45 +370,45 @@ class JsonServiceClient
     }
 
     /** @throws Exception */
-    public function get(IReturn|string $request, ?array $args = null): mixed
+    public function get(IReturn|IReturnVoid|string $request, ?array $args = null): mixed
     {
         return $this->send($request, method: HttpMethods::GET, args: $args);
     }
 
     /** @throws Exception */
-    public function post(IReturn|string $request, ?array $args = null): mixed
+    public function post(IReturn|IReturnVoid|string $request, mixed $body = null, ?array $args = null): mixed
     {
-        return $this->send($request, method: HttpMethods::POST, args: $args);
+        return $this->send($request, method: HttpMethods::POST, body: $body, args: $args);
     }
 
     /** @throws Exception */
-    public function put(IReturn|string $request, ?array $args = null): mixed
+    public function put(IReturn|IReturnVoid|string $request, mixed $body = null, ?array $args = null): mixed
     {
-        return $this->send($request, method: HttpMethods::PUT, args: $args);
+        return $this->send($request, method: HttpMethods::PUT, body: $body, args: $args);
     }
 
     /** @throws Exception */
-    public function patch(IReturn|string $request, ?array $args = null): mixed
+    public function patch(IReturn|IReturnVoid|string $request, mixed $body = null, ?array $args = null): mixed
     {
-        return $this->send($request, method: HttpMethods::PATCH, args: $args);
+        return $this->send($request, method: HttpMethods::PATCH, body: $body, args: $args);
     }
 
     /** @throws Exception */
-    public function delete(IReturn|string $request, ?array $args = null): mixed
+    public function delete(IReturn|IReturnVoid|string $request, ?array $args = null): mixed
     {
         return $this->send($request, method: HttpMethods::DELETE, args: $args);
     }
 
     /** @throws Exception */
-    public function getUrl(string $path, mixed $responseAs=null, mixed $args = null): mixed
+    public function getUrl(string $path, mixed $responseAs = null, mixed $args = null): mixed
     {
-        return $this->sendUrl($path, method: HttpMethods::GET, responseAs:$responseAs, args:$args);
+        return $this->sendUrl($path, method: HttpMethods::GET, responseAs: $responseAs, args: $args);
     }
 
     /** @throws Exception */
-    public function postUrl(string $path, mixed $responseAs=null, mixed $body=null, ?array $args = null): mixed
+    public function postUrl(string $path, mixed $responseAs = null, mixed $body = null, ?array $args = null): mixed
     {
-        return $this->sendUrl($path, method: HttpMethods::POST, responseAs:$responseAs, body:$body, args:$args);
+        return $this->sendUrl($path, method: HttpMethods::POST, responseAs: $responseAs, body: $body, args: $args);
     }
 
     /**
@@ -450,7 +465,7 @@ class JsonServiceClient
         return $url;
     }
 
-    public function raiseError(mixed $res, Exception $e): Exception
+    function raiseError(mixed $res, Exception $e): Exception
     {
         if (isset($this->exceptionFilter))
             $this->exceptionFilter->call($res, $e);
@@ -462,7 +477,7 @@ class JsonServiceClient
     /**
      * @throws Exception
      */
-    public function handleError(mixed $holdRes, Exception $e)
+    function handleError(mixed $holdRes, Exception $e)
     {
         if ($e instanceof WebServiceException)
             throw $this->raiseError($holdRes, $e);
@@ -511,10 +526,74 @@ class JsonServiceClient
         ));
     }
 
+    /** @throws Exception */
+    function assertValidBatchRequest(array $requestDtos): array
+    {
+        if (!is_array($requestDtos))
+            throw new Exception(JsonConverters::getClass($requestDtos) . " is not an array of Request DTOs");
+
+        if (count($requestDtos) == 0)
+            return [null, null];
+
+        $request = $requestDtos[0];
+        if (!($request instanceof IReturn || $request instanceof IReturnVoid))
+            throw new Exception(JsonConverters::getClass($request) . " does not implement IReturn or IReturnVoid");
+
+        $itemResponseAs = resolveResponseType($request);
+        if (!isset($itemResponseAs))
+            throw new Exception("Could not resolve Response Type for " . JsonConverters::getClass($request));
+
+        return [$request, $itemResponseAs];
+    }
+
+    /** @throws Exception */
+    public function sendAll(array $requestDtos): mixed
+    {
+        [$request, $itemResponseAs] = $this->assertValidBatchRequest($requestDtos);
+        if (!isset($request))
+            return [];
+
+        $url = combinePaths($this->replyBaseUrl, nameof($request) . "[]");
+
+        /** @var ArrayList $arrayList */
+        $arrayList = $this->sendRequest(new SendContext(
+            headers: array_replace([], $this->headers),
+            method: HttpMethods::POST,
+            request: $requestDtos,
+            url: $url,
+            responseAs: ArrayList::create([nameof($itemResponseAs)]),
+        ));
+        return $arrayList->jsonSerialize();
+    }
+
+    /** @throws Exception */
+    public function sendAllOneWay(array $requestDtos): void {
+        if (!is_array($requestDtos))
+            throw new Exception(JsonConverters::getClass($requestDtos) . " is not an array of Request DTOs");
+
+        if (count($requestDtos) == 0)
+            return;
+
+        $request = $requestDtos[0];
+        if (!($request instanceof IReturn || $request instanceof IReturnVoid))
+            throw new Exception(JsonConverters::getClass($request) . " does not implement IReturn or IReturnVoid");
+
+        $url = combinePaths($this->oneWayBaseUrl, nameof($request) . "[]");
+
+        /** @var ArrayList $arrayList */
+        $this->sendRequest(new SendContext(
+            headers: array_replace([], $this->headers),
+            method: HttpMethods::POST,
+            request: $requestDtos,
+            url: $url,
+            responseAs: null,
+        ));
+    }
+
     /**
      * @throws Exception
      */
-    public function createRequest(SendContext $info): SendContext
+    function createRequest(SendContext $info): SendContext
     {
         $url = $info->url;
         $body = $info->body ?? $info->request;
@@ -549,8 +628,8 @@ class JsonServiceClient
                 $info->bodyString = ((is_object($info->args)
                     ? json_encode(JsonConverters::to(nameof($info->args), $info->args))
                     : is_array($info->args)) ? json_encode($info->args) : is_string($info->args))
-                        ? $info->args
-                        : null;
+                    ? $info->args
+                    : null;
         }
         return $info;
     }
@@ -568,14 +647,21 @@ class JsonServiceClient
         [$response, $headers] = $info->exec();
         if ($headers['statusCode'] >= 400) {
             $status = null;
+            $desc = JsonServiceClient::$HttpStatusCodes[$headers['statusCode']] ?? "Unknown Error";
             try {
                 $o = json_decode($response, associative: true);
-                $status = new ResponseStatus();
-                $status->fromMap($o);
-            } catch (Exception $ignore) {
+                $status = new ResponseStatus(errorCode: $headers['statusCode'], message: $desc);
+                if (isset($o['responseStatus'])) {
+                    $status->fromMap($o['responseStatus']);
+                    Log::debug("responseStatus:");
+                    Log::debug($status->errors);
+                }
+            } catch (Exception $ex) {
+                Log::error("Could not parse ResponseStatus", error: $ex);
             }
-            $desc = JsonServiceClient::$HttpStatusCodes[$headers['statusCode']] ?? "Unknown Error";
-            echo "ERROR: " . $headers['statusCode'] . ": $desc\n" . (isset($status) ? json_encode($status) : "");
+            Log::debug("ERROR: " . $headers['statusCode'] . ": $desc");
+            Log::debug((isset($status) ? json_encode($status) : ""));
+
             throw $this->raiseError($headers, new WebServiceException(
                 statusCode: $headers['statusCode'],
                 statusDescription: $desc,
@@ -603,59 +689,6 @@ class JsonServiceClient
         }
     }
 
-    public function getFetch(IReturn|string $request, ?array $args = null): mixed
-    {
-        return !is_string($request)
-            ? $this->fetch(HttpMethods::GET, $request, $args)
-            : $this->fetch(HttpMethods::GET, null, $args, $this->toAbsoluteUrl($request));
-    }
-
-    /**
-     * @param string $method
-     * @param IReturn|string|null $request
-     * @param array<string,mixed> $args
-     * @param string|null $absoluteUrl
-     * @return mixed
-     */
-    public function fetch(string $method, IReturn|string|null $request, ?array $args = null, ?string $absoluteUrl = null): mixed
-    {
-        $opts = [
-            "http" => [
-                'method' => $method,
-                "header" => $this->headers,
-                "ignore_errors" => true,
-            ]
-        ];
-
-        $url = !empty($absoluteUrl)
-            ? $absoluteUrl
-            : combinePaths($this->replyBaseUrl, nameof($request));
-
-        $context = stream_context_create($opts);
-        $json = file_get_contents($url, false, $context);
-
-        if ($request != null && method_exists($request, 'createResponse')) {
-            $to = $request->createResponse();
-            JsonConverters::registerNamespace((new \ReflectionClass(get_class($request)))->getNamespaceName());
-            if ($to != null) {
-                JsonConverters::registerNamespace((new \ReflectionClass(get_class($to)))->getNamespaceName());
-            }
-
-            $obj = json_decode($json, true);
-            echo "RESPONSE::HEADERS\n";
-            print_r(parseHeaders($http_response_header));
-            echo "RESPONSE::BEGIN\n";
-            print_r($obj);
-            echo "RESPONSE::END\n";
-
-            if (method_exists($to, 'fromMap')) {
-                $to->fromMap($obj);
-            }
-            return $to;
-        }
-        return $json;
-    }
-
     /**
      * @throws WebServiceException
      * @throws Exception
@@ -663,15 +696,16 @@ class JsonServiceClient
     function createResponse(mixed $response, SendContext $info)
     {
         if (isset($info->requestFilter))
-            $info->responseFilter->call($response);
-        if (isset($this->requestFilter))
-            $this->responseFilter->call($response);
+            $info->responseFilter->call($response, $info);
+        if (isset($this->responseFilter))
+            $this->responseFilter->call($response, $info);
         if (isset(JsonServiceClient::$globalResponseFilter))
-            JsonServiceClient::$globalResponseFilter->call($response);
+            JsonServiceClient::$globalResponseFilter->call($response, $info);
 
         $into = $info->responseAs;
 
         $ctx = new TypeContext(is_string($into) ? $into : nameof($into));
+
         if ($ctx->class == "string")
             return $response;
 
@@ -693,7 +727,7 @@ class JsonServiceClient
             $into->fromMap($obj);
             return $into;
         }
-        throw new WebServiceException(message:"Failed to deserialize into '$ctx->class'");
+        throw new WebServiceException(message: "Failed to deserialize into '$ctx->class'");
     }
 
 }

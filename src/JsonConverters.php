@@ -16,7 +16,7 @@ class JsonConverters
     }
 
     public array $converters = [];
-    public array $namespaces = [];
+    public array $namespaces = ["ServiceStack"];
 
     public static function getInstance(): JsonConverters
     {
@@ -185,6 +185,24 @@ class JsonConverters
         return $to;
     }
 
+    public static function getClass(mixed $value) {
+        if (!isset($value))
+            return null;
+        if (is_object($value))
+            return nameof($value);
+        if (is_string($value))
+            return 'string';
+        if (is_bool($value))
+            return 'bool';
+        if (is_int($value))
+            return 'int';
+        if (is_float($value))
+            return 'float';
+        if (is_array($value))
+            return 'array';
+        throw new Exception("Could not find class name of " . $value);
+    }
+
     /**
      * @throws Exception
      */
@@ -219,7 +237,7 @@ class JsonConverters
         if (str_starts_with($name, "Dictionary<"))
             return [];
 
-        throw new Exception("Could not create instance of $name");
+        throw new Exception("Could not create instance of $name, namespaces: " . implode(",", JsonConverters::getInstance()->namespaces));
     }
 
 }

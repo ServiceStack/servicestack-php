@@ -1,6 +1,6 @@
 <?php namespace dtos;
 /* Options:
-Date: 2023-10-11 02:19:09
+Date: 2023-10-12 02:29:26
 Version: 6.111
 Tip: To override a DTO option, remove "//" prefix before updating
 BaseUrl: https://localhost:5001
@@ -23,7 +23,7 @@ use DateInterval;
 use JsonSerializable;
 use ServiceStack\{IReturn,IReturnVoid,IGet,IPost,IPut,IDelete,IPatch,IMeta,IHasSessionId,IHasBearerToken,IHasVersion};
 use ServiceStack\{ICrud,ICreateDb,IUpdateDb,IPatchDb,IDeleteDb,ISaveDb,AuditBase,QueryDb,QueryDb2,QueryData,QueryData2,QueryResponse};
-use ServiceStack\{ResponseStatus,ResponseError,EmptyResponse,IdResponse,KeyValuePair2,StringResponse,StringsResponse,Tuple2,Tuple3,ByteArray};
+use ServiceStack\{ResponseStatus,ResponseError,EmptyResponse,IdResponse,ArrayList,KeyValuePair2,StringResponse,StringsResponse,Tuple2,Tuple3,ByteArray};
 use ServiceStack\{JsonConverters,Returns,TypeContext};
 
 
@@ -2952,6 +2952,54 @@ class Level implements JsonSerializable
     }
 }
 
+class Item implements JsonSerializable
+{
+    public function __construct(
+        /** @var string|null */
+        public ?string $name=null,
+        /** @var string|null */
+        public ?string $description=null
+    ) {
+    }
+
+    /** @throws Exception */
+    public function fromMap($o): void {
+        if (isset($o['name'])) $this->name = $o['name'];
+        if (isset($o['description'])) $this->description = $o['description'];
+    }
+    
+    /** @throws Exception */
+    public function jsonSerialize(): array
+    {
+        $o = [];
+        if (isset($this->name)) $o['name'] = $this->name;
+        if (isset($this->description)) $o['description'] = $this->description;
+        return $o;
+    }
+}
+
+class ListResult implements JsonSerializable
+{
+    public function __construct(
+        /** @var string */
+        public string $result=''
+    ) {
+    }
+
+    /** @throws Exception */
+    public function fromMap($o): void {
+        if (isset($o['result'])) $this->result = $o['result'];
+    }
+    
+    /** @throws Exception */
+    public function jsonSerialize(): array
+    {
+        $o = [];
+        if (isset($this->result)) $o['result'] = $this->result;
+        return $o;
+    }
+}
+
 /**
  * @property int $id
  * @property string $fileName
@@ -3027,6 +3075,76 @@ class TalentStatsResponse implements JsonSerializable
         if (isset($this->avgSalaryLower)) $o['avgSalaryLower'] = $this->avgSalaryLower;
         if (isset($this->avgSalaryUpper)) $o['avgSalaryUpper'] = $this->avgSalaryUpper;
         if (isset($this->preferredRemotePercentage)) $o['preferredRemotePercentage'] = $this->preferredRemotePercentage;
+        return $o;
+    }
+}
+
+/**
+ * @template Item
+ */
+class QueryResponseAlt implements JsonSerializable
+{
+    public array $genericArgs = [];
+    public static function create(array $genericArgs=[]): QueryResponseAlt {
+        $to = new QueryResponseAlt();
+        $to->genericArgs = $genericArgs;
+        return $to;
+    }
+
+    public function __construct(
+        /** @var int */
+        public mixed $offset=0,
+        /** @var int */
+        public mixed $total=0,
+        /** @var array<Item>|null */
+        public mixed $results=null,
+        /** @var array<string,string>|null */
+        public mixed $meta=null,
+        /** @var ResponseStatus|null */
+        public mixed $responseStatus=null
+    ) {
+    }
+
+    /** @throws Exception */
+    public function fromMap($o): void {
+        if (isset($o['offset'])) $this->offset = $o['offset'];
+        if (isset($o['total'])) $this->total = $o['total'];
+        if (isset($o['results'])) $this->results = JsonConverters::fromArray($this->genericArgs[0], $o['results']);
+        if (isset($o['meta'])) $this->meta = JsonConverters::from(JsonConverters::context('Dictionary',genericArgs:['string','string']), $o['meta']);
+        if (isset($o['responseStatus'])) $this->responseStatus = JsonConverters::from('ResponseStatus', $o['responseStatus']);
+    }
+    
+    /** @throws Exception */
+    public function jsonSerialize(): array
+    {
+        $o = [];
+        if (isset($this->offset)) $o['offset'] = $this->offset;
+        if (isset($this->total)) $o['total'] = $this->total;
+        if (isset($this->results)) $o['results'] = JsonConverters::toArray($this->genericArgs[0], $this->results);
+        if (isset($this->meta)) $o['meta'] = JsonConverters::to(JsonConverters::context('Dictionary',genericArgs:['string','string']), $this->meta);
+        if (isset($this->responseStatus)) $o['responseStatus'] = JsonConverters::to('ResponseStatus', $this->responseStatus);
+        return $o;
+    }
+}
+
+class Items implements JsonSerializable
+{
+    public function __construct(
+        /** @var array<Item>|null */
+        public ?array $results=null
+    ) {
+    }
+
+    /** @throws Exception */
+    public function fromMap($o): void {
+        if (isset($o['results'])) $this->results = JsonConverters::fromArray('Item', $o['results']);
+    }
+    
+    /** @throws Exception */
+    public function jsonSerialize(): array
+    {
+        $o = [];
+        if (isset($this->results)) $o['results'] = JsonConverters::toArray('Item', $this->results);
         return $o;
     }
 }
@@ -3309,6 +3427,100 @@ class HelloResponse implements JsonSerializable
     }
 }
 
+class SendVerbResponse implements JsonSerializable
+{
+    public function __construct(
+        /** @var int */
+        public int $id=0,
+        /** @var string */
+        public string $pathInfo='',
+        /** @var string */
+        public string $requestMethod=''
+    ) {
+    }
+
+    /** @throws Exception */
+    public function fromMap($o): void {
+        if (isset($o['id'])) $this->id = $o['id'];
+        if (isset($o['pathInfo'])) $this->pathInfo = $o['pathInfo'];
+        if (isset($o['requestMethod'])) $this->requestMethod = $o['requestMethod'];
+    }
+    
+    /** @throws Exception */
+    public function jsonSerialize(): array
+    {
+        $o = [];
+        if (isset($this->id)) $o['id'] = $this->id;
+        if (isset($this->pathInfo)) $o['pathInfo'] = $this->pathInfo;
+        if (isset($this->requestMethod)) $o['requestMethod'] = $this->requestMethod;
+        return $o;
+    }
+}
+
+class TestAuthResponse implements JsonSerializable
+{
+    public function __construct(
+        /** @var string */
+        public string $userId='',
+        /** @var string */
+        public string $sessionId='',
+        /** @var string */
+        public string $userName='',
+        /** @var string */
+        public string $displayName='',
+        /** @var ResponseStatus|null */
+        public ?ResponseStatus $responseStatus=null
+    ) {
+    }
+
+    /** @throws Exception */
+    public function fromMap($o): void {
+        if (isset($o['userId'])) $this->userId = $o['userId'];
+        if (isset($o['sessionId'])) $this->sessionId = $o['sessionId'];
+        if (isset($o['userName'])) $this->userName = $o['userName'];
+        if (isset($o['displayName'])) $this->displayName = $o['displayName'];
+        if (isset($o['responseStatus'])) $this->responseStatus = JsonConverters::from('ResponseStatus', $o['responseStatus']);
+    }
+    
+    /** @throws Exception */
+    public function jsonSerialize(): array
+    {
+        $o = [];
+        if (isset($this->userId)) $o['userId'] = $this->userId;
+        if (isset($this->sessionId)) $o['sessionId'] = $this->sessionId;
+        if (isset($this->userName)) $o['userName'] = $this->userName;
+        if (isset($this->displayName)) $o['displayName'] = $this->displayName;
+        if (isset($this->responseStatus)) $o['responseStatus'] = JsonConverters::to('ResponseStatus', $this->responseStatus);
+        return $o;
+    }
+}
+
+#[Returns('RequiresAdmin')]
+class RequiresAdmin implements IReturn, JsonSerializable
+{
+    public function __construct(
+        /** @var int */
+        public int $id=0
+    ) {
+    }
+
+    /** @throws Exception */
+    public function fromMap($o): void {
+        if (isset($o['id'])) $this->id = $o['id'];
+    }
+    
+    /** @throws Exception */
+    public function jsonSerialize(): array
+    {
+        $o = [];
+        if (isset($this->id)) $o['id'] = $this->id;
+        return $o;
+    }
+    public function getTypeName(): string { return 'RequiresAdmin'; }
+    public function getMethod(): string { return 'POST'; }
+    public function createResponse(): mixed { return new RequiresAdmin(); }
+}
+
 #[Returns('AllTypes')]
 class AllTypes implements IReturn, JsonSerializable
 {
@@ -3547,6 +3759,62 @@ class HelloAllTypesResponse implements JsonSerializable
     }
 }
 
+class ThrowTypeResponse implements JsonSerializable
+{
+    public function __construct(
+        /** @var ResponseStatus|null */
+        public ?ResponseStatus $responseStatus=null
+    ) {
+    }
+
+    /** @throws Exception */
+    public function fromMap($o): void {
+        if (isset($o['responseStatus'])) $this->responseStatus = JsonConverters::from('ResponseStatus', $o['responseStatus']);
+    }
+    
+    /** @throws Exception */
+    public function jsonSerialize(): array
+    {
+        $o = [];
+        if (isset($this->responseStatus)) $o['responseStatus'] = JsonConverters::to('ResponseStatus', $this->responseStatus);
+        return $o;
+    }
+}
+
+class ThrowValidationResponse implements JsonSerializable
+{
+    public function __construct(
+        /** @var int */
+        public int $age=0,
+        /** @var string */
+        public string $required='',
+        /** @var string */
+        public string $email='',
+        /** @var ResponseStatus|null */
+        public ?ResponseStatus $responseStatus=null
+    ) {
+    }
+
+    /** @throws Exception */
+    public function fromMap($o): void {
+        if (isset($o['age'])) $this->age = $o['age'];
+        if (isset($o['required'])) $this->required = $o['required'];
+        if (isset($o['email'])) $this->email = $o['email'];
+        if (isset($o['responseStatus'])) $this->responseStatus = JsonConverters::from('ResponseStatus', $o['responseStatus']);
+    }
+    
+    /** @throws Exception */
+    public function jsonSerialize(): array
+    {
+        $o = [];
+        if (isset($this->age)) $o['age'] = $this->age;
+        if (isset($this->required)) $o['required'] = $this->required;
+        if (isset($this->email)) $o['email'] = $this->email;
+        if (isset($this->responseStatus)) $o['responseStatus'] = JsonConverters::to('ResponseStatus', $this->responseStatus);
+        return $o;
+    }
+}
+
 class ProfileGenResponse implements JsonSerializable
 {
     
@@ -3556,6 +3824,93 @@ class ProfileGenResponse implements JsonSerializable
         $o = [];
         return $o;
     }
+}
+
+// @Route("/echo/types")
+#[Returns('EchoTypes')]
+class EchoTypes implements IReturn, JsonSerializable
+{
+    public function __construct(
+        /** @var int */
+        public int $byte=0,
+        /** @var int */
+        public int $short=0,
+        /** @var int */
+        public int $int=0,
+        /** @var int */
+        public int $long=0,
+        /** @var int */
+        public int $uShort=0,
+        /** @var int */
+        public int $uInt=0,
+        /** @var int */
+        public int $uLong=0,
+        /** @var float */
+        public float $float=0.0,
+        /** @var float */
+        public float $double=0.0,
+        /** @var float */
+        public float $decimal=0.0,
+        /** @var string */
+        public string $string='',
+        /** @var DateTime */
+        public DateTime $dateTime=new DateTime(),
+        /** @var DateInterval|null */
+        public ?DateInterval $timeSpan=null,
+        /** @var DateTime */
+        public DateTime $dateTimeOffset=new DateTime(),
+        /** @var string */
+        public string $guid='',
+        /** @var string */
+        public string $char=''
+    ) {
+    }
+
+    /** @throws Exception */
+    public function fromMap($o): void {
+        if (isset($o['byte'])) $this->byte = $o['byte'];
+        if (isset($o['short'])) $this->short = $o['short'];
+        if (isset($o['int'])) $this->int = $o['int'];
+        if (isset($o['long'])) $this->long = $o['long'];
+        if (isset($o['uShort'])) $this->uShort = $o['uShort'];
+        if (isset($o['uInt'])) $this->uInt = $o['uInt'];
+        if (isset($o['uLong'])) $this->uLong = $o['uLong'];
+        if (isset($o['float'])) $this->float = $o['float'];
+        if (isset($o['double'])) $this->double = $o['double'];
+        if (isset($o['decimal'])) $this->decimal = $o['decimal'];
+        if (isset($o['string'])) $this->string = $o['string'];
+        if (isset($o['dateTime'])) $this->dateTime = JsonConverters::from('DateTime', $o['dateTime']);
+        if (isset($o['timeSpan'])) $this->timeSpan = JsonConverters::from('DateInterval', $o['timeSpan']);
+        if (isset($o['dateTimeOffset'])) $this->dateTimeOffset = JsonConverters::from('DateTime', $o['dateTimeOffset']);
+        if (isset($o['guid'])) $this->guid = $o['guid'];
+        if (isset($o['char'])) $this->char = $o['char'];
+    }
+    
+    /** @throws Exception */
+    public function jsonSerialize(): array
+    {
+        $o = [];
+        if (isset($this->byte)) $o['byte'] = $this->byte;
+        if (isset($this->short)) $o['short'] = $this->short;
+        if (isset($this->int)) $o['int'] = $this->int;
+        if (isset($this->long)) $o['long'] = $this->long;
+        if (isset($this->uShort)) $o['uShort'] = $this->uShort;
+        if (isset($this->uInt)) $o['uInt'] = $this->uInt;
+        if (isset($this->uLong)) $o['uLong'] = $this->uLong;
+        if (isset($this->float)) $o['float'] = $this->float;
+        if (isset($this->double)) $o['double'] = $this->double;
+        if (isset($this->decimal)) $o['decimal'] = $this->decimal;
+        if (isset($this->string)) $o['string'] = $this->string;
+        if (isset($this->dateTime)) $o['dateTime'] = JsonConverters::to('DateTime', $this->dateTime);
+        if (isset($this->timeSpan)) $o['timeSpan'] = JsonConverters::to('DateInterval', $this->timeSpan);
+        if (isset($this->dateTimeOffset)) $o['dateTimeOffset'] = JsonConverters::to('DateTime', $this->dateTimeOffset);
+        if (isset($this->guid)) $o['guid'] = $this->guid;
+        if (isset($this->char)) $o['char'] = $this->char;
+        return $o;
+    }
+    public function getTypeName(): string { return 'EchoTypes'; }
+    public function getMethod(): string { return 'POST'; }
+    public function createResponse(): mixed { return new EchoTypes(); }
 }
 
 // @Route("/contacts", "POST")
@@ -3843,73 +4198,60 @@ class TalentStats implements IReturn, IGet, JsonSerializable
     public function createResponse(): mixed { return new TalentStatsResponse(); }
 }
 
-class Dummy implements JsonSerializable
+#[Returns('QueryResponseAlt')]
+class AltQueryItems implements IReturn, JsonSerializable
 {
     public function __construct(
-        /** @var GetNavItems|null */
-        public ?GetNavItems $getNavItems=null,
-        /** @var GetNavItemsResponse|null */
-        public ?GetNavItemsResponse $getNavItemsResponse=null,
-        /** @var EmptyResponse|null */
-        public ?EmptyResponse $emptyResponse=null,
-        /** @var IdResponse|null */
-        public ?IdResponse $idResponse=null,
-        /** @var StringResponse|null */
-        public ?StringResponse $stringResponse=null,
-        /** @var StringsResponse|null */
-        public ?StringsResponse $stringsResponse=null,
-        /** @var ConvertSessionToToken|null */
-        public ?ConvertSessionToToken $convertSessionToToken=null,
-        /** @var ConvertSessionToTokenResponse|null */
-        public ?ConvertSessionToTokenResponse $convertSessionToTokenResponse=null,
-        /** @var CancelRequest|null */
-        public ?CancelRequest $cancelRequest=null,
-        /** @var CancelRequestResponse|null */
-        public ?CancelRequestResponse $cancelRequestResponse=null,
-        /** @var UpdateEventSubscriber|null */
-        public ?UpdateEventSubscriber $updateEventSubscriber=null,
-        /** @var UpdateEventSubscriberResponse|null */
-        public ?UpdateEventSubscriberResponse $updateEventSubscriberResponse=null
+        /** @var string|null */
+        public ?string $name=null
     ) {
     }
 
     /** @throws Exception */
     public function fromMap($o): void {
-        if (isset($o['getNavItems'])) $this->getNavItems = JsonConverters::from('GetNavItems', $o['getNavItems']);
-        if (isset($o['getNavItemsResponse'])) $this->getNavItemsResponse = JsonConverters::from('GetNavItemsResponse', $o['getNavItemsResponse']);
-        if (isset($o['emptyResponse'])) $this->emptyResponse = JsonConverters::from('EmptyResponse', $o['emptyResponse']);
-        if (isset($o['idResponse'])) $this->idResponse = JsonConverters::from('IdResponse', $o['idResponse']);
-        if (isset($o['stringResponse'])) $this->stringResponse = JsonConverters::from('StringResponse', $o['stringResponse']);
-        if (isset($o['stringsResponse'])) $this->stringsResponse = JsonConverters::from('StringsResponse', $o['stringsResponse']);
-        if (isset($o['convertSessionToToken'])) $this->convertSessionToToken = JsonConverters::from('ConvertSessionToToken', $o['convertSessionToToken']);
-        if (isset($o['convertSessionToTokenResponse'])) $this->convertSessionToTokenResponse = JsonConverters::from('ConvertSessionToTokenResponse', $o['convertSessionToTokenResponse']);
-        if (isset($o['cancelRequest'])) $this->cancelRequest = JsonConverters::from('CancelRequest', $o['cancelRequest']);
-        if (isset($o['cancelRequestResponse'])) $this->cancelRequestResponse = JsonConverters::from('CancelRequestResponse', $o['cancelRequestResponse']);
-        if (isset($o['updateEventSubscriber'])) $this->updateEventSubscriber = JsonConverters::from('UpdateEventSubscriber', $o['updateEventSubscriber']);
-        if (isset($o['updateEventSubscriberResponse'])) $this->updateEventSubscriberResponse = JsonConverters::from('UpdateEventSubscriberResponse', $o['updateEventSubscriberResponse']);
+        if (isset($o['name'])) $this->name = $o['name'];
     }
     
     /** @throws Exception */
     public function jsonSerialize(): array
     {
         $o = [];
-        if (isset($this->getNavItems)) $o['getNavItems'] = JsonConverters::to('GetNavItems', $this->getNavItems);
-        if (isset($this->getNavItemsResponse)) $o['getNavItemsResponse'] = JsonConverters::to('GetNavItemsResponse', $this->getNavItemsResponse);
-        if (isset($this->emptyResponse)) $o['emptyResponse'] = JsonConverters::to('EmptyResponse', $this->emptyResponse);
-        if (isset($this->idResponse)) $o['idResponse'] = JsonConverters::to('IdResponse', $this->idResponse);
-        if (isset($this->stringResponse)) $o['stringResponse'] = JsonConverters::to('StringResponse', $this->stringResponse);
-        if (isset($this->stringsResponse)) $o['stringsResponse'] = JsonConverters::to('StringsResponse', $this->stringsResponse);
-        if (isset($this->convertSessionToToken)) $o['convertSessionToToken'] = JsonConverters::to('ConvertSessionToToken', $this->convertSessionToToken);
-        if (isset($this->convertSessionToTokenResponse)) $o['convertSessionToTokenResponse'] = JsonConverters::to('ConvertSessionToTokenResponse', $this->convertSessionToTokenResponse);
-        if (isset($this->cancelRequest)) $o['cancelRequest'] = JsonConverters::to('CancelRequest', $this->cancelRequest);
-        if (isset($this->cancelRequestResponse)) $o['cancelRequestResponse'] = JsonConverters::to('CancelRequestResponse', $this->cancelRequestResponse);
-        if (isset($this->updateEventSubscriber)) $o['updateEventSubscriber'] = JsonConverters::to('UpdateEventSubscriber', $this->updateEventSubscriber);
-        if (isset($this->updateEventSubscriberResponse)) $o['updateEventSubscriberResponse'] = JsonConverters::to('UpdateEventSubscriberResponse', $this->updateEventSubscriberResponse);
+        if (isset($this->name)) $o['name'] = $this->name;
         return $o;
     }
-    public function getTypeName(): string { return 'Dummy'; }
+    public function getTypeName(): string { return 'AltQueryItems'; }
     public function getMethod(): string { return 'POST'; }
-    public function createResponse():void {}
+    public function createResponse(): mixed { return QueryResponseAlt::create(genericArgs:['Item']); }
+}
+
+#[Returns('Items')]
+class GetItems implements IReturn, JsonSerializable
+{
+    
+    /** @throws Exception */
+    public function jsonSerialize(): array
+    {
+        $o = [];
+        return $o;
+    }
+    public function getTypeName(): string { return 'GetItems'; }
+    public function getMethod(): string { return 'GET'; }
+    public function createResponse(): mixed { return new Items(); }
+}
+
+#[Returns('array')]
+class GetNakedItems implements IReturn, JsonSerializable
+{
+    
+    /** @throws Exception */
+    public function jsonSerialize(): array
+    {
+        $o = [];
+        return $o;
+    }
+    public function getTypeName(): string { return 'GetNakedItems'; }
+    public function getMethod(): string { return 'GET'; }
+    public function createResponse(): mixed { return ArrayList::create(["Item"]); }
 }
 
 // @Route("/profile-image")
@@ -4162,7 +4504,371 @@ class HelloBookingList implements IReturn, JsonSerializable
     }
     public function getTypeName(): string { return 'HelloBookingList'; }
     public function getMethod(): string { return 'POST'; }
-    public function createResponse(): mixed { return []; }
+    public function createResponse(): mixed { return ArrayList::create(["Booking"]); }
+}
+
+#[Returns('string')]
+class HelloString implements IReturn, JsonSerializable
+{
+    public function __construct(
+        /** @var string */
+        public string $name=''
+    ) {
+    }
+
+    /** @throws Exception */
+    public function fromMap($o): void {
+        if (isset($o['name'])) $this->name = $o['name'];
+    }
+    
+    /** @throws Exception */
+    public function jsonSerialize(): array
+    {
+        $o = [];
+        if (isset($this->name)) $o['name'] = $this->name;
+        return $o;
+    }
+    public function getTypeName(): string { return 'HelloString'; }
+    public function getMethod(): string { return 'POST'; }
+    public function createResponse(): mixed { return 'string'; }
+}
+
+// @Route("/return/string")
+#[Returns('string')]
+class ReturnString implements IReturn, JsonSerializable
+{
+    public function __construct(
+        /** @var string */
+        public string $data=''
+    ) {
+    }
+
+    /** @throws Exception */
+    public function fromMap($o): void {
+        if (isset($o['data'])) $this->data = $o['data'];
+    }
+    
+    /** @throws Exception */
+    public function jsonSerialize(): array
+    {
+        $o = [];
+        if (isset($this->data)) $o['data'] = $this->data;
+        return $o;
+    }
+    public function getTypeName(): string { return 'ReturnString'; }
+    public function getMethod(): string { return 'POST'; }
+    public function createResponse(): mixed { return 'string'; }
+}
+
+// @Route("/sendjson")
+#[Returns('string')]
+class SendJson implements IReturn, JsonSerializable
+{
+    public function __construct(
+        /** @var int */
+        public int $id=0,
+        /** @var string|null */
+        public ?string $name=null,
+        /** @var ByteArray|null */
+        public ?ByteArray $requestStream=null
+    ) {
+    }
+
+    /** @throws Exception */
+    public function fromMap($o): void {
+        if (isset($o['id'])) $this->id = $o['id'];
+        if (isset($o['name'])) $this->name = $o['name'];
+        if (isset($o['requestStream'])) $this->requestStream = JsonConverters::from('ByteArray', $o['requestStream']);
+    }
+    
+    /** @throws Exception */
+    public function jsonSerialize(): array
+    {
+        $o = [];
+        if (isset($this->id)) $o['id'] = $this->id;
+        if (isset($this->name)) $o['name'] = $this->name;
+        if (isset($this->requestStream)) $o['requestStream'] = JsonConverters::to('ByteArray', $this->requestStream);
+        return $o;
+    }
+    public function getTypeName(): string { return 'SendJson'; }
+    public function getMethod(): string { return 'POST'; }
+    public function createResponse(): mixed { return 'string'; }
+}
+
+// @Route("/sendtext")
+#[Returns('string')]
+class SendText implements IReturn, JsonSerializable
+{
+    public function __construct(
+        /** @var int */
+        public int $id=0,
+        /** @var string|null */
+        public ?string $name=null,
+        /** @var string|null */
+        public ?string $contentType=null,
+        /** @var ByteArray|null */
+        public ?ByteArray $requestStream=null
+    ) {
+    }
+
+    /** @throws Exception */
+    public function fromMap($o): void {
+        if (isset($o['id'])) $this->id = $o['id'];
+        if (isset($o['name'])) $this->name = $o['name'];
+        if (isset($o['contentType'])) $this->contentType = $o['contentType'];
+        if (isset($o['requestStream'])) $this->requestStream = JsonConverters::from('ByteArray', $o['requestStream']);
+    }
+    
+    /** @throws Exception */
+    public function jsonSerialize(): array
+    {
+        $o = [];
+        if (isset($this->id)) $o['id'] = $this->id;
+        if (isset($this->name)) $o['name'] = $this->name;
+        if (isset($this->contentType)) $o['contentType'] = $this->contentType;
+        if (isset($this->requestStream)) $o['requestStream'] = JsonConverters::to('ByteArray', $this->requestStream);
+        return $o;
+    }
+    public function getTypeName(): string { return 'SendText'; }
+    public function getMethod(): string { return 'POST'; }
+    public function createResponse(): mixed { return 'string'; }
+}
+
+// @Route("/sendraw")
+#[Returns('ByteArray')]
+class SendRaw implements IReturn, JsonSerializable
+{
+    public function __construct(
+        /** @var int */
+        public int $id=0,
+        /** @var string|null */
+        public ?string $name=null,
+        /** @var string|null */
+        public ?string $contentType=null,
+        /** @var ByteArray|null */
+        public ?ByteArray $requestStream=null
+    ) {
+    }
+
+    /** @throws Exception */
+    public function fromMap($o): void {
+        if (isset($o['id'])) $this->id = $o['id'];
+        if (isset($o['name'])) $this->name = $o['name'];
+        if (isset($o['contentType'])) $this->contentType = $o['contentType'];
+        if (isset($o['requestStream'])) $this->requestStream = JsonConverters::from('ByteArray', $o['requestStream']);
+    }
+    
+    /** @throws Exception */
+    public function jsonSerialize(): array
+    {
+        $o = [];
+        if (isset($this->id)) $o['id'] = $this->id;
+        if (isset($this->name)) $o['name'] = $this->name;
+        if (isset($this->contentType)) $o['contentType'] = $this->contentType;
+        if (isset($this->requestStream)) $o['requestStream'] = JsonConverters::to('ByteArray', $this->requestStream);
+        return $o;
+    }
+    public function getTypeName(): string { return 'SendRaw'; }
+    public function getMethod(): string { return 'POST'; }
+    public function createResponse(): mixed { return new ByteArray(); }
+}
+
+#[Returns('SendVerbResponse')]
+class SendDefault implements IReturn, JsonSerializable
+{
+    public function __construct(
+        /** @var int */
+        public int $id=0
+    ) {
+    }
+
+    /** @throws Exception */
+    public function fromMap($o): void {
+        if (isset($o['id'])) $this->id = $o['id'];
+    }
+    
+    /** @throws Exception */
+    public function jsonSerialize(): array
+    {
+        $o = [];
+        if (isset($this->id)) $o['id'] = $this->id;
+        return $o;
+    }
+    public function getTypeName(): string { return 'SendDefault'; }
+    public function getMethod(): string { return 'POST'; }
+    public function createResponse(): mixed { return new SendVerbResponse(); }
+}
+
+// @Route("/sendrestget/{Id}", "GET")
+#[Returns('SendVerbResponse')]
+class SendRestGet implements IReturn, IGet, JsonSerializable
+{
+    public function __construct(
+        /** @var int */
+        public int $id=0
+    ) {
+    }
+
+    /** @throws Exception */
+    public function fromMap($o): void {
+        if (isset($o['id'])) $this->id = $o['id'];
+    }
+    
+    /** @throws Exception */
+    public function jsonSerialize(): array
+    {
+        $o = [];
+        if (isset($this->id)) $o['id'] = $this->id;
+        return $o;
+    }
+    public function getTypeName(): string { return 'SendRestGet'; }
+    public function getMethod(): string { return 'GET'; }
+    public function createResponse(): mixed { return new SendVerbResponse(); }
+}
+
+#[Returns('SendVerbResponse')]
+class SendGet implements IReturn, IGet, JsonSerializable
+{
+    public function __construct(
+        /** @var int */
+        public int $id=0
+    ) {
+    }
+
+    /** @throws Exception */
+    public function fromMap($o): void {
+        if (isset($o['id'])) $this->id = $o['id'];
+    }
+    
+    /** @throws Exception */
+    public function jsonSerialize(): array
+    {
+        $o = [];
+        if (isset($this->id)) $o['id'] = $this->id;
+        return $o;
+    }
+    public function getTypeName(): string { return 'SendGet'; }
+    public function getMethod(): string { return 'GET'; }
+    public function createResponse(): mixed { return new SendVerbResponse(); }
+}
+
+#[Returns('SendVerbResponse')]
+class SendPost implements IReturn, IPost, JsonSerializable
+{
+    public function __construct(
+        /** @var int */
+        public int $id=0
+    ) {
+    }
+
+    /** @throws Exception */
+    public function fromMap($o): void {
+        if (isset($o['id'])) $this->id = $o['id'];
+    }
+    
+    /** @throws Exception */
+    public function jsonSerialize(): array
+    {
+        $o = [];
+        if (isset($this->id)) $o['id'] = $this->id;
+        return $o;
+    }
+    public function getTypeName(): string { return 'SendPost'; }
+    public function getMethod(): string { return 'POST'; }
+    public function createResponse(): mixed { return new SendVerbResponse(); }
+}
+
+#[Returns('SendVerbResponse')]
+class SendPut implements IReturn, IPut, JsonSerializable
+{
+    public function __construct(
+        /** @var int */
+        public int $id=0
+    ) {
+    }
+
+    /** @throws Exception */
+    public function fromMap($o): void {
+        if (isset($o['id'])) $this->id = $o['id'];
+    }
+    
+    /** @throws Exception */
+    public function jsonSerialize(): array
+    {
+        $o = [];
+        if (isset($this->id)) $o['id'] = $this->id;
+        return $o;
+    }
+    public function getTypeName(): string { return 'SendPut'; }
+    public function getMethod(): string { return 'PUT'; }
+    public function createResponse(): mixed { return new SendVerbResponse(); }
+}
+
+class SendReturnVoid implements IReturnVoid, JsonSerializable
+{
+    public function __construct(
+        /** @var int */
+        public int $id=0
+    ) {
+    }
+
+    /** @throws Exception */
+    public function fromMap($o): void {
+        if (isset($o['id'])) $this->id = $o['id'];
+    }
+    
+    /** @throws Exception */
+    public function jsonSerialize(): array
+    {
+        $o = [];
+        if (isset($this->id)) $o['id'] = $this->id;
+        return $o;
+    }
+    public function getTypeName(): string { return 'SendReturnVoid'; }
+    public function getMethod(): string { return 'POST'; }
+    public function createResponse(): void {}
+}
+
+#[Returns('HelloResponse')]
+class HelloAuth implements IReturn, JsonSerializable
+{
+    public function __construct(
+        /** @var string */
+        public string $name=''
+    ) {
+    }
+
+    /** @throws Exception */
+    public function fromMap($o): void {
+        if (isset($o['name'])) $this->name = $o['name'];
+    }
+    
+    /** @throws Exception */
+    public function jsonSerialize(): array
+    {
+        $o = [];
+        if (isset($this->name)) $o['name'] = $this->name;
+        return $o;
+    }
+    public function getTypeName(): string { return 'HelloAuth'; }
+    public function getMethod(): string { return 'POST'; }
+    public function createResponse(): mixed { return new HelloResponse(); }
+}
+
+// @Route("/testauth")
+#[Returns('TestAuthResponse')]
+class TestAuth implements IReturn, JsonSerializable
+{
+    
+    /** @throws Exception */
+    public function jsonSerialize(): array
+    {
+        $o = [];
+        return $o;
+    }
+    public function getTypeName(): string { return 'TestAuth'; }
+    public function getMethod(): string { return 'POST'; }
+    public function createResponse(): mixed { return new TestAuthResponse(); }
 }
 
 #[Returns('HelloAllTypesResponse')]
@@ -4199,6 +4905,72 @@ class HelloAllTypes implements IReturn, JsonSerializable
     public function createResponse(): mixed { return new HelloAllTypesResponse(); }
 }
 
+// @Route("/throw/{Type}")
+#[Returns('ThrowTypeResponse')]
+class ThrowType implements IReturn, JsonSerializable
+{
+    public function __construct(
+        /** @var string|null */
+        public ?string $type=null,
+        /** @var string|null */
+        public ?string $message=null
+    ) {
+    }
+
+    /** @throws Exception */
+    public function fromMap($o): void {
+        if (isset($o['type'])) $this->type = $o['type'];
+        if (isset($o['message'])) $this->message = $o['message'];
+    }
+    
+    /** @throws Exception */
+    public function jsonSerialize(): array
+    {
+        $o = [];
+        if (isset($this->type)) $o['type'] = $this->type;
+        if (isset($this->message)) $o['message'] = $this->message;
+        return $o;
+    }
+    public function getTypeName(): string { return 'ThrowType'; }
+    public function getMethod(): string { return 'POST'; }
+    public function createResponse(): mixed { return new ThrowTypeResponse(); }
+}
+
+// @Route("/throwvalidation")
+#[Returns('ThrowValidationResponse')]
+class ThrowValidation implements IReturn, JsonSerializable
+{
+    public function __construct(
+        /** @var int */
+        public int $age=0,
+        /** @var string */
+        public string $required='',
+        /** @var string */
+        public string $email=''
+    ) {
+    }
+
+    /** @throws Exception */
+    public function fromMap($o): void {
+        if (isset($o['age'])) $this->age = $o['age'];
+        if (isset($o['required'])) $this->required = $o['required'];
+        if (isset($o['email'])) $this->email = $o['email'];
+    }
+    
+    /** @throws Exception */
+    public function jsonSerialize(): array
+    {
+        $o = [];
+        if (isset($this->age)) $o['age'] = $this->age;
+        if (isset($this->required)) $o['required'] = $this->required;
+        if (isset($this->email)) $o['email'] = $this->email;
+        return $o;
+    }
+    public function getTypeName(): string { return 'ThrowValidation'; }
+    public function getMethod(): string { return 'POST'; }
+    public function createResponse(): mixed { return new ThrowValidationResponse(); }
+}
+
 #[Returns('ProfileGenResponse')]
 class ProfileGen implements IReturn, JsonSerializable
 {
@@ -4212,6 +4984,57 @@ class ProfileGen implements IReturn, JsonSerializable
     public function getTypeName(): string { return 'ProfileGen'; }
     public function getMethod(): string { return 'POST'; }
     public function createResponse(): mixed { return new ProfileGenResponse(); }
+}
+
+class HelloReturnVoid implements IReturnVoid, JsonSerializable
+{
+    public function __construct(
+        /** @var int */
+        public int $id=0
+    ) {
+    }
+
+    /** @throws Exception */
+    public function fromMap($o): void {
+        if (isset($o['id'])) $this->id = $o['id'];
+    }
+    
+    /** @throws Exception */
+    public function jsonSerialize(): array
+    {
+        $o = [];
+        if (isset($this->id)) $o['id'] = $this->id;
+        return $o;
+    }
+    public function getTypeName(): string { return 'HelloReturnVoid'; }
+    public function getMethod(): string { return 'POST'; }
+    public function createResponse(): void {}
+}
+
+#[Returns('array')]
+class HelloList implements IReturn, JsonSerializable
+{
+    public function __construct(
+        /** @var array<string>|null */
+        public ?array $names=null
+    ) {
+    }
+
+    /** @throws Exception */
+    public function fromMap($o): void {
+        if (isset($o['names'])) $this->names = JsonConverters::fromArray('string', $o['names']);
+    }
+    
+    /** @throws Exception */
+    public function jsonSerialize(): array
+    {
+        $o = [];
+        if (isset($this->names)) $o['names'] = JsonConverters::toArray('string', $this->names);
+        return $o;
+    }
+    public function getTypeName(): string { return 'HelloList'; }
+    public function getMethod(): string { return 'POST'; }
+    public function createResponse(): mixed { return ArrayList::create(["ListResult"]); }
 }
 
 // @Route("/invoiceitems/{InvoiceLineId}", "PUT")

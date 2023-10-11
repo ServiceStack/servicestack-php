@@ -10,6 +10,7 @@
         "files": [
             "src/Returns.php",
             "src/Convertible.php",
+            "src/ArrayList.php",
             "src/IReturn.php",
             "src/ICreateDb.php",
             "src/ICrud.php",
@@ -35,6 +36,7 @@
             "src/Tuple2.php",
             "src/Tuple3.php",
             "src/ByteArray.php",
+            "src/Log.php",
             "src/AuditBase.php",
             "src/QueryResponse.php",
             "src/QueryBase.php",
