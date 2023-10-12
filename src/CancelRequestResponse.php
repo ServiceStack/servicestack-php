@@ -37,13 +37,13 @@ class CancelRequestResponse implements JsonSerializable
     }
 
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->tag)) $o['tag'] = $this->tag;
         if (isset($this->elapsed)) $o['elapsed'] = JsonConverters::to('DateInterval', $this->elapsed);
         if (isset($this->meta)) $o['meta'] = JsonConverters::to(JsonConverters::context('Dictionary',genericArgs:['string','string']), $this->meta);
         if (isset($this->responseStatus)) $o['responseStatus'] = JsonConverters::to('ResponseStatus', $this->responseStatus);
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
 }

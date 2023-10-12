@@ -46,7 +46,7 @@ class AuditBase implements JsonSerializable
         if (isset($o['deletedBy'])) $this->deletedBy = $o['deletedBy'];
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->createdDate)) $o['createdDate'] = JsonConverters::to('DateTime', $this->createdDate);
@@ -55,6 +55,6 @@ class AuditBase implements JsonSerializable
         if (isset($this->modifiedBy)) $o['modifiedBy'] = $this->modifiedBy;
         if (isset($this->deletedDate)) $o['deletedDate'] = $this->deletedDate;
         if (isset($this->deletedBy)) $o['deletedBy'] = $this->deletedBy;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
 }

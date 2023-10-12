@@ -51,7 +51,7 @@ class QueryBase implements JsonSerializable
     }
 
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->skip)) $o['skip'] = $this->skip;
@@ -61,6 +61,6 @@ class QueryBase implements JsonSerializable
         if (isset($this->include)) $o['include'] = $this->include;
         if (isset($this->fields)) $o['fields'] = $this->fields;
         if (isset($this->meta)) $o['meta'] = JsonConverters::to(JsonConverters::context('Dictionary',genericArgs:['string','string']), $this->meta);
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
 }

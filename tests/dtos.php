@@ -1,6 +1,6 @@
 <?php namespace dtos;
 /* Options:
-Date: 2023-10-12 02:29:26
+Date: 2023-10-12 23:13:38
 Version: 6.111
 Tip: To override a DTO option, remove "//" prefix before updating
 BaseUrl: https://localhost:5001
@@ -166,8 +166,8 @@ class AppUser implements JsonSerializable
         if (isset($o['salary'])) $this->salary = $o['salary'];
         if (isset($o['about'])) $this->about = $o['about'];
         if (isset($o['isArchived'])) $this->isArchived = $o['isArchived'];
-        if (isset($o['archivedDate'])) $this->archivedDate = $o['archivedDate'];
-        if (isset($o['lastLoginDate'])) $this->lastLoginDate = $o['lastLoginDate'];
+        if (isset($o['archivedDate'])) $this->archivedDate = JsonConverters::from('DateTime', $o['archivedDate']);
+        if (isset($o['lastLoginDate'])) $this->lastLoginDate = JsonConverters::from('DateTime', $o['lastLoginDate']);
         if (isset($o['lastLoginIp'])) $this->lastLoginIp = $o['lastLoginIp'];
         if (isset($o['userName'])) $this->userName = $o['userName'];
         if (isset($o['primaryEmail'])) $this->primaryEmail = $o['primaryEmail'];
@@ -176,7 +176,7 @@ class AppUser implements JsonSerializable
         if (isset($o['company'])) $this->company = $o['company'];
         if (isset($o['country'])) $this->country = $o['country'];
         if (isset($o['phoneNumber'])) $this->phoneNumber = $o['phoneNumber'];
-        if (isset($o['birthDate'])) $this->birthDate = $o['birthDate'];
+        if (isset($o['birthDate'])) $this->birthDate = JsonConverters::from('DateTime', $o['birthDate']);
         if (isset($o['birthDateRaw'])) $this->birthDateRaw = $o['birthDateRaw'];
         if (isset($o['address'])) $this->address = $o['address'];
         if (isset($o['address2'])) $this->address2 = $o['address2'];
@@ -198,8 +198,8 @@ class AppUser implements JsonSerializable
         if (isset($o['createdDate'])) $this->createdDate = JsonConverters::from('DateTime', $o['createdDate']);
         if (isset($o['modifiedDate'])) $this->modifiedDate = JsonConverters::from('DateTime', $o['modifiedDate']);
         if (isset($o['invalidLoginAttempts'])) $this->invalidLoginAttempts = $o['invalidLoginAttempts'];
-        if (isset($o['lastLoginAttempt'])) $this->lastLoginAttempt = $o['lastLoginAttempt'];
-        if (isset($o['lockedDate'])) $this->lockedDate = $o['lockedDate'];
+        if (isset($o['lastLoginAttempt'])) $this->lastLoginAttempt = JsonConverters::from('DateTime', $o['lastLoginAttempt']);
+        if (isset($o['lockedDate'])) $this->lockedDate = JsonConverters::from('DateTime', $o['lockedDate']);
         if (isset($o['recoveryToken'])) $this->recoveryToken = $o['recoveryToken'];
         if (isset($o['refId'])) $this->refId = $o['refId'];
         if (isset($o['refIdStr'])) $this->refIdStr = $o['refIdStr'];
@@ -207,7 +207,7 @@ class AppUser implements JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->id)) $o['id'] = $this->id;
@@ -221,8 +221,8 @@ class AppUser implements JsonSerializable
         if (isset($this->salary)) $o['salary'] = $this->salary;
         if (isset($this->about)) $o['about'] = $this->about;
         if (isset($this->isArchived)) $o['isArchived'] = $this->isArchived;
-        if (isset($this->archivedDate)) $o['archivedDate'] = $this->archivedDate;
-        if (isset($this->lastLoginDate)) $o['lastLoginDate'] = $this->lastLoginDate;
+        if (isset($this->archivedDate)) $o['archivedDate'] = JsonConverters::to('DateTime', $this->archivedDate);
+        if (isset($this->lastLoginDate)) $o['lastLoginDate'] = JsonConverters::to('DateTime', $this->lastLoginDate);
         if (isset($this->lastLoginIp)) $o['lastLoginIp'] = $this->lastLoginIp;
         if (isset($this->userName)) $o['userName'] = $this->userName;
         if (isset($this->primaryEmail)) $o['primaryEmail'] = $this->primaryEmail;
@@ -231,7 +231,7 @@ class AppUser implements JsonSerializable
         if (isset($this->company)) $o['company'] = $this->company;
         if (isset($this->country)) $o['country'] = $this->country;
         if (isset($this->phoneNumber)) $o['phoneNumber'] = $this->phoneNumber;
-        if (isset($this->birthDate)) $o['birthDate'] = $this->birthDate;
+        if (isset($this->birthDate)) $o['birthDate'] = JsonConverters::to('DateTime', $this->birthDate);
         if (isset($this->birthDateRaw)) $o['birthDateRaw'] = $this->birthDateRaw;
         if (isset($this->address)) $o['address'] = $this->address;
         if (isset($this->address2)) $o['address2'] = $this->address2;
@@ -253,13 +253,13 @@ class AppUser implements JsonSerializable
         if (isset($this->createdDate)) $o['createdDate'] = JsonConverters::to('DateTime', $this->createdDate);
         if (isset($this->modifiedDate)) $o['modifiedDate'] = JsonConverters::to('DateTime', $this->modifiedDate);
         if (isset($this->invalidLoginAttempts)) $o['invalidLoginAttempts'] = $this->invalidLoginAttempts;
-        if (isset($this->lastLoginAttempt)) $o['lastLoginAttempt'] = $this->lastLoginAttempt;
-        if (isset($this->lockedDate)) $o['lockedDate'] = $this->lockedDate;
+        if (isset($this->lastLoginAttempt)) $o['lastLoginAttempt'] = JsonConverters::to('DateTime', $this->lastLoginAttempt);
+        if (isset($this->lockedDate)) $o['lockedDate'] = JsonConverters::to('DateTime', $this->lockedDate);
         if (isset($this->recoveryToken)) $o['recoveryToken'] = $this->recoveryToken;
         if (isset($this->refId)) $o['refId'] = $this->refId;
         if (isset($this->refIdStr)) $o['refIdStr'] = $this->refIdStr;
         if (isset($this->meta)) $o['meta'] = JsonConverters::to(JsonConverters::context('Dictionary',genericArgs:['string','string']), $this->meta);
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
 }
 
@@ -313,7 +313,7 @@ class PhoneScreen extends AuditBase implements JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = parent::jsonSerialize();
         if (isset($this->id)) $o['id'] = $this->id;
@@ -322,7 +322,7 @@ class PhoneScreen extends AuditBase implements JsonSerializable
         if (isset($this->jobApplicationId)) $o['jobApplicationId'] = $this->jobApplicationId;
         if (isset($this->applicationStatus)) $o['applicationStatus'] = JsonConverters::to('JobApplicationStatus', $this->applicationStatus);
         if (isset($this->notes)) $o['notes'] = $this->notes;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
 }
 
@@ -379,7 +379,7 @@ class Interview extends AuditBase implements JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = parent::jsonSerialize();
         if (isset($this->id)) $o['id'] = $this->id;
@@ -389,7 +389,7 @@ class Interview extends AuditBase implements JsonSerializable
         if (isset($this->appUser)) $o['appUser'] = JsonConverters::to('AppUser', $this->appUser);
         if (isset($this->applicationStatus)) $o['applicationStatus'] = JsonConverters::to('JobApplicationStatus', $this->applicationStatus);
         if (isset($this->notes)) $o['notes'] = $this->notes;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
 }
 
@@ -443,7 +443,7 @@ class JobOffer extends AuditBase implements JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = parent::jsonSerialize();
         if (isset($this->id)) $o['id'] = $this->id;
@@ -452,7 +452,7 @@ class JobOffer extends AuditBase implements JsonSerializable
         if (isset($this->appUserId)) $o['appUserId'] = $this->appUserId;
         if (isset($this->appUser)) $o['appUser'] = JsonConverters::to('AppUser', $this->appUser);
         if (isset($this->notes)) $o['notes'] = $this->notes;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
 }
 
@@ -473,12 +473,12 @@ class SubType implements JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->id)) $o['id'] = $this->id;
         if (isset($this->name)) $o['name'] = $this->name;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
 }
 
@@ -513,14 +513,413 @@ class Attachment implements JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->fileName)) $o['fileName'] = $this->fileName;
         if (isset($this->filePath)) $o['filePath'] = $this->filePath;
         if (isset($this->contentType)) $o['contentType'] = $this->contentType;
         if (isset($this->contentLength)) $o['contentLength'] = $this->contentLength;
-        return $o;
+        return empty($o) ? new class(){} : $o;
+    }
+}
+
+/**
+ * @property string|null $provider
+ * @property string|null $userId
+ * @property string|null $accessToken
+ * @property string|null $accessTokenSecret
+ * @property string|null $refreshToken
+ * @property DateTime|null $refreshTokenExpiry
+ * @property string|null $requestToken
+ * @property string|null $requestTokenSecret
+ * @property array<string,string>|null $items
+ */
+interface IAuthTokens
+{
+}
+
+// @DataContract
+class AuthUserSession implements JsonSerializable
+{
+    public function __construct(
+        // @DataMember(Order=1)
+        /** @var string|null */
+        public ?string $referrerUrl=null,
+
+        // @DataMember(Order=2)
+        /** @var string|null */
+        public ?string $id=null,
+
+        // @DataMember(Order=3)
+        /** @var string|null */
+        public ?string $userAuthId=null,
+
+        // @DataMember(Order=4)
+        /** @var string|null */
+        public ?string $userAuthName=null,
+
+        // @DataMember(Order=5)
+        /** @var string|null */
+        public ?string $userName=null,
+
+        // @DataMember(Order=6)
+        /** @var string|null */
+        public ?string $twitterUserId=null,
+
+        // @DataMember(Order=7)
+        /** @var string|null */
+        public ?string $twitterScreenName=null,
+
+        // @DataMember(Order=8)
+        /** @var string|null */
+        public ?string $facebookUserId=null,
+
+        // @DataMember(Order=9)
+        /** @var string|null */
+        public ?string $facebookUserName=null,
+
+        // @DataMember(Order=10)
+        /** @var string|null */
+        public ?string $firstName=null,
+
+        // @DataMember(Order=11)
+        /** @var string|null */
+        public ?string $lastName=null,
+
+        // @DataMember(Order=12)
+        /** @var string|null */
+        public ?string $displayName=null,
+
+        // @DataMember(Order=13)
+        /** @var string|null */
+        public ?string $company=null,
+
+        // @DataMember(Order=14)
+        /** @var string|null */
+        public ?string $email=null,
+
+        // @DataMember(Order=15)
+        /** @var string|null */
+        public ?string $primaryEmail=null,
+
+        // @DataMember(Order=16)
+        /** @var string|null */
+        public ?string $phoneNumber=null,
+
+        // @DataMember(Order=17)
+        /** @var DateTime|null */
+        public ?DateTime $birthDate=null,
+
+        // @DataMember(Order=18)
+        /** @var string|null */
+        public ?string $birthDateRaw=null,
+
+        // @DataMember(Order=19)
+        /** @var string|null */
+        public ?string $address=null,
+
+        // @DataMember(Order=20)
+        /** @var string|null */
+        public ?string $address2=null,
+
+        // @DataMember(Order=21)
+        /** @var string|null */
+        public ?string $city=null,
+
+        // @DataMember(Order=22)
+        /** @var string|null */
+        public ?string $state=null,
+
+        // @DataMember(Order=23)
+        /** @var string|null */
+        public ?string $country=null,
+
+        // @DataMember(Order=24)
+        /** @var string|null */
+        public ?string $culture=null,
+
+        // @DataMember(Order=25)
+        /** @var string|null */
+        public ?string $fullName=null,
+
+        // @DataMember(Order=26)
+        /** @var string|null */
+        public ?string $gender=null,
+
+        // @DataMember(Order=27)
+        /** @var string|null */
+        public ?string $language=null,
+
+        // @DataMember(Order=28)
+        /** @var string|null */
+        public ?string $mailAddress=null,
+
+        // @DataMember(Order=29)
+        /** @var string|null */
+        public ?string $nickname=null,
+
+        // @DataMember(Order=30)
+        /** @var string|null */
+        public ?string $postalCode=null,
+
+        // @DataMember(Order=31)
+        /** @var string|null */
+        public ?string $timeZone=null,
+
+        // @DataMember(Order=32)
+        /** @var string|null */
+        public ?string $requestTokenSecret=null,
+
+        // @DataMember(Order=33)
+        /** @var DateTime */
+        public DateTime $createdAt=new DateTime(),
+
+        // @DataMember(Order=34)
+        /** @var DateTime */
+        public DateTime $lastModified=new DateTime(),
+
+        // @DataMember(Order=35)
+        /** @var array<string>|null */
+        public ?array $roles=null,
+
+        // @DataMember(Order=36)
+        /** @var array<string>|null */
+        public ?array $permissions=null,
+
+        // @DataMember(Order=37)
+        /** @var bool|null */
+        public ?bool $isAuthenticated=null,
+
+        // @DataMember(Order=38)
+        /** @var bool|null */
+        public ?bool $fromToken=null,
+
+        // @DataMember(Order=39)
+        /** @var string|null */
+        public ?string $profileUrl=null,
+
+        // @DataMember(Order=40)
+        /** @var string|null */
+        public ?string $sequence=null,
+
+        // @DataMember(Order=41)
+        /** @var int */
+        public int $tag=0,
+
+        // @DataMember(Order=42)
+        /** @var string|null */
+        public ?string $authProvider=null,
+
+        // @DataMember(Order=43)
+        /** @var array<IAuthTokens>|null */
+        public ?array $providerOAuthAccess=null,
+
+        // @DataMember(Order=44)
+        /** @var array<string,string>|null */
+        public ?array $meta=null,
+
+        // @DataMember(Order=45)
+        /** @var array<string>|null */
+        public ?array $audiences=null,
+
+        // @DataMember(Order=46)
+        /** @var array<string>|null */
+        public ?array $scopes=null,
+
+        // @DataMember(Order=47)
+        /** @var string|null */
+        public ?string $dns=null,
+
+        // @DataMember(Order=48)
+        /** @var string|null */
+        public ?string $rsa=null,
+
+        // @DataMember(Order=49)
+        /** @var string|null */
+        public ?string $sid=null,
+
+        // @DataMember(Order=50)
+        /** @var string|null */
+        public ?string $hash=null,
+
+        // @DataMember(Order=51)
+        /** @var string|null */
+        public ?string $homePhone=null,
+
+        // @DataMember(Order=52)
+        /** @var string|null */
+        public ?string $mobilePhone=null,
+
+        // @DataMember(Order=53)
+        /** @var string|null */
+        public ?string $webpage=null,
+
+        // @DataMember(Order=54)
+        /** @var bool|null */
+        public ?bool $emailConfirmed=null,
+
+        // @DataMember(Order=55)
+        /** @var bool|null */
+        public ?bool $phoneNumberConfirmed=null,
+
+        // @DataMember(Order=56)
+        /** @var bool|null */
+        public ?bool $twoFactorEnabled=null,
+
+        // @DataMember(Order=57)
+        /** @var string|null */
+        public ?string $securityStamp=null,
+
+        // @DataMember(Order=58)
+        /** @var string|null */
+        public ?string $type=null,
+
+        // @DataMember(Order=59)
+        /** @var string|null */
+        public ?string $recoveryToken=null,
+
+        // @DataMember(Order=60)
+        /** @var int|null */
+        public ?int $refId=null,
+
+        // @DataMember(Order=61)
+        /** @var string|null */
+        public ?string $refIdStr=null
+    ) {
+    }
+
+    /** @throws Exception */
+    public function fromMap($o): void {
+        if (isset($o['referrerUrl'])) $this->referrerUrl = $o['referrerUrl'];
+        if (isset($o['id'])) $this->id = $o['id'];
+        if (isset($o['userAuthId'])) $this->userAuthId = $o['userAuthId'];
+        if (isset($o['userAuthName'])) $this->userAuthName = $o['userAuthName'];
+        if (isset($o['userName'])) $this->userName = $o['userName'];
+        if (isset($o['twitterUserId'])) $this->twitterUserId = $o['twitterUserId'];
+        if (isset($o['twitterScreenName'])) $this->twitterScreenName = $o['twitterScreenName'];
+        if (isset($o['facebookUserId'])) $this->facebookUserId = $o['facebookUserId'];
+        if (isset($o['facebookUserName'])) $this->facebookUserName = $o['facebookUserName'];
+        if (isset($o['firstName'])) $this->firstName = $o['firstName'];
+        if (isset($o['lastName'])) $this->lastName = $o['lastName'];
+        if (isset($o['displayName'])) $this->displayName = $o['displayName'];
+        if (isset($o['company'])) $this->company = $o['company'];
+        if (isset($o['email'])) $this->email = $o['email'];
+        if (isset($o['primaryEmail'])) $this->primaryEmail = $o['primaryEmail'];
+        if (isset($o['phoneNumber'])) $this->phoneNumber = $o['phoneNumber'];
+        if (isset($o['birthDate'])) $this->birthDate = JsonConverters::from('DateTime', $o['birthDate']);
+        if (isset($o['birthDateRaw'])) $this->birthDateRaw = $o['birthDateRaw'];
+        if (isset($o['address'])) $this->address = $o['address'];
+        if (isset($o['address2'])) $this->address2 = $o['address2'];
+        if (isset($o['city'])) $this->city = $o['city'];
+        if (isset($o['state'])) $this->state = $o['state'];
+        if (isset($o['country'])) $this->country = $o['country'];
+        if (isset($o['culture'])) $this->culture = $o['culture'];
+        if (isset($o['fullName'])) $this->fullName = $o['fullName'];
+        if (isset($o['gender'])) $this->gender = $o['gender'];
+        if (isset($o['language'])) $this->language = $o['language'];
+        if (isset($o['mailAddress'])) $this->mailAddress = $o['mailAddress'];
+        if (isset($o['nickname'])) $this->nickname = $o['nickname'];
+        if (isset($o['postalCode'])) $this->postalCode = $o['postalCode'];
+        if (isset($o['timeZone'])) $this->timeZone = $o['timeZone'];
+        if (isset($o['requestTokenSecret'])) $this->requestTokenSecret = $o['requestTokenSecret'];
+        if (isset($o['createdAt'])) $this->createdAt = JsonConverters::from('DateTime', $o['createdAt']);
+        if (isset($o['lastModified'])) $this->lastModified = JsonConverters::from('DateTime', $o['lastModified']);
+        if (isset($o['roles'])) $this->roles = JsonConverters::fromArray('string', $o['roles']);
+        if (isset($o['permissions'])) $this->permissions = JsonConverters::fromArray('string', $o['permissions']);
+        if (isset($o['isAuthenticated'])) $this->isAuthenticated = $o['isAuthenticated'];
+        if (isset($o['fromToken'])) $this->fromToken = $o['fromToken'];
+        if (isset($o['profileUrl'])) $this->profileUrl = $o['profileUrl'];
+        if (isset($o['sequence'])) $this->sequence = $o['sequence'];
+        if (isset($o['tag'])) $this->tag = $o['tag'];
+        if (isset($o['authProvider'])) $this->authProvider = $o['authProvider'];
+        if (isset($o['providerOAuthAccess'])) $this->providerOAuthAccess = JsonConverters::fromArray('IAuthTokens', $o['providerOAuthAccess']);
+        if (isset($o['meta'])) $this->meta = JsonConverters::from(JsonConverters::context('Dictionary',genericArgs:['string','string']), $o['meta']);
+        if (isset($o['audiences'])) $this->audiences = JsonConverters::fromArray('string', $o['audiences']);
+        if (isset($o['scopes'])) $this->scopes = JsonConverters::fromArray('string', $o['scopes']);
+        if (isset($o['dns'])) $this->dns = $o['dns'];
+        if (isset($o['rsa'])) $this->rsa = $o['rsa'];
+        if (isset($o['sid'])) $this->sid = $o['sid'];
+        if (isset($o['hash'])) $this->hash = $o['hash'];
+        if (isset($o['homePhone'])) $this->homePhone = $o['homePhone'];
+        if (isset($o['mobilePhone'])) $this->mobilePhone = $o['mobilePhone'];
+        if (isset($o['webpage'])) $this->webpage = $o['webpage'];
+        if (isset($o['emailConfirmed'])) $this->emailConfirmed = $o['emailConfirmed'];
+        if (isset($o['phoneNumberConfirmed'])) $this->phoneNumberConfirmed = $o['phoneNumberConfirmed'];
+        if (isset($o['twoFactorEnabled'])) $this->twoFactorEnabled = $o['twoFactorEnabled'];
+        if (isset($o['securityStamp'])) $this->securityStamp = $o['securityStamp'];
+        if (isset($o['type'])) $this->type = $o['type'];
+        if (isset($o['recoveryToken'])) $this->recoveryToken = $o['recoveryToken'];
+        if (isset($o['refId'])) $this->refId = $o['refId'];
+        if (isset($o['refIdStr'])) $this->refIdStr = $o['refIdStr'];
+    }
+    
+    /** @throws Exception */
+    public function jsonSerialize(): mixed
+    {
+        $o = [];
+        if (isset($this->referrerUrl)) $o['referrerUrl'] = $this->referrerUrl;
+        if (isset($this->id)) $o['id'] = $this->id;
+        if (isset($this->userAuthId)) $o['userAuthId'] = $this->userAuthId;
+        if (isset($this->userAuthName)) $o['userAuthName'] = $this->userAuthName;
+        if (isset($this->userName)) $o['userName'] = $this->userName;
+        if (isset($this->twitterUserId)) $o['twitterUserId'] = $this->twitterUserId;
+        if (isset($this->twitterScreenName)) $o['twitterScreenName'] = $this->twitterScreenName;
+        if (isset($this->facebookUserId)) $o['facebookUserId'] = $this->facebookUserId;
+        if (isset($this->facebookUserName)) $o['facebookUserName'] = $this->facebookUserName;
+        if (isset($this->firstName)) $o['firstName'] = $this->firstName;
+        if (isset($this->lastName)) $o['lastName'] = $this->lastName;
+        if (isset($this->displayName)) $o['displayName'] = $this->displayName;
+        if (isset($this->company)) $o['company'] = $this->company;
+        if (isset($this->email)) $o['email'] = $this->email;
+        if (isset($this->primaryEmail)) $o['primaryEmail'] = $this->primaryEmail;
+        if (isset($this->phoneNumber)) $o['phoneNumber'] = $this->phoneNumber;
+        if (isset($this->birthDate)) $o['birthDate'] = JsonConverters::to('DateTime', $this->birthDate);
+        if (isset($this->birthDateRaw)) $o['birthDateRaw'] = $this->birthDateRaw;
+        if (isset($this->address)) $o['address'] = $this->address;
+        if (isset($this->address2)) $o['address2'] = $this->address2;
+        if (isset($this->city)) $o['city'] = $this->city;
+        if (isset($this->state)) $o['state'] = $this->state;
+        if (isset($this->country)) $o['country'] = $this->country;
+        if (isset($this->culture)) $o['culture'] = $this->culture;
+        if (isset($this->fullName)) $o['fullName'] = $this->fullName;
+        if (isset($this->gender)) $o['gender'] = $this->gender;
+        if (isset($this->language)) $o['language'] = $this->language;
+        if (isset($this->mailAddress)) $o['mailAddress'] = $this->mailAddress;
+        if (isset($this->nickname)) $o['nickname'] = $this->nickname;
+        if (isset($this->postalCode)) $o['postalCode'] = $this->postalCode;
+        if (isset($this->timeZone)) $o['timeZone'] = $this->timeZone;
+        if (isset($this->requestTokenSecret)) $o['requestTokenSecret'] = $this->requestTokenSecret;
+        if (isset($this->createdAt)) $o['createdAt'] = JsonConverters::to('DateTime', $this->createdAt);
+        if (isset($this->lastModified)) $o['lastModified'] = JsonConverters::to('DateTime', $this->lastModified);
+        if (isset($this->roles)) $o['roles'] = JsonConverters::toArray('string', $this->roles);
+        if (isset($this->permissions)) $o['permissions'] = JsonConverters::toArray('string', $this->permissions);
+        if (isset($this->isAuthenticated)) $o['isAuthenticated'] = $this->isAuthenticated;
+        if (isset($this->fromToken)) $o['fromToken'] = $this->fromToken;
+        if (isset($this->profileUrl)) $o['profileUrl'] = $this->profileUrl;
+        if (isset($this->sequence)) $o['sequence'] = $this->sequence;
+        if (isset($this->tag)) $o['tag'] = $this->tag;
+        if (isset($this->authProvider)) $o['authProvider'] = $this->authProvider;
+        if (isset($this->providerOAuthAccess)) $o['providerOAuthAccess'] = JsonConverters::toArray('IAuthTokens', $this->providerOAuthAccess);
+        if (isset($this->meta)) $o['meta'] = JsonConverters::to(JsonConverters::context('Dictionary',genericArgs:['string','string']), $this->meta);
+        if (isset($this->audiences)) $o['audiences'] = JsonConverters::toArray('string', $this->audiences);
+        if (isset($this->scopes)) $o['scopes'] = JsonConverters::toArray('string', $this->scopes);
+        if (isset($this->dns)) $o['dns'] = $this->dns;
+        if (isset($this->rsa)) $o['rsa'] = $this->rsa;
+        if (isset($this->sid)) $o['sid'] = $this->sid;
+        if (isset($this->hash)) $o['hash'] = $this->hash;
+        if (isset($this->homePhone)) $o['homePhone'] = $this->homePhone;
+        if (isset($this->mobilePhone)) $o['mobilePhone'] = $this->mobilePhone;
+        if (isset($this->webpage)) $o['webpage'] = $this->webpage;
+        if (isset($this->emailConfirmed)) $o['emailConfirmed'] = $this->emailConfirmed;
+        if (isset($this->phoneNumberConfirmed)) $o['phoneNumberConfirmed'] = $this->phoneNumberConfirmed;
+        if (isset($this->twoFactorEnabled)) $o['twoFactorEnabled'] = $this->twoFactorEnabled;
+        if (isset($this->securityStamp)) $o['securityStamp'] = $this->securityStamp;
+        if (isset($this->type)) $o['type'] = $this->type;
+        if (isset($this->recoveryToken)) $o['recoveryToken'] = $this->recoveryToken;
+        if (isset($this->refId)) $o['refId'] = $this->refId;
+        if (isset($this->refIdStr)) $o['refIdStr'] = $this->refIdStr;
+        return empty($o) ? new class(){} : $o;
     }
 }
 
@@ -538,11 +937,11 @@ class Poco implements JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->name)) $o['name'] = $this->name;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
 }
 
@@ -572,7 +971,7 @@ class InvoiceItems implements JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->invoiceLineId)) $o['invoiceLineId'] = $this->invoiceLineId;
@@ -580,7 +979,7 @@ class InvoiceItems implements JsonSerializable
         if (isset($this->trackId)) $o['trackId'] = $this->trackId;
         if (isset($this->unitPrice)) $o['unitPrice'] = $this->unitPrice;
         if (isset($this->quantity)) $o['quantity'] = $this->quantity;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
 }
 
@@ -622,7 +1021,7 @@ class Invoices implements JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->invoiceId)) $o['invoiceId'] = $this->invoiceId;
@@ -634,7 +1033,7 @@ class Invoices implements JsonSerializable
         if (isset($this->billingCountry)) $o['billingCountry'] = $this->billingCountry;
         if (isset($this->billingPostalCode)) $o['billingPostalCode'] = $this->billingPostalCode;
         if (isset($this->total)) $o['total'] = $this->total;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
 }
 
@@ -655,12 +1054,12 @@ class MediaTypes implements JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->mediaTypeId)) $o['mediaTypeId'] = $this->mediaTypeId;
         if (isset($this->name)) $o['name'] = $this->name;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
 }
 
@@ -681,12 +1080,12 @@ class Playlists implements JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->playlistId)) $o['playlistId'] = $this->playlistId;
         if (isset($this->name)) $o['name'] = $this->name;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
 }
 
@@ -730,7 +1129,7 @@ class Tracks implements JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->trackId)) $o['trackId'] = $this->trackId;
@@ -742,7 +1141,7 @@ class Tracks implements JsonSerializable
         if (isset($this->milliseconds)) $o['milliseconds'] = $this->milliseconds;
         if (isset($this->bytes)) $o['bytes'] = $this->bytes;
         if (isset($this->unitPrice)) $o['unitPrice'] = $this->unitPrice;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
 }
 
@@ -813,7 +1212,7 @@ class Job extends AuditBase implements JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = parent::jsonSerialize();
         if (isset($this->id)) $o['id'] = $this->id;
@@ -826,7 +1225,7 @@ class Job extends AuditBase implements JsonSerializable
         if (isset($this->description)) $o['description'] = $this->description;
         if (isset($this->applications)) $o['applications'] = JsonConverters::toArray('JobApplication', $this->applications);
         if (isset($this->closing)) $o['closing'] = JsonConverters::to('DateTime', $this->closing);
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
 }
 
@@ -903,7 +1302,7 @@ class Contact extends AuditBase implements JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = parent::jsonSerialize();
         if (isset($this->id)) $o['id'] = $this->id;
@@ -920,7 +1319,7 @@ class Contact extends AuditBase implements JsonSerializable
         if (isset($this->phone)) $o['phone'] = $this->phone;
         if (isset($this->about)) $o['about'] = $this->about;
         if (isset($this->applications)) $o['applications'] = JsonConverters::toArray('JobApplication', $this->applications);
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
 }
 
@@ -971,7 +1370,7 @@ class JobApplicationComment extends AuditBase implements JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = parent::jsonSerialize();
         if (isset($this->id)) $o['id'] = $this->id;
@@ -979,7 +1378,7 @@ class JobApplicationComment extends AuditBase implements JsonSerializable
         if (isset($this->appUser)) $o['appUser'] = JsonConverters::to('AppUser', $this->appUser);
         if (isset($this->jobApplicationId)) $o['jobApplicationId'] = $this->jobApplicationId;
         if (isset($this->comment)) $o['comment'] = $this->comment;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
 }
 
@@ -1014,7 +1413,7 @@ class JobApplicationAttachment implements JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->id)) $o['id'] = $this->id;
@@ -1023,7 +1422,7 @@ class JobApplicationAttachment implements JsonSerializable
         if (isset($this->filePath)) $o['filePath'] = $this->filePath;
         if (isset($this->contentType)) $o['contentType'] = $this->contentType;
         if (isset($this->contentLength)) $o['contentLength'] = $this->contentLength;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
 }
 
@@ -1081,7 +1480,7 @@ class JobApplicationEvent extends AuditBase implements JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = parent::jsonSerialize();
         if (isset($this->id)) $o['id'] = $this->id;
@@ -1091,7 +1490,7 @@ class JobApplicationEvent extends AuditBase implements JsonSerializable
         if (isset($this->description)) $o['description'] = $this->description;
         if (isset($this->status)) $o['status'] = JsonConverters::to('JobApplicationStatus', $this->status);
         if (isset($this->eventDate)) $o['eventDate'] = JsonConverters::to('DateTime', $this->eventDate);
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
 }
 
@@ -1165,7 +1564,7 @@ class JobApplication extends AuditBase implements JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = parent::jsonSerialize();
         if (isset($this->id)) $o['id'] = $this->id;
@@ -1181,7 +1580,7 @@ class JobApplication extends AuditBase implements JsonSerializable
         if (isset($this->phoneScreen)) $o['phoneScreen'] = JsonConverters::to('PhoneScreen', $this->phoneScreen);
         if (isset($this->interview)) $o['interview'] = JsonConverters::to('Interview', $this->interview);
         if (isset($this->jobOffer)) $o['jobOffer'] = JsonConverters::to('JobOffer', $this->jobOffer);
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
 }
 
@@ -1218,14 +1617,14 @@ class Coupon implements JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->id)) $o['id'] = $this->id;
         if (isset($this->description)) $o['description'] = $this->description;
         if (isset($this->discount)) $o['discount'] = $this->discount;
         if (isset($this->expiryDate)) $o['expiryDate'] = JsonConverters::to('DateTime', $this->expiryDate);
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
 }
 
@@ -1283,7 +1682,7 @@ class Booking extends AuditBase implements JsonSerializable
         if (isset($o['roomType'])) $this->roomType = JsonConverters::from('RoomType', $o['roomType']);
         if (isset($o['roomNumber'])) $this->roomNumber = $o['roomNumber'];
         if (isset($o['bookingStartDate'])) $this->bookingStartDate = JsonConverters::from('DateTime', $o['bookingStartDate']);
-        if (isset($o['bookingEndDate'])) $this->bookingEndDate = $o['bookingEndDate'];
+        if (isset($o['bookingEndDate'])) $this->bookingEndDate = JsonConverters::from('DateTime', $o['bookingEndDate']);
         if (isset($o['cost'])) $this->cost = $o['cost'];
         if (isset($o['couponId'])) $this->couponId = $o['couponId'];
         if (isset($o['discount'])) $this->discount = JsonConverters::from('Coupon', $o['discount']);
@@ -1292,7 +1691,7 @@ class Booking extends AuditBase implements JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = parent::jsonSerialize();
         if (isset($this->id)) $o['id'] = $this->id;
@@ -1300,13 +1699,13 @@ class Booking extends AuditBase implements JsonSerializable
         if (isset($this->roomType)) $o['roomType'] = JsonConverters::to('RoomType', $this->roomType);
         if (isset($this->roomNumber)) $o['roomNumber'] = $this->roomNumber;
         if (isset($this->bookingStartDate)) $o['bookingStartDate'] = JsonConverters::to('DateTime', $this->bookingStartDate);
-        if (isset($this->bookingEndDate)) $o['bookingEndDate'] = $this->bookingEndDate;
+        if (isset($this->bookingEndDate)) $o['bookingEndDate'] = JsonConverters::to('DateTime', $this->bookingEndDate);
         if (isset($this->cost)) $o['cost'] = $this->cost;
         if (isset($this->couponId)) $o['couponId'] = $this->couponId;
         if (isset($this->discount)) $o['discount'] = JsonConverters::to('Coupon', $this->discount);
         if (isset($this->notes)) $o['notes'] = $this->notes;
         if (isset($this->cancelled)) $o['cancelled'] = $this->cancelled;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
 }
 
@@ -1347,7 +1746,7 @@ class FileSystemFile implements IFile, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->id)) $o['id'] = $this->id;
@@ -1356,7 +1755,7 @@ class FileSystemFile implements IFile, JsonSerializable
         if (isset($this->contentType)) $o['contentType'] = $this->contentType;
         if (isset($this->contentLength)) $o['contentLength'] = $this->contentLength;
         if (isset($this->fileSystemItemId)) $o['fileSystemItemId'] = $this->fileSystemItemId;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
 }
 
@@ -1383,14 +1782,14 @@ class FileSystemItem implements IFileItem, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->id)) $o['id'] = $this->id;
         if (isset($this->fileAccessType)) $o['fileAccessType'] = JsonConverters::to('FileAccessType', $this->fileAccessType);
         if (isset($this->file)) $o['file'] = JsonConverters::to('FileSystemFile', $this->file);
         if (isset($this->appUserId)) $o['appUserId'] = $this->appUserId;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
 }
 
@@ -1428,13 +1827,13 @@ class Phone implements JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->kind)) $o['kind'] = JsonConverters::to('PhoneKind', $this->kind);
         if (isset($this->number)) $o['number'] = $this->number;
         if (isset($this->ext)) $o['ext'] = $this->ext;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
 }
 
@@ -1461,13 +1860,13 @@ class PlayerGameItem implements JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->id)) $o['id'] = $this->id;
         if (isset($this->playerId)) $o['playerId'] = $this->playerId;
         if (isset($this->gameItemName)) $o['gameItemName'] = $this->gameItemName;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
 }
 
@@ -1544,7 +1943,7 @@ class Profile extends AuditBase implements JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = parent::jsonSerialize();
         if (isset($this->id)) $o['id'] = $this->id;
@@ -1557,7 +1956,7 @@ class Profile extends AuditBase implements JsonSerializable
         if (isset($this->profileUrl)) $o['profileUrl'] = $this->profileUrl;
         if (isset($this->coverUrl)) $o['coverUrl'] = $this->coverUrl;
         if (isset($this->meta)) $o['meta'] = JsonConverters::to(JsonConverters::context('Dictionary',genericArgs:['string','string']), $this->meta);
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
 }
 
@@ -1623,7 +2022,7 @@ class Player extends AuditBase implements JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = parent::jsonSerialize();
         if (isset($this->id)) $o['id'] = $this->id;
@@ -1637,7 +2036,7 @@ class Player extends AuditBase implements JsonSerializable
         if (isset($this->savedLevelId)) $o['savedLevelId'] = $this->savedLevelId;
         if (isset($this->rowVersion)) $o['rowVersion'] = $this->rowVersion;
         if (isset($this->capital)) $o['capital'] = $this->capital;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
 }
 
@@ -1684,14 +2083,14 @@ class GameItem extends AuditBase implements JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = parent::jsonSerialize();
         if (isset($this->name)) $o['name'] = $this->name;
         if (isset($this->imageUrl)) $o['imageUrl'] = $this->imageUrl;
         if (isset($this->description)) $o['description'] = $this->description;
         if (isset($this->dateAdded)) $o['dateAdded'] = JsonConverters::to('DateTime', $this->dateAdded);
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
 }
 
@@ -1767,7 +2166,7 @@ class Migration implements JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->id)) $o['id'] = $this->id;
@@ -1782,7 +2181,7 @@ class Migration implements JsonSerializable
         if (isset($this->errorMessage)) $o['errorMessage'] = $this->errorMessage;
         if (isset($this->errorStackTrace)) $o['errorStackTrace'] = $this->errorStackTrace;
         if (isset($this->meta)) $o['meta'] = $this->meta;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
 }
 
@@ -1867,7 +2266,7 @@ class Order implements JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->id)) $o['id'] = $this->id;
@@ -1884,7 +2283,7 @@ class Order implements JsonSerializable
         if (isset($this->shipRegion)) $o['shipRegion'] = $this->shipRegion;
         if (isset($this->shipPostalCode)) $o['shipPostalCode'] = $this->shipPostalCode;
         if (isset($this->shipCountry)) $o['shipCountry'] = $this->shipCountry;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
 }
 
@@ -1929,7 +2328,7 @@ class OrderDetail implements JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->id)) $o['id'] = $this->id;
@@ -1938,7 +2337,7 @@ class OrderDetail implements JsonSerializable
         if (isset($this->unitPrice)) $o['unitPrice'] = $this->unitPrice;
         if (isset($this->quantity)) $o['quantity'] = $this->quantity;
         if (isset($this->discount)) $o['discount'] = $this->discount;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
 }
 
@@ -2003,7 +2402,7 @@ class Product implements JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->id)) $o['id'] = $this->id;
@@ -2016,7 +2415,7 @@ class Product implements JsonSerializable
         if (isset($this->unitsOnOrder)) $o['unitsOnOrder'] = $this->unitsOnOrder;
         if (isset($this->reorderLevel)) $o['reorderLevel'] = $this->reorderLevel;
         if (isset($this->discontinued)) $o['discontinued'] = $this->discontinued;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
 }
 
@@ -2041,12 +2440,12 @@ class Region implements JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->id)) $o['id'] = $this->id;
         if (isset($this->regionDescription)) $o['regionDescription'] = $this->regionDescription;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
 }
 
@@ -2076,13 +2475,13 @@ class Shipper implements JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->id)) $o['id'] = $this->id;
         if (isset($this->companyName)) $o['companyName'] = $this->companyName;
         if (isset($this->phone)) $o['phone'] = $this->phone;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
 }
 
@@ -2157,7 +2556,7 @@ class Supplier implements JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->id)) $o['id'] = $this->id;
@@ -2172,7 +2571,7 @@ class Supplier implements JsonSerializable
         if (isset($this->phone)) $o['phone'] = $this->phone;
         if (isset($this->fax)) $o['fax'] = $this->fax;
         if (isset($this->homePage)) $o['homePage'] = $this->homePage;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
 }
 
@@ -2202,13 +2601,13 @@ class Territory implements JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->id)) $o['id'] = $this->id;
         if (isset($this->territoryDescription)) $o['territoryDescription'] = $this->territoryDescription;
         if (isset($this->regionId)) $o['regionId'] = $this->regionId;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
 }
 
@@ -2232,13 +2631,13 @@ class Todo implements JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->id)) $o['id'] = $this->id;
         if (isset($this->text)) $o['text'] = $this->text;
         if (isset($this->isFinished)) $o['isFinished'] = $this->isFinished;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
 }
 
@@ -2280,7 +2679,7 @@ class UserAuthRole implements JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->id)) $o['id'] = $this->id;
@@ -2292,7 +2691,7 @@ class UserAuthRole implements JsonSerializable
         if (isset($this->refId)) $o['refId'] = $this->refId;
         if (isset($this->refIdStr)) $o['refIdStr'] = $this->refIdStr;
         if (isset($this->meta)) $o['meta'] = JsonConverters::to(JsonConverters::context('Dictionary',genericArgs:['string','string']), $this->meta);
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
 }
 
@@ -2319,14 +2718,14 @@ class ValidateRule implements JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->validator)) $o['validator'] = $this->validator;
         if (isset($this->condition)) $o['condition'] = $this->condition;
         if (isset($this->errorCode)) $o['errorCode'] = $this->errorCode;
         if (isset($this->message)) $o['message'] = $this->message;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
 }
 
@@ -2376,29 +2775,29 @@ class ValidationRule extends ValidateRule implements JsonSerializable
         if (isset($o['type'])) $this->type = $o['type'];
         if (isset($o['field'])) $this->field = $o['field'];
         if (isset($o['createdBy'])) $this->createdBy = $o['createdBy'];
-        if (isset($o['createdDate'])) $this->createdDate = $o['createdDate'];
+        if (isset($o['createdDate'])) $this->createdDate = JsonConverters::from('DateTime', $o['createdDate']);
         if (isset($o['modifiedBy'])) $this->modifiedBy = $o['modifiedBy'];
-        if (isset($o['modifiedDate'])) $this->modifiedDate = $o['modifiedDate'];
+        if (isset($o['modifiedDate'])) $this->modifiedDate = JsonConverters::from('DateTime', $o['modifiedDate']);
         if (isset($o['suspendedBy'])) $this->suspendedBy = $o['suspendedBy'];
-        if (isset($o['suspendedDate'])) $this->suspendedDate = $o['suspendedDate'];
+        if (isset($o['suspendedDate'])) $this->suspendedDate = JsonConverters::from('DateTime', $o['suspendedDate']);
         if (isset($o['notes'])) $this->notes = $o['notes'];
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = parent::jsonSerialize();
         if (isset($this->id)) $o['id'] = $this->id;
         if (isset($this->type)) $o['type'] = $this->type;
         if (isset($this->field)) $o['field'] = $this->field;
         if (isset($this->createdBy)) $o['createdBy'] = $this->createdBy;
-        if (isset($this->createdDate)) $o['createdDate'] = $this->createdDate;
+        if (isset($this->createdDate)) $o['createdDate'] = JsonConverters::to('DateTime', $this->createdDate);
         if (isset($this->modifiedBy)) $o['modifiedBy'] = $this->modifiedBy;
-        if (isset($this->modifiedDate)) $o['modifiedDate'] = $this->modifiedDate;
+        if (isset($this->modifiedDate)) $o['modifiedDate'] = JsonConverters::to('DateTime', $this->modifiedDate);
         if (isset($this->suspendedBy)) $o['suspendedBy'] = $this->suspendedBy;
-        if (isset($this->suspendedDate)) $o['suspendedDate'] = $this->suspendedDate;
+        if (isset($this->suspendedDate)) $o['suspendedDate'] = JsonConverters::to('DateTime', $this->suspendedDate);
         if (isset($this->notes)) $o['notes'] = $this->notes;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
 }
 
@@ -2428,13 +2827,13 @@ class Category implements JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->id)) $o['id'] = $this->id;
         if (isset($this->categoryName)) $o['categoryName'] = $this->categoryName;
         if (isset($this->description)) $o['description'] = $this->description;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
 }
 
@@ -2504,7 +2903,7 @@ class Customer implements JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->id)) $o['id'] = $this->id;
@@ -2518,7 +2917,7 @@ class Customer implements JsonSerializable
         if (isset($this->country)) $o['country'] = $this->country;
         if (isset($this->phone)) $o['phone'] = $this->phone;
         if (isset($this->fax)) $o['fax'] = $this->fax;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
 }
 
@@ -2623,7 +3022,7 @@ class Employee implements JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->id)) $o['id'] = $this->id;
@@ -2644,7 +3043,7 @@ class Employee implements JsonSerializable
         if (isset($this->extension)) $o['extension'] = $this->extension;
         if (isset($this->photo)) $o['photo'] = JsonConverters::to('ByteArray', $this->photo);
         if (isset($this->notes)) $o['notes'] = $this->notes;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
 }
 
@@ -2674,13 +3073,13 @@ class EmployeeTerritory implements JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->id)) $o['id'] = $this->id;
         if (isset($this->employeeId)) $o['employeeId'] = $this->employeeId;
         if (isset($this->territoryId)) $o['territoryId'] = $this->territoryId;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
 }
 
@@ -2706,13 +3105,13 @@ class Albums implements JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->albumId)) $o['albumId'] = $this->albumId;
         if (isset($this->title)) $o['title'] = $this->title;
         if (isset($this->artistId)) $o['artistId'] = $this->artistId;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
 }
 
@@ -2733,12 +3132,12 @@ class Artists implements JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->artistId)) $o['artistId'] = $this->artistId;
         if (isset($this->name)) $o['name'] = $this->name;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
 }
 
@@ -2798,7 +3197,7 @@ class Customers implements JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->customerId)) $o['customerId'] = $this->customerId;
@@ -2814,7 +3213,7 @@ class Customers implements JsonSerializable
         if (isset($this->fax)) $o['fax'] = $this->fax;
         if (isset($this->email)) $o['email'] = $this->email;
         if (isset($this->supportRepId)) $o['supportRepId'] = $this->supportRepId;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
 }
 
@@ -2865,8 +3264,8 @@ class Employees implements JsonSerializable
         if (isset($o['firstName'])) $this->firstName = $o['firstName'];
         if (isset($o['title'])) $this->title = $o['title'];
         if (isset($o['reportsTo'])) $this->reportsTo = $o['reportsTo'];
-        if (isset($o['birthDate'])) $this->birthDate = $o['birthDate'];
-        if (isset($o['hireDate'])) $this->hireDate = $o['hireDate'];
+        if (isset($o['birthDate'])) $this->birthDate = JsonConverters::from('DateTime', $o['birthDate']);
+        if (isset($o['hireDate'])) $this->hireDate = JsonConverters::from('DateTime', $o['hireDate']);
         if (isset($o['address'])) $this->address = $o['address'];
         if (isset($o['city'])) $this->city = $o['city'];
         if (isset($o['state'])) $this->state = $o['state'];
@@ -2878,7 +3277,7 @@ class Employees implements JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->employeeId)) $o['employeeId'] = $this->employeeId;
@@ -2886,8 +3285,8 @@ class Employees implements JsonSerializable
         if (isset($this->firstName)) $o['firstName'] = $this->firstName;
         if (isset($this->title)) $o['title'] = $this->title;
         if (isset($this->reportsTo)) $o['reportsTo'] = $this->reportsTo;
-        if (isset($this->birthDate)) $o['birthDate'] = $this->birthDate;
-        if (isset($this->hireDate)) $o['hireDate'] = $this->hireDate;
+        if (isset($this->birthDate)) $o['birthDate'] = JsonConverters::to('DateTime', $this->birthDate);
+        if (isset($this->hireDate)) $o['hireDate'] = JsonConverters::to('DateTime', $this->hireDate);
         if (isset($this->address)) $o['address'] = $this->address;
         if (isset($this->city)) $o['city'] = $this->city;
         if (isset($this->state)) $o['state'] = $this->state;
@@ -2896,7 +3295,7 @@ class Employees implements JsonSerializable
         if (isset($this->phone)) $o['phone'] = $this->phone;
         if (isset($this->fax)) $o['fax'] = $this->fax;
         if (isset($this->email)) $o['email'] = $this->email;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
 }
 
@@ -2917,12 +3316,12 @@ class Genres implements JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->genreId)) $o['genreId'] = $this->genreId;
         if (isset($this->name)) $o['name'] = $this->name;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
 }
 
@@ -2943,12 +3342,12 @@ class Level implements JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->id)) $o['id'] = $this->id;
         if (isset($this->data)) $o['data'] = JsonConverters::to('ByteArray', $this->data);
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
 }
 
@@ -2969,12 +3368,12 @@ class Item implements JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->name)) $o['name'] = $this->name;
         if (isset($this->description)) $o['description'] = $this->description;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
 }
 
@@ -2992,11 +3391,11 @@ class ListResult implements JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->result)) $o['result'] = $this->result;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
 }
 
@@ -3028,12 +3427,12 @@ class GetContactsResponse implements JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->results)) $o['results'] = JsonConverters::toArray('Contact', $this->results);
         if (isset($this->responseStatus)) $o['responseStatus'] = JsonConverters::to('ResponseStatus', $this->responseStatus);
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
 }
 
@@ -3066,7 +3465,7 @@ class TalentStatsResponse implements JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->totalJobs)) $o['totalJobs'] = $this->totalJobs;
@@ -3075,7 +3474,7 @@ class TalentStatsResponse implements JsonSerializable
         if (isset($this->avgSalaryLower)) $o['avgSalaryLower'] = $this->avgSalaryLower;
         if (isset($this->avgSalaryUpper)) $o['avgSalaryUpper'] = $this->avgSalaryUpper;
         if (isset($this->preferredRemotePercentage)) $o['preferredRemotePercentage'] = $this->preferredRemotePercentage;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
 }
 
@@ -3115,7 +3514,7 @@ class QueryResponseAlt implements JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->offset)) $o['offset'] = $this->offset;
@@ -3123,7 +3522,7 @@ class QueryResponseAlt implements JsonSerializable
         if (isset($this->results)) $o['results'] = JsonConverters::toArray($this->genericArgs[0], $this->results);
         if (isset($this->meta)) $o['meta'] = JsonConverters::to(JsonConverters::context('Dictionary',genericArgs:['string','string']), $this->meta);
         if (isset($this->responseStatus)) $o['responseStatus'] = JsonConverters::to('ResponseStatus', $this->responseStatus);
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
 }
 
@@ -3141,11 +3540,11 @@ class Items implements JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->results)) $o['results'] = JsonConverters::toArray('Item', $this->results);
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
 }
 
@@ -3177,7 +3576,7 @@ class EchoComplexTypes implements IReturn, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->subType)) $o['subType'] = JsonConverters::to('SubType', $this->subType);
@@ -3185,7 +3584,7 @@ class EchoComplexTypes implements IReturn, JsonSerializable
         if (isset($this->subTypeMap)) $o['subTypeMap'] = JsonConverters::to(JsonConverters::context('Dictionary',genericArgs:['string','SubType']), $this->subTypeMap);
         if (isset($this->stringMap)) $o['stringMap'] = JsonConverters::to(JsonConverters::context('Dictionary',genericArgs:['string','string']), $this->stringMap);
         if (isset($this->intStringMap)) $o['intStringMap'] = JsonConverters::to(JsonConverters::context('Dictionary',genericArgs:['int','string']), $this->intStringMap);
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'EchoComplexTypes'; }
     public function getMethod(): string { return 'POST'; }
@@ -3217,14 +3616,14 @@ class EchoCollections implements IReturn, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->stringList)) $o['stringList'] = JsonConverters::toArray('string', $this->stringList);
         if (isset($this->stringArray)) $o['stringArray'] = JsonConverters::toArray('string', $this->stringArray);
         if (isset($this->stringMap)) $o['stringMap'] = JsonConverters::to(JsonConverters::context('Dictionary',genericArgs:['string','string']), $this->stringMap);
         if (isset($this->intStringMap)) $o['intStringMap'] = JsonConverters::to(JsonConverters::context('Dictionary',genericArgs:['int','string']), $this->intStringMap);
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'EchoCollections'; }
     public function getMethod(): string { return 'POST'; }
@@ -3291,7 +3690,7 @@ class FormDataTest implements IReturn, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->hidden)) $o['hidden'] = $this->hidden;
@@ -3310,7 +3709,7 @@ class FormDataTest implements IReturn, JsonSerializable
         if (isset($this->multiSelectColors)) $o['multiSelectColors'] = JsonConverters::toArray('Colors', $this->multiSelectColors);
         if (isset($this->profileUrl)) $o['profileUrl'] = $this->profileUrl;
         if (isset($this->attachments)) $o['attachments'] = JsonConverters::toArray('Attachment', $this->attachments);
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'FormDataTest'; }
     public function getMethod(): string { return 'POST'; }
@@ -3347,7 +3746,7 @@ class ComboBoxExamples implements IReturn, IPost, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->singleClientValues)) $o['singleClientValues'] = $this->singleClientValues;
@@ -3356,11 +3755,89 @@ class ComboBoxExamples implements IReturn, IPost, JsonSerializable
         if (isset($this->multipleServerValues)) $o['multipleServerValues'] = JsonConverters::toArray('string', $this->multipleServerValues);
         if (isset($this->singleServerEntries)) $o['singleServerEntries'] = $this->singleServerEntries;
         if (isset($this->multipleServerEntries)) $o['multipleServerEntries'] = JsonConverters::toArray('string', $this->multipleServerEntries);
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'ComboBoxExamples'; }
     public function getMethod(): string { return 'POST'; }
     public function createResponse(): mixed { return new ComboBoxExamples(); }
+}
+
+class SecuredResponse implements JsonSerializable
+{
+    public function __construct(
+        /** @var string */
+        public string $result='',
+        /** @var ResponseStatus|null */
+        public ?ResponseStatus $responseStatus=null
+    ) {
+    }
+
+    /** @throws Exception */
+    public function fromMap($o): void {
+        if (isset($o['result'])) $this->result = $o['result'];
+        if (isset($o['responseStatus'])) $this->responseStatus = JsonConverters::from('ResponseStatus', $o['responseStatus']);
+    }
+    
+    /** @throws Exception */
+    public function jsonSerialize(): mixed
+    {
+        $o = [];
+        if (isset($this->result)) $o['result'] = $this->result;
+        if (isset($this->responseStatus)) $o['responseStatus'] = JsonConverters::to('ResponseStatus', $this->responseStatus);
+        return empty($o) ? new class(){} : $o;
+    }
+}
+
+class CreateJwtResponse implements JsonSerializable
+{
+    public function __construct(
+        /** @var string */
+        public string $token='',
+        /** @var ResponseStatus|null */
+        public ?ResponseStatus $responseStatus=null
+    ) {
+    }
+
+    /** @throws Exception */
+    public function fromMap($o): void {
+        if (isset($o['token'])) $this->token = $o['token'];
+        if (isset($o['responseStatus'])) $this->responseStatus = JsonConverters::from('ResponseStatus', $o['responseStatus']);
+    }
+    
+    /** @throws Exception */
+    public function jsonSerialize(): mixed
+    {
+        $o = [];
+        if (isset($this->token)) $o['token'] = $this->token;
+        if (isset($this->responseStatus)) $o['responseStatus'] = JsonConverters::to('ResponseStatus', $this->responseStatus);
+        return empty($o) ? new class(){} : $o;
+    }
+}
+
+class CreateRefreshJwtResponse implements JsonSerializable
+{
+    public function __construct(
+        /** @var string */
+        public string $token='',
+        /** @var ResponseStatus|null */
+        public ?ResponseStatus $responseStatus=null
+    ) {
+    }
+
+    /** @throws Exception */
+    public function fromMap($o): void {
+        if (isset($o['token'])) $this->token = $o['token'];
+        if (isset($o['responseStatus'])) $this->responseStatus = JsonConverters::from('ResponseStatus', $o['responseStatus']);
+    }
+    
+    /** @throws Exception */
+    public function jsonSerialize(): mixed
+    {
+        $o = [];
+        if (isset($this->token)) $o['token'] = $this->token;
+        if (isset($this->responseStatus)) $o['responseStatus'] = JsonConverters::to('ResponseStatus', $this->responseStatus);
+        return empty($o) ? new class(){} : $o;
+    }
 }
 
 class Movie implements JsonSerializable
@@ -3389,7 +3866,7 @@ class Movie implements JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->movieID)) $o['movieID'] = $this->movieID;
@@ -3397,7 +3874,7 @@ class Movie implements JsonSerializable
         if (isset($this->name)) $o['name'] = $this->name;
         if (isset($this->description)) $o['description'] = $this->description;
         if (isset($this->movieRef)) $o['movieRef'] = $this->movieRef;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
 }
 
@@ -3418,12 +3895,12 @@ class HelloResponse implements JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->result)) $o['result'] = $this->result;
         if (isset($this->responseStatus)) $o['responseStatus'] = JsonConverters::to('ResponseStatus', $this->responseStatus);
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
 }
 
@@ -3447,13 +3924,13 @@ class SendVerbResponse implements JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->id)) $o['id'] = $this->id;
         if (isset($this->pathInfo)) $o['pathInfo'] = $this->pathInfo;
         if (isset($this->requestMethod)) $o['requestMethod'] = $this->requestMethod;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
 }
 
@@ -3483,7 +3960,7 @@ class TestAuthResponse implements JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->userId)) $o['userId'] = $this->userId;
@@ -3491,7 +3968,7 @@ class TestAuthResponse implements JsonSerializable
         if (isset($this->userName)) $o['userName'] = $this->userName;
         if (isset($this->displayName)) $o['displayName'] = $this->displayName;
         if (isset($this->responseStatus)) $o['responseStatus'] = JsonConverters::to('ResponseStatus', $this->responseStatus);
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
 }
 
@@ -3510,11 +3987,11 @@ class RequiresAdmin implements IReturn, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->id)) $o['id'] = $this->id;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'RequiresAdmin'; }
     public function getMethod(): string { return 'POST'; }
@@ -3606,8 +4083,8 @@ class AllTypes implements IReturn, JsonSerializable
         if (isset($o['guid'])) $this->guid = $o['guid'];
         if (isset($o['char'])) $this->char = $o['char'];
         if (isset($o['keyValuePair'])) $this->keyValuePair = JsonConverters::from(JsonConverters::context('KeyValuePair2',genericArgs:['string','string']), $o['keyValuePair']);
-        if (isset($o['nullableDateTime'])) $this->nullableDateTime = $o['nullableDateTime'];
-        if (isset($o['nullableTimeSpan'])) $this->nullableTimeSpan = $o['nullableTimeSpan'];
+        if (isset($o['nullableDateTime'])) $this->nullableDateTime = JsonConverters::from('DateTime', $o['nullableDateTime']);
+        if (isset($o['nullableTimeSpan'])) $this->nullableTimeSpan = JsonConverters::from('TimeSpan', $o['nullableTimeSpan']);
         if (isset($o['stringList'])) $this->stringList = JsonConverters::fromArray('string', $o['stringList']);
         if (isset($o['stringArray'])) $this->stringArray = JsonConverters::fromArray('string', $o['stringArray']);
         if (isset($o['stringMap'])) $this->stringMap = JsonConverters::from(JsonConverters::context('Dictionary',genericArgs:['string','string']), $o['stringMap']);
@@ -3617,7 +4094,7 @@ class AllTypes implements IReturn, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->id)) $o['id'] = $this->id;
@@ -3640,15 +4117,15 @@ class AllTypes implements IReturn, JsonSerializable
         if (isset($this->guid)) $o['guid'] = $this->guid;
         if (isset($this->char)) $o['char'] = $this->char;
         if (isset($this->keyValuePair)) $o['keyValuePair'] = JsonConverters::to(JsonConverters::context('KeyValuePair2',genericArgs:['string','string']), $this->keyValuePair);
-        if (isset($this->nullableDateTime)) $o['nullableDateTime'] = $this->nullableDateTime;
-        if (isset($this->nullableTimeSpan)) $o['nullableTimeSpan'] = $this->nullableTimeSpan;
+        if (isset($this->nullableDateTime)) $o['nullableDateTime'] = JsonConverters::to('DateTime', $this->nullableDateTime);
+        if (isset($this->nullableTimeSpan)) $o['nullableTimeSpan'] = JsonConverters::to('TimeSpan', $this->nullableTimeSpan);
         if (isset($this->stringList)) $o['stringList'] = JsonConverters::toArray('string', $this->stringList);
         if (isset($this->stringArray)) $o['stringArray'] = JsonConverters::toArray('string', $this->stringArray);
         if (isset($this->stringMap)) $o['stringMap'] = JsonConverters::to(JsonConverters::context('Dictionary',genericArgs:['string','string']), $this->stringMap);
         if (isset($this->intStringMap)) $o['intStringMap'] = JsonConverters::to(JsonConverters::context('Dictionary',genericArgs:['int','string']), $this->intStringMap);
         if (isset($this->subType)) $o['subType'] = JsonConverters::to('SubType', $this->subType);
         if (isset($this->nullableBytes)) $o['nullableBytes'] = JsonConverters::toArray('int', $this->nullableBytes);
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'AllTypes'; }
     public function getMethod(): string { return 'POST'; }
@@ -3706,7 +4183,7 @@ class AllCollectionTypes implements IReturn, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->intArray)) $o['intArray'] = JsonConverters::toArray('int', $this->intArray);
@@ -3722,7 +4199,7 @@ class AllCollectionTypes implements IReturn, JsonSerializable
         if (isset($this->pocoList)) $o['pocoList'] = JsonConverters::toArray('Poco', $this->pocoList);
         if (isset($this->pocoLookup)) $o['pocoLookup'] = JsonConverters::to(JsonConverters::context('Dictionary',genericArgs:['string','List<Poco>']), $this->pocoLookup);
         if (isset($this->pocoLookupMap)) $o['pocoLookupMap'] = JsonConverters::to(JsonConverters::context('Dictionary',genericArgs:['string','List<Dictionary<String,Poco>>']), $this->pocoLookupMap);
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'AllCollectionTypes'; }
     public function getMethod(): string { return 'POST'; }
@@ -3749,13 +4226,13 @@ class HelloAllTypesResponse implements JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->result)) $o['result'] = $this->result;
         if (isset($this->allTypes)) $o['allTypes'] = JsonConverters::to('AllTypes', $this->allTypes);
         if (isset($this->allCollectionTypes)) $o['allCollectionTypes'] = JsonConverters::to('AllCollectionTypes', $this->allCollectionTypes);
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
 }
 
@@ -3773,11 +4250,11 @@ class ThrowTypeResponse implements JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->responseStatus)) $o['responseStatus'] = JsonConverters::to('ResponseStatus', $this->responseStatus);
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
 }
 
@@ -3804,14 +4281,14 @@ class ThrowValidationResponse implements JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->age)) $o['age'] = $this->age;
         if (isset($this->required)) $o['required'] = $this->required;
         if (isset($this->email)) $o['email'] = $this->email;
         if (isset($this->responseStatus)) $o['responseStatus'] = JsonConverters::to('ResponseStatus', $this->responseStatus);
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
 }
 
@@ -3819,10 +4296,10 @@ class ProfileGenResponse implements JsonSerializable
 {
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
 }
 
@@ -3887,7 +4364,7 @@ class EchoTypes implements IReturn, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->byte)) $o['byte'] = $this->byte;
@@ -3906,7 +4383,7 @@ class EchoTypes implements IReturn, JsonSerializable
         if (isset($this->dateTimeOffset)) $o['dateTimeOffset'] = JsonConverters::to('DateTime', $this->dateTimeOffset);
         if (isset($this->guid)) $o['guid'] = $this->guid;
         if (isset($this->char)) $o['char'] = $this->char;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'EchoTypes'; }
     public function getMethod(): string { return 'POST'; }
@@ -3955,10 +4432,10 @@ class GetContacts implements IReturn, JsonSerializable
 {
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'GetContacts'; }
     public function getMethod(): string { return 'GET'; }
@@ -3993,13 +4470,13 @@ class CreatePhoneScreen implements IReturn, ICreateDb, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->jobApplicationId)) $o['jobApplicationId'] = $this->jobApplicationId;
         if (isset($this->appUserId)) $o['appUserId'] = $this->appUserId;
         if (isset($this->applicationStatus)) $o['applicationStatus'] = JsonConverters::to('JobApplicationStatus', $this->applicationStatus);
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'CreatePhoneScreen'; }
     public function getMethod(): string { return 'POST'; }
@@ -4033,14 +4510,14 @@ class UpdatePhoneScreen implements IReturn, IPatchDb, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->id)) $o['id'] = $this->id;
         if (isset($this->jobApplicationId)) $o['jobApplicationId'] = $this->jobApplicationId;
         if (isset($this->notes)) $o['notes'] = $this->notes;
         if (isset($this->applicationStatus)) $o['applicationStatus'] = JsonConverters::to('JobApplicationStatus', $this->applicationStatus);
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'UpdatePhoneScreen'; }
     public function getMethod(): string { return 'PATCH'; }
@@ -4073,21 +4550,21 @@ class CreateInterview implements IReturn, ICreateDb, JsonSerializable
 
     /** @throws Exception */
     public function fromMap($o): void {
-        if (isset($o['bookingTime'])) $this->bookingTime = $o['bookingTime'];
+        if (isset($o['bookingTime'])) $this->bookingTime = JsonConverters::from('DateTime', $o['bookingTime']);
         if (isset($o['jobApplicationId'])) $this->jobApplicationId = $o['jobApplicationId'];
         if (isset($o['appUserId'])) $this->appUserId = $o['appUserId'];
         if (isset($o['applicationStatus'])) $this->applicationStatus = JsonConverters::from('JobApplicationStatus', $o['applicationStatus']);
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
-        if (isset($this->bookingTime)) $o['bookingTime'] = $this->bookingTime;
+        if (isset($this->bookingTime)) $o['bookingTime'] = JsonConverters::to('DateTime', $this->bookingTime);
         if (isset($this->jobApplicationId)) $o['jobApplicationId'] = $this->jobApplicationId;
         if (isset($this->appUserId)) $o['appUserId'] = $this->appUserId;
         if (isset($this->applicationStatus)) $o['applicationStatus'] = JsonConverters::to('JobApplicationStatus', $this->applicationStatus);
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'CreateInterview'; }
     public function getMethod(): string { return 'POST'; }
@@ -4123,14 +4600,14 @@ class UpdateInterview implements IReturn, IPatchDb, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->id)) $o['id'] = $this->id;
         if (isset($this->jobApplicationId)) $o['jobApplicationId'] = $this->jobApplicationId;
         if (isset($this->notes)) $o['notes'] = $this->notes;
         if (isset($this->applicationStatus)) $o['applicationStatus'] = JsonConverters::to('JobApplicationStatus', $this->applicationStatus);
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'UpdateInterview'; }
     public function getMethod(): string { return 'PATCH'; }
@@ -4169,14 +4646,14 @@ class CreateJobOffer implements IReturn, ICreateDb, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->salaryOffer)) $o['salaryOffer'] = $this->salaryOffer;
         if (isset($this->jobApplicationId)) $o['jobApplicationId'] = $this->jobApplicationId;
         if (isset($this->applicationStatus)) $o['applicationStatus'] = JsonConverters::to('JobApplicationStatus', $this->applicationStatus);
         if (isset($this->notes)) $o['notes'] = $this->notes;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'CreateJobOffer'; }
     public function getMethod(): string { return 'POST'; }
@@ -4188,10 +4665,10 @@ class TalentStats implements IReturn, IGet, JsonSerializable
 {
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'TalentStats'; }
     public function getMethod(): string { return 'GET'; }
@@ -4213,11 +4690,11 @@ class AltQueryItems implements IReturn, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->name)) $o['name'] = $this->name;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'AltQueryItems'; }
     public function getMethod(): string { return 'POST'; }
@@ -4229,10 +4706,10 @@ class GetItems implements IReturn, JsonSerializable
 {
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'GetItems'; }
     public function getMethod(): string { return 'GET'; }
@@ -4244,10 +4721,10 @@ class GetNakedItems implements IReturn, JsonSerializable
 {
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'GetNakedItems'; }
     public function getMethod(): string { return 'GET'; }
@@ -4275,16 +4752,244 @@ class GetProfileImage implements IReturn, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->type)) $o['type'] = $this->type;
         if (isset($this->size)) $o['size'] = $this->size;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'GetProfileImage'; }
     public function getMethod(): string { return 'POST'; }
     public function createResponse(): mixed { return new ByteArray(); }
+}
+
+// @Route("/secured")
+// @ValidateRequest(Validator="IsAuthenticated")
+#[Returns('SecuredResponse')]
+class Secured implements IReturn, JsonSerializable
+{
+    public function __construct(
+        /** @var string */
+        public string $name=''
+    ) {
+    }
+
+    /** @throws Exception */
+    public function fromMap($o): void {
+        if (isset($o['name'])) $this->name = $o['name'];
+    }
+    
+    /** @throws Exception */
+    public function jsonSerialize(): mixed
+    {
+        $o = [];
+        if (isset($this->name)) $o['name'] = $this->name;
+        return empty($o) ? new class(){} : $o;
+    }
+    public function getTypeName(): string { return 'Secured'; }
+    public function getMethod(): string { return 'POST'; }
+    public function createResponse(): mixed { return new SecuredResponse(); }
+}
+
+// @Route("/jwt")
+#[Returns('CreateJwtResponse')]
+class CreateJwt extends AuthUserSession implements IReturn, JsonSerializable
+{
+    /**
+     * @param string|null $referrerUrl
+     * @param string|null $id
+     * @param string|null $userAuthId
+     * @param string|null $userAuthName
+     * @param string|null $userName
+     * @param string|null $twitterUserId
+     * @param string|null $twitterScreenName
+     * @param string|null $facebookUserId
+     * @param string|null $facebookUserName
+     * @param string|null $firstName
+     * @param string|null $lastName
+     * @param string|null $displayName
+     * @param string|null $company
+     * @param string|null $email
+     * @param string|null $primaryEmail
+     * @param string|null $phoneNumber
+     * @param DateTime|null $birthDate
+     * @param string|null $birthDateRaw
+     * @param string|null $address
+     * @param string|null $address2
+     * @param string|null $city
+     * @param string|null $state
+     * @param string|null $country
+     * @param string|null $culture
+     * @param string|null $fullName
+     * @param string|null $gender
+     * @param string|null $language
+     * @param string|null $mailAddress
+     * @param string|null $nickname
+     * @param string|null $postalCode
+     * @param string|null $timeZone
+     * @param string|null $requestTokenSecret
+     * @param DateTime $createdAt
+     * @param DateTime $lastModified
+     * @param array<string>|null $roles
+     * @param array<string>|null $permissions
+     * @param bool|null $isAuthenticated
+     * @param bool|null $fromToken
+     * @param string|null $profileUrl
+     * @param string|null $sequence
+     * @param int $tag
+     * @param string|null $authProvider
+     * @param array<IAuthTokens>|null $providerOAuthAccess
+     * @param array<string,string>|null $meta
+     * @param array<string>|null $audiences
+     * @param array<string>|null $scopes
+     * @param string|null $dns
+     * @param string|null $rsa
+     * @param string|null $sid
+     * @param string|null $hash
+     * @param string|null $homePhone
+     * @param string|null $mobilePhone
+     * @param string|null $webpage
+     * @param bool|null $emailConfirmed
+     * @param bool|null $phoneNumberConfirmed
+     * @param bool|null $twoFactorEnabled
+     * @param string|null $securityStamp
+     * @param string|null $type
+     * @param string|null $recoveryToken
+     * @param int|null $refId
+     * @param string|null $refIdStr
+     */
+    public function __construct(
+        string $referrerUrl=null,
+        string $id=null,
+        string $userAuthId=null,
+        string $userAuthName=null,
+        string $userName=null,
+        string $twitterUserId=null,
+        string $twitterScreenName=null,
+        string $facebookUserId=null,
+        string $facebookUserName=null,
+        string $firstName=null,
+        string $lastName=null,
+        string $displayName=null,
+        string $company=null,
+        string $email=null,
+        string $primaryEmail=null,
+        string $phoneNumber=null,
+        DateTime $birthDate=null,
+        string $birthDateRaw=null,
+        string $address=null,
+        string $address2=null,
+        string $city=null,
+        string $state=null,
+        string $country=null,
+        string $culture=null,
+        string $fullName=null,
+        string $gender=null,
+        string $language=null,
+        string $mailAddress=null,
+        string $nickname=null,
+        string $postalCode=null,
+        string $timeZone=null,
+        string $requestTokenSecret=null,
+        DateTime $createdAt=new DateTime(),
+        DateTime $lastModified=new DateTime(),
+        array $roles=null,
+        array $permissions=null,
+        bool $isAuthenticated=null,
+        bool $fromToken=null,
+        string $profileUrl=null,
+        string $sequence=null,
+        int $tag=0,
+        string $authProvider=null,
+        array $providerOAuthAccess=null,
+        array $meta=null,
+        array $audiences=null,
+        array $scopes=null,
+        string $dns=null,
+        string $rsa=null,
+        string $sid=null,
+        string $hash=null,
+        string $homePhone=null,
+        string $mobilePhone=null,
+        string $webpage=null,
+        bool $emailConfirmed=null,
+        bool $phoneNumberConfirmed=null,
+        bool $twoFactorEnabled=null,
+        string $securityStamp=null,
+        string $type=null,
+        string $recoveryToken=null,
+        int $refId=null,
+        string $refIdStr=null,
+        /** @var DateTime|null */
+        public ?DateTime $jwtExpiry=null
+    ) {
+        parent::__construct($referrerUrl,$id,$userAuthId,$userAuthName,$userName,$twitterUserId,$twitterScreenName,$facebookUserId,$facebookUserName,$firstName,$lastName,$displayName,$company,$email,$primaryEmail,$phoneNumber,$birthDate,$birthDateRaw,$address,$address2,$city,$state,$country,$culture,$fullName,$gender,$language,$mailAddress,$nickname,$postalCode,$timeZone,$requestTokenSecret,$createdAt,$lastModified,$roles,$permissions,$isAuthenticated,$fromToken,$profileUrl,$sequence,$tag,$authProvider,$providerOAuthAccess,$meta,$audiences,$scopes,$dns,$rsa,$sid,$hash,$homePhone,$mobilePhone,$webpage,$emailConfirmed,$phoneNumberConfirmed,$twoFactorEnabled,$securityStamp,$type,$recoveryToken,$refId,$refIdStr);
+    }
+
+    /** @throws Exception */
+    public function fromMap($o): void {
+        parent::fromMap($o);
+        if (isset($o['jwtExpiry'])) $this->jwtExpiry = JsonConverters::from('DateTime', $o['jwtExpiry']);
+    }
+    
+    /** @throws Exception */
+    public function jsonSerialize(): mixed
+    {
+        $o = parent::jsonSerialize();
+        if (isset($this->jwtExpiry)) $o['jwtExpiry'] = JsonConverters::to('DateTime', $this->jwtExpiry);
+        return empty($o) ? new class(){} : $o;
+    }
+    public function getTypeName(): string { return 'CreateJwt'; }
+    public function getMethod(): string { return 'POST'; }
+    public function createResponse(): mixed { return new CreateJwtResponse(); }
+}
+
+// @Route("/jwt-refresh")
+#[Returns('CreateRefreshJwtResponse')]
+class CreateRefreshJwt implements IReturn, JsonSerializable
+{
+    public function __construct(
+        /** @var string */
+        public string $userAuthId='',
+        /** @var DateTime|null */
+        public ?DateTime $jwtExpiry=null
+    ) {
+    }
+
+    /** @throws Exception */
+    public function fromMap($o): void {
+        if (isset($o['userAuthId'])) $this->userAuthId = $o['userAuthId'];
+        if (isset($o['jwtExpiry'])) $this->jwtExpiry = JsonConverters::from('DateTime', $o['jwtExpiry']);
+    }
+    
+    /** @throws Exception */
+    public function jsonSerialize(): mixed
+    {
+        $o = [];
+        if (isset($this->userAuthId)) $o['userAuthId'] = $this->userAuthId;
+        if (isset($this->jwtExpiry)) $o['jwtExpiry'] = JsonConverters::to('DateTime', $this->jwtExpiry);
+        return empty($o) ? new class(){} : $o;
+    }
+    public function getTypeName(): string { return 'CreateRefreshJwt'; }
+    public function getMethod(): string { return 'POST'; }
+    public function createResponse(): mixed { return new CreateRefreshJwtResponse(); }
+}
+
+// @Route("/jwt-invalidate")
+#[Returns('EmptyResponse')]
+class InvalidateLastAccessToken implements IReturn, JsonSerializable
+{
+    
+    /** @throws Exception */
+    public function jsonSerialize(): mixed
+    {
+        $o = [];
+        return empty($o) ? new class(){} : $o;
+    }
+    public function getTypeName(): string { return 'InvalidateLastAccessToken'; }
+    public function getMethod(): string { return 'POST'; }
+    public function createResponse(): mixed { return new EmptyResponse(); }
 }
 
 #[Returns('Movie')]
@@ -4304,11 +5009,11 @@ class MovieGETRequest implements IReturn, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->movieID)) $o['movieID'] = $this->movieID;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'MovieGETRequest'; }
     public function getMethod(): string { return 'GET'; }
@@ -4344,13 +5049,13 @@ class MoviePOSTRequest extends Movie implements IReturn, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = parent::jsonSerialize();
         if (isset($this->movieID)) $o['movieID'] = $this->movieID;
         if (isset($this->movieNo)) $o['movieNo'] = $this->movieNo;
         if (isset($this->movieRef)) $o['movieRef'] = $this->movieRef;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'MoviePOSTRequest'; }
     public function getMethod(): string { return 'POST'; }
@@ -4373,11 +5078,11 @@ class Greet implements IReturn, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->name)) $o['name'] = $this->name;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'Greet'; }
     public function getMethod(): string { return 'GET'; }
@@ -4401,11 +5106,11 @@ class Hello implements IReturn, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->name)) $o['name'] = $this->name;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'Hello'; }
     public function getMethod(): string { return 'POST'; }
@@ -4438,13 +5143,13 @@ class HelloVeryLongOperationNameVersions implements IReturn, IGet, IPost, IPut, 
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->name)) $o['name'] = $this->name;
         if (isset($this->names)) $o['names'] = JsonConverters::toArray('string', $this->names);
         if (isset($this->ids)) $o['ids'] = JsonConverters::toArray('int', $this->ids);
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'HelloVeryLongOperationNameVersions'; }
     public function getMethod(): string { return 'GET'; }
@@ -4468,11 +5173,11 @@ class HelloSecure implements IReturn, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->name)) $o['name'] = $this->name;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'HelloSecure'; }
     public function getMethod(): string { return 'PUT'; }
@@ -4496,11 +5201,11 @@ class HelloBookingList implements IReturn, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->Alias)) $o['Alias'] = $this->Alias;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'HelloBookingList'; }
     public function getMethod(): string { return 'POST'; }
@@ -4522,11 +5227,11 @@ class HelloString implements IReturn, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->name)) $o['name'] = $this->name;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'HelloString'; }
     public function getMethod(): string { return 'POST'; }
@@ -4549,11 +5254,11 @@ class ReturnString implements IReturn, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->data)) $o['data'] = $this->data;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'ReturnString'; }
     public function getMethod(): string { return 'POST'; }
@@ -4582,13 +5287,13 @@ class SendJson implements IReturn, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->id)) $o['id'] = $this->id;
         if (isset($this->name)) $o['name'] = $this->name;
         if (isset($this->requestStream)) $o['requestStream'] = JsonConverters::to('ByteArray', $this->requestStream);
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'SendJson'; }
     public function getMethod(): string { return 'POST'; }
@@ -4620,14 +5325,14 @@ class SendText implements IReturn, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->id)) $o['id'] = $this->id;
         if (isset($this->name)) $o['name'] = $this->name;
         if (isset($this->contentType)) $o['contentType'] = $this->contentType;
         if (isset($this->requestStream)) $o['requestStream'] = JsonConverters::to('ByteArray', $this->requestStream);
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'SendText'; }
     public function getMethod(): string { return 'POST'; }
@@ -4659,14 +5364,14 @@ class SendRaw implements IReturn, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->id)) $o['id'] = $this->id;
         if (isset($this->name)) $o['name'] = $this->name;
         if (isset($this->contentType)) $o['contentType'] = $this->contentType;
         if (isset($this->requestStream)) $o['requestStream'] = JsonConverters::to('ByteArray', $this->requestStream);
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'SendRaw'; }
     public function getMethod(): string { return 'POST'; }
@@ -4688,11 +5393,11 @@ class SendDefault implements IReturn, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->id)) $o['id'] = $this->id;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'SendDefault'; }
     public function getMethod(): string { return 'POST'; }
@@ -4715,11 +5420,11 @@ class SendRestGet implements IReturn, IGet, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->id)) $o['id'] = $this->id;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'SendRestGet'; }
     public function getMethod(): string { return 'GET'; }
@@ -4741,11 +5446,11 @@ class SendGet implements IReturn, IGet, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->id)) $o['id'] = $this->id;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'SendGet'; }
     public function getMethod(): string { return 'GET'; }
@@ -4767,11 +5472,11 @@ class SendPost implements IReturn, IPost, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->id)) $o['id'] = $this->id;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'SendPost'; }
     public function getMethod(): string { return 'POST'; }
@@ -4793,11 +5498,11 @@ class SendPut implements IReturn, IPut, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->id)) $o['id'] = $this->id;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'SendPut'; }
     public function getMethod(): string { return 'PUT'; }
@@ -4818,11 +5523,11 @@ class SendReturnVoid implements IReturnVoid, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->id)) $o['id'] = $this->id;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'SendReturnVoid'; }
     public function getMethod(): string { return 'POST'; }
@@ -4844,11 +5549,11 @@ class HelloAuth implements IReturn, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->name)) $o['name'] = $this->name;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'HelloAuth'; }
     public function getMethod(): string { return 'POST'; }
@@ -4861,10 +5566,10 @@ class TestAuth implements IReturn, JsonSerializable
 {
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'TestAuth'; }
     public function getMethod(): string { return 'POST'; }
@@ -4892,13 +5597,13 @@ class HelloAllTypes implements IReturn, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->name)) $o['name'] = $this->name;
         if (isset($this->allTypes)) $o['allTypes'] = JsonConverters::to('AllTypes', $this->allTypes);
         if (isset($this->allCollectionTypes)) $o['allCollectionTypes'] = JsonConverters::to('AllCollectionTypes', $this->allCollectionTypes);
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'HelloAllTypes'; }
     public function getMethod(): string { return 'POST'; }
@@ -4924,12 +5629,12 @@ class ThrowType implements IReturn, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->type)) $o['type'] = $this->type;
         if (isset($this->message)) $o['message'] = $this->message;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'ThrowType'; }
     public function getMethod(): string { return 'POST'; }
@@ -4958,13 +5663,13 @@ class ThrowValidation implements IReturn, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->age)) $o['age'] = $this->age;
         if (isset($this->required)) $o['required'] = $this->required;
         if (isset($this->email)) $o['email'] = $this->email;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'ThrowValidation'; }
     public function getMethod(): string { return 'POST'; }
@@ -4976,10 +5681,10 @@ class ProfileGen implements IReturn, JsonSerializable
 {
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'ProfileGen'; }
     public function getMethod(): string { return 'POST'; }
@@ -5000,11 +5705,11 @@ class HelloReturnVoid implements IReturnVoid, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->id)) $o['id'] = $this->id;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'HelloReturnVoid'; }
     public function getMethod(): string { return 'POST'; }
@@ -5026,11 +5731,11 @@ class HelloList implements IReturn, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->names)) $o['names'] = JsonConverters::toArray('string', $this->names);
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'HelloList'; }
     public function getMethod(): string { return 'POST'; }
@@ -5068,7 +5773,7 @@ class UpdateInvoiceItems implements IReturn, IPut, IUpdateDb, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->invoiceLineId)) $o['invoiceLineId'] = $this->invoiceLineId;
@@ -5076,7 +5781,7 @@ class UpdateInvoiceItems implements IReturn, IPut, IUpdateDb, JsonSerializable
         if (isset($this->trackId)) $o['trackId'] = $this->trackId;
         if (isset($this->unitPrice)) $o['unitPrice'] = $this->unitPrice;
         if (isset($this->quantity)) $o['quantity'] = $this->quantity;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'UpdateInvoiceItems'; }
     public function getMethod(): string { return 'PUT'; }
@@ -5126,7 +5831,7 @@ class UpdateInvoices implements IReturn, IPut, IUpdateDb, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->invoiceId)) $o['invoiceId'] = $this->invoiceId;
@@ -5138,7 +5843,7 @@ class UpdateInvoices implements IReturn, IPut, IUpdateDb, JsonSerializable
         if (isset($this->billingCountry)) $o['billingCountry'] = $this->billingCountry;
         if (isset($this->billingPostalCode)) $o['billingPostalCode'] = $this->billingPostalCode;
         if (isset($this->total)) $o['total'] = $this->total;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'UpdateInvoices'; }
     public function getMethod(): string { return 'PUT'; }
@@ -5167,12 +5872,12 @@ class UpdateMediaTypes implements IReturn, IPut, IUpdateDb, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->mediaTypeId)) $o['mediaTypeId'] = $this->mediaTypeId;
         if (isset($this->name)) $o['name'] = $this->name;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'UpdateMediaTypes'; }
     public function getMethod(): string { return 'PUT'; }
@@ -5201,12 +5906,12 @@ class UpdatePlaylists implements IReturn, IPut, IUpdateDb, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->playlistId)) $o['playlistId'] = $this->playlistId;
         if (isset($this->name)) $o['name'] = $this->name;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'UpdatePlaylists'; }
     public function getMethod(): string { return 'PUT'; }
@@ -5256,7 +5961,7 @@ class UpdateTracks implements IReturn, IPut, IUpdateDb, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->trackId)) $o['trackId'] = $this->trackId;
@@ -5268,7 +5973,7 @@ class UpdateTracks implements IReturn, IPut, IUpdateDb, JsonSerializable
         if (isset($this->milliseconds)) $o['milliseconds'] = $this->milliseconds;
         if (isset($this->bytes)) $o['bytes'] = $this->bytes;
         if (isset($this->unitPrice)) $o['unitPrice'] = $this->unitPrice;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'UpdateTracks'; }
     public function getMethod(): string { return 'PUT'; }
@@ -5333,7 +6038,7 @@ class CreateContact implements IReturn, ICreateDb, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->firstName)) $o['firstName'] = $this->firstName;
@@ -5347,7 +6052,7 @@ class CreateContact implements IReturn, ICreateDb, JsonSerializable
         if (isset($this->email)) $o['email'] = $this->email;
         if (isset($this->phone)) $o['phone'] = $this->phone;
         if (isset($this->about)) $o['about'] = $this->about;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'CreateContact'; }
     public function getMethod(): string { return 'POST'; }
@@ -5413,7 +6118,7 @@ class UpdateContact implements IReturn, IPatchDb, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->id)) $o['id'] = $this->id;
@@ -5428,7 +6133,7 @@ class UpdateContact implements IReturn, IPatchDb, JsonSerializable
         if (isset($this->email)) $o['email'] = $this->email;
         if (isset($this->phone)) $o['phone'] = $this->phone;
         if (isset($this->about)) $o['about'] = $this->about;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'UpdateContact'; }
     public function getMethod(): string { return 'PATCH'; }
@@ -5452,11 +6157,11 @@ class DeleteContact implements IReturnVoid, IDeleteDb, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->id)) $o['id'] = $this->id;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'DeleteContact'; }
     public function getMethod(): string { return 'DELETE'; }
@@ -5506,7 +6211,7 @@ class CreateJob implements IReturn, ICreateDb, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->title)) $o['title'] = $this->title;
@@ -5517,7 +6222,7 @@ class CreateJob implements IReturn, ICreateDb, JsonSerializable
         if (isset($this->company)) $o['company'] = $this->company;
         if (isset($this->location)) $o['location'] = $this->location;
         if (isset($this->closing)) $o['closing'] = JsonConverters::to('DateTime', $this->closing);
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'CreateJob'; }
     public function getMethod(): string { return 'POST'; }
@@ -5554,7 +6259,7 @@ class UpdateJob implements IReturn, IPatchDb, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->id)) $o['id'] = $this->id;
@@ -5562,7 +6267,7 @@ class UpdateJob implements IReturn, IPatchDb, JsonSerializable
         if (isset($this->salaryRangeLower)) $o['salaryRangeLower'] = $this->salaryRangeLower;
         if (isset($this->salaryRangeUpper)) $o['salaryRangeUpper'] = $this->salaryRangeUpper;
         if (isset($this->description)) $o['description'] = $this->description;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'UpdateJob'; }
     public function getMethod(): string { return 'PATCH'; }
@@ -5587,11 +6292,11 @@ class DeleteJob implements IReturn, IDeleteDb, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->id)) $o['id'] = $this->id;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'DeleteJob'; }
     public function getMethod(): string { return 'DELETE'; }
@@ -5632,7 +6337,7 @@ class CreateJobApplication implements IReturn, ICreateDb, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->jobId)) $o['jobId'] = $this->jobId;
@@ -5640,7 +6345,7 @@ class CreateJobApplication implements IReturn, ICreateDb, JsonSerializable
         if (isset($this->appliedDate)) $o['appliedDate'] = JsonConverters::to('DateTime', $this->appliedDate);
         if (isset($this->applicationStatus)) $o['applicationStatus'] = JsonConverters::to('JobApplicationStatus', $this->applicationStatus);
         if (isset($this->attachments)) $o['attachments'] = JsonConverters::toArray('JobApplicationAttachment', $this->attachments);
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'CreateJobApplication'; }
     public function getMethod(): string { return 'POST'; }
@@ -5674,22 +6379,22 @@ class UpdateJobApplication implements IReturn, IPatchDb, JsonSerializable
         if (isset($o['id'])) $this->id = $o['id'];
         if (isset($o['jobId'])) $this->jobId = $o['jobId'];
         if (isset($o['contactId'])) $this->contactId = $o['contactId'];
-        if (isset($o['appliedDate'])) $this->appliedDate = $o['appliedDate'];
+        if (isset($o['appliedDate'])) $this->appliedDate = JsonConverters::from('DateTime', $o['appliedDate']);
         if (isset($o['applicationStatus'])) $this->applicationStatus = JsonConverters::from('JobApplicationStatus', $o['applicationStatus']);
         if (isset($o['attachments'])) $this->attachments = JsonConverters::fromArray('JobApplicationAttachment', $o['attachments']);
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->id)) $o['id'] = $this->id;
         if (isset($this->jobId)) $o['jobId'] = $this->jobId;
         if (isset($this->contactId)) $o['contactId'] = $this->contactId;
-        if (isset($this->appliedDate)) $o['appliedDate'] = $this->appliedDate;
+        if (isset($this->appliedDate)) $o['appliedDate'] = JsonConverters::to('DateTime', $this->appliedDate);
         if (isset($this->applicationStatus)) $o['applicationStatus'] = JsonConverters::to('JobApplicationStatus', $this->applicationStatus);
         if (isset($this->attachments)) $o['attachments'] = JsonConverters::toArray('JobApplicationAttachment', $this->attachments);
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'UpdateJobApplication'; }
     public function getMethod(): string { return 'PATCH'; }
@@ -5713,11 +6418,11 @@ class DeleteJobApplication implements IReturnVoid, IDeleteDb, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->id)) $o['id'] = $this->id;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'DeleteJobApplication'; }
     public function getMethod(): string { return 'DELETE'; }
@@ -5732,10 +6437,10 @@ class CreateJobApplicationEvent implements IReturn, ICreateDb, JsonSerializable
 {
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'CreateJobApplicationEvent'; }
     public function getMethod(): string { return 'POST'; }
@@ -5765,18 +6470,18 @@ class UpdateJobApplicationEvent implements IReturn, IPatchDb, JsonSerializable
         if (isset($o['id'])) $this->id = $o['id'];
         if (isset($o['status'])) $this->status = JsonConverters::from('JobApplicationStatus', $o['status']);
         if (isset($o['description'])) $this->description = $o['description'];
-        if (isset($o['eventDate'])) $this->eventDate = $o['eventDate'];
+        if (isset($o['eventDate'])) $this->eventDate = JsonConverters::from('DateTime', $o['eventDate']);
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->id)) $o['id'] = $this->id;
         if (isset($this->status)) $o['status'] = JsonConverters::to('JobApplicationStatus', $this->status);
         if (isset($this->description)) $o['description'] = $this->description;
-        if (isset($this->eventDate)) $o['eventDate'] = $this->eventDate;
-        return $o;
+        if (isset($this->eventDate)) $o['eventDate'] = JsonConverters::to('DateTime', $this->eventDate);
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'UpdateJobApplicationEvent'; }
     public function getMethod(): string { return 'PATCH'; }
@@ -5790,10 +6495,10 @@ class DeleteJobApplicationEvent implements IReturnVoid, IDeleteDb, JsonSerializa
 {
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'DeleteJobApplicationEvent'; }
     public function getMethod(): string { return 'DELETE'; }
@@ -5824,12 +6529,12 @@ class CreateJobApplicationComment implements IReturn, ICreateDb, JsonSerializabl
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->jobApplicationId)) $o['jobApplicationId'] = $this->jobApplicationId;
         if (isset($this->comment)) $o['comment'] = $this->comment;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'CreateJobApplicationComment'; }
     public function getMethod(): string { return 'POST'; }
@@ -5860,13 +6565,13 @@ class UpdateJobApplicationComment implements IReturn, IPatchDb, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->id)) $o['id'] = $this->id;
         if (isset($this->jobApplicationId)) $o['jobApplicationId'] = $this->jobApplicationId;
         if (isset($this->comment)) $o['comment'] = $this->comment;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'UpdateJobApplicationComment'; }
     public function getMethod(): string { return 'PATCH'; }
@@ -5890,11 +6595,11 @@ class DeleteJobApplicationComment implements IReturnVoid, IDeleteDb, JsonSeriali
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->id)) $o['id'] = $this->id;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'DeleteJobApplicationComment'; }
     public function getMethod(): string { return 'DELETE'; }
@@ -5946,13 +6651,13 @@ class CreateBooking implements IReturn, ICreateDb, JsonSerializable
         if (isset($o['roomNumber'])) $this->roomNumber = $o['roomNumber'];
         if (isset($o['cost'])) $this->cost = $o['cost'];
         if (isset($o['bookingStartDate'])) $this->bookingStartDate = JsonConverters::from('DateTime', $o['bookingStartDate']);
-        if (isset($o['bookingEndDate'])) $this->bookingEndDate = $o['bookingEndDate'];
+        if (isset($o['bookingEndDate'])) $this->bookingEndDate = JsonConverters::from('DateTime', $o['bookingEndDate']);
         if (isset($o['notes'])) $this->notes = $o['notes'];
         if (isset($o['couponId'])) $this->couponId = $o['couponId'];
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->name)) $o['name'] = $this->name;
@@ -5960,10 +6665,10 @@ class CreateBooking implements IReturn, ICreateDb, JsonSerializable
         if (isset($this->roomNumber)) $o['roomNumber'] = $this->roomNumber;
         if (isset($this->cost)) $o['cost'] = $this->cost;
         if (isset($this->bookingStartDate)) $o['bookingStartDate'] = JsonConverters::to('DateTime', $this->bookingStartDate);
-        if (isset($this->bookingEndDate)) $o['bookingEndDate'] = $this->bookingEndDate;
+        if (isset($this->bookingEndDate)) $o['bookingEndDate'] = JsonConverters::to('DateTime', $this->bookingEndDate);
         if (isset($this->notes)) $o['notes'] = $this->notes;
         if (isset($this->couponId)) $o['couponId'] = $this->couponId;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'CreateBooking'; }
     public function getMethod(): string { return 'POST'; }
@@ -6014,15 +6719,15 @@ class UpdateBooking implements IReturn, IPatchDb, JsonSerializable
         if (isset($o['roomType'])) $this->roomType = JsonConverters::from('RoomType', $o['roomType']);
         if (isset($o['roomNumber'])) $this->roomNumber = $o['roomNumber'];
         if (isset($o['cost'])) $this->cost = $o['cost'];
-        if (isset($o['bookingStartDate'])) $this->bookingStartDate = $o['bookingStartDate'];
-        if (isset($o['bookingEndDate'])) $this->bookingEndDate = $o['bookingEndDate'];
+        if (isset($o['bookingStartDate'])) $this->bookingStartDate = JsonConverters::from('DateTime', $o['bookingStartDate']);
+        if (isset($o['bookingEndDate'])) $this->bookingEndDate = JsonConverters::from('DateTime', $o['bookingEndDate']);
         if (isset($o['notes'])) $this->notes = $o['notes'];
         if (isset($o['couponId'])) $this->couponId = $o['couponId'];
         if (isset($o['cancelled'])) $this->cancelled = $o['cancelled'];
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->id)) $o['id'] = $this->id;
@@ -6030,12 +6735,12 @@ class UpdateBooking implements IReturn, IPatchDb, JsonSerializable
         if (isset($this->roomType)) $o['roomType'] = JsonConverters::to('RoomType', $this->roomType);
         if (isset($this->roomNumber)) $o['roomNumber'] = $this->roomNumber;
         if (isset($this->cost)) $o['cost'] = $this->cost;
-        if (isset($this->bookingStartDate)) $o['bookingStartDate'] = $this->bookingStartDate;
-        if (isset($this->bookingEndDate)) $o['bookingEndDate'] = $this->bookingEndDate;
+        if (isset($this->bookingStartDate)) $o['bookingStartDate'] = JsonConverters::to('DateTime', $this->bookingStartDate);
+        if (isset($this->bookingEndDate)) $o['bookingEndDate'] = JsonConverters::to('DateTime', $this->bookingEndDate);
         if (isset($this->notes)) $o['notes'] = $this->notes;
         if (isset($this->couponId)) $o['couponId'] = $this->couponId;
         if (isset($this->cancelled)) $o['cancelled'] = $this->cancelled;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'UpdateBooking'; }
     public function getMethod(): string { return 'PATCH'; }
@@ -6062,11 +6767,11 @@ class DeleteBooking implements IReturnVoid, IDeleteDb, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->id)) $o['id'] = $this->id;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'DeleteBooking'; }
     public function getMethod(): string { return 'DELETE'; }
@@ -6104,13 +6809,13 @@ class CreateCoupon implements IReturn, ICreateDb, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->description)) $o['description'] = $this->description;
         if (isset($this->discount)) $o['discount'] = $this->discount;
         if (isset($this->expiryDate)) $o['expiryDate'] = JsonConverters::to('DateTime', $this->expiryDate);
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'CreateCoupon'; }
     public function getMethod(): string { return 'POST'; }
@@ -6148,18 +6853,18 @@ class UpdateCoupon implements IReturn, IPatchDb, JsonSerializable
         if (isset($o['id'])) $this->id = $o['id'];
         if (isset($o['description'])) $this->description = $o['description'];
         if (isset($o['discount'])) $this->discount = $o['discount'];
-        if (isset($o['expiryDate'])) $this->expiryDate = $o['expiryDate'];
+        if (isset($o['expiryDate'])) $this->expiryDate = JsonConverters::from('DateTime', $o['expiryDate']);
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->id)) $o['id'] = $this->id;
         if (isset($this->description)) $o['description'] = $this->description;
         if (isset($this->discount)) $o['discount'] = $this->discount;
-        if (isset($this->expiryDate)) $o['expiryDate'] = $this->expiryDate;
-        return $o;
+        if (isset($this->expiryDate)) $o['expiryDate'] = JsonConverters::to('DateTime', $this->expiryDate);
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'UpdateCoupon'; }
     public function getMethod(): string { return 'PATCH'; }
@@ -6186,11 +6891,11 @@ class DeleteCoupon implements IReturnVoid, IDeleteDb, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->id)) $o['id'] = $this->id;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'DeleteCoupon'; }
     public function getMethod(): string { return 'DELETE'; }
@@ -6218,12 +6923,12 @@ class CreateFileSystemItem implements IReturn, ICreateDb, IFileItem, JsonSeriali
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->fileAccessType)) $o['fileAccessType'] = JsonConverters::to('FileAccessType', $this->fileAccessType);
         if (isset($this->file)) $o['file'] = JsonConverters::to('FileSystemFile', $this->file);
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'CreateFileSystemItem'; }
     public function getMethod(): string { return 'POST'; }
@@ -6267,7 +6972,7 @@ class CreatePlayer implements IReturn, ICreateDb, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->firstName)) $o['firstName'] = $this->firstName;
@@ -6276,7 +6981,7 @@ class CreatePlayer implements IReturn, ICreateDb, JsonSerializable
         if (isset($this->phoneNumbers)) $o['phoneNumbers'] = JsonConverters::toArray('Phone', $this->phoneNumbers);
         if (isset($this->profileId)) $o['profileId'] = $this->profileId;
         if (isset($this->savedLevelId)) $o['savedLevelId'] = $this->savedLevelId;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'CreatePlayer'; }
     public function getMethod(): string { return 'POST'; }
@@ -6324,7 +7029,7 @@ class UpdatePlayer implements IReturn, IPatchDb, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->id)) $o['id'] = $this->id;
@@ -6335,7 +7040,7 @@ class UpdatePlayer implements IReturn, IPatchDb, JsonSerializable
         if (isset($this->profileId)) $o['profileId'] = $this->profileId;
         if (isset($this->savedLevelId)) $o['savedLevelId'] = $this->savedLevelId;
         if (isset($this->capital)) $o['capital'] = $this->capital;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'UpdatePlayer'; }
     public function getMethod(): string { return 'PATCH'; }
@@ -6359,11 +7064,11 @@ class DeletePlayer implements IReturnVoid, IDeleteDb, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->id)) $o['id'] = $this->id;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'DeletePlayer'; }
     public function getMethod(): string { return 'DELETE'; }
@@ -6413,7 +7118,7 @@ class CreateProfile implements IReturn, ICreateDb, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->role)) $o['role'] = JsonConverters::to('PlayerRole', $this->role);
@@ -6424,7 +7129,7 @@ class CreateProfile implements IReturn, ICreateDb, JsonSerializable
         if (isset($this->energy)) $o['energy'] = $this->energy;
         if (isset($this->profileUrl)) $o['profileUrl'] = $this->profileUrl;
         if (isset($this->coverUrl)) $o['coverUrl'] = $this->coverUrl;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'CreateProfile'; }
     public function getMethod(): string { return 'POST'; }
@@ -6475,7 +7180,7 @@ class UpdateProfile implements IReturn, IPatchDb, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->id)) $o['id'] = $this->id;
@@ -6487,7 +7192,7 @@ class UpdateProfile implements IReturn, IPatchDb, JsonSerializable
         if (isset($this->energy)) $o['energy'] = $this->energy;
         if (isset($this->profileUrl)) $o['profileUrl'] = $this->profileUrl;
         if (isset($this->coverUrl)) $o['coverUrl'] = $this->coverUrl;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'UpdateProfile'; }
     public function getMethod(): string { return 'PATCH'; }
@@ -6511,11 +7216,11 @@ class DeleteProfile implements IReturnVoid, IDeleteDb, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->id)) $o['id'] = $this->id;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'DeleteProfile'; }
     public function getMethod(): string { return 'DELETE'; }
@@ -6551,13 +7256,13 @@ class CreateGameItem implements IReturn, ICreateDb, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->name)) $o['name'] = $this->name;
         if (isset($this->description)) $o['description'] = $this->description;
         if (isset($this->imageUrl)) $o['imageUrl'] = $this->imageUrl;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'CreateGameItem'; }
     public function getMethod(): string { return 'POST'; }
@@ -6592,13 +7297,13 @@ class UpdateGameItem implements IReturn, IPatchDb, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->name)) $o['name'] = $this->name;
         if (isset($this->description)) $o['description'] = $this->description;
         if (isset($this->imageUrl)) $o['imageUrl'] = $this->imageUrl;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'UpdateGameItem'; }
     public function getMethod(): string { return 'PATCH'; }
@@ -6623,11 +7328,11 @@ class DeleteGameItem implements IReturnVoid, IDeleteDb, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->name)) $o['name'] = $this->name;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'DeleteGameItem'; }
     public function getMethod(): string { return 'DELETE'; }
@@ -6688,12 +7393,12 @@ class CreateMqBooking extends AuditBase implements IReturn, ICreateDb, JsonSeria
         if (isset($o['roomNumber'])) $this->roomNumber = $o['roomNumber'];
         if (isset($o['cost'])) $this->cost = $o['cost'];
         if (isset($o['bookingStartDate'])) $this->bookingStartDate = JsonConverters::from('DateTime', $o['bookingStartDate']);
-        if (isset($o['bookingEndDate'])) $this->bookingEndDate = $o['bookingEndDate'];
+        if (isset($o['bookingEndDate'])) $this->bookingEndDate = JsonConverters::from('DateTime', $o['bookingEndDate']);
         if (isset($o['notes'])) $this->notes = $o['notes'];
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = parent::jsonSerialize();
         if (isset($this->name)) $o['name'] = $this->name;
@@ -6701,9 +7406,9 @@ class CreateMqBooking extends AuditBase implements IReturn, ICreateDb, JsonSeria
         if (isset($this->roomNumber)) $o['roomNumber'] = $this->roomNumber;
         if (isset($this->cost)) $o['cost'] = $this->cost;
         if (isset($this->bookingStartDate)) $o['bookingStartDate'] = JsonConverters::to('DateTime', $this->bookingStartDate);
-        if (isset($this->bookingEndDate)) $o['bookingEndDate'] = $this->bookingEndDate;
+        if (isset($this->bookingEndDate)) $o['bookingEndDate'] = JsonConverters::to('DateTime', $this->bookingEndDate);
         if (isset($this->notes)) $o['notes'] = $this->notes;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'CreateMqBooking'; }
     public function getMethod(): string { return 'POST'; }
@@ -6786,7 +7491,7 @@ class PatchMigration implements IReturn, IPatch, IPatchDb, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->id)) $o['id'] = $this->id;
@@ -6801,7 +7506,7 @@ class PatchMigration implements IReturn, IPatch, IPatchDb, JsonSerializable
         if (isset($this->errorMessage)) $o['errorMessage'] = $this->errorMessage;
         if (isset($this->errorStackTrace)) $o['errorStackTrace'] = $this->errorStackTrace;
         if (isset($this->meta)) $o['meta'] = $this->meta;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'PatchMigration'; }
     public function getMethod(): string { return 'PATCH'; }
@@ -6894,7 +7599,7 @@ class PatchOrder implements IReturn, IPatch, IPatchDb, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->id)) $o['id'] = $this->id;
@@ -6911,7 +7616,7 @@ class PatchOrder implements IReturn, IPatch, IPatchDb, JsonSerializable
         if (isset($this->shipRegion)) $o['shipRegion'] = $this->shipRegion;
         if (isset($this->shipPostalCode)) $o['shipPostalCode'] = $this->shipPostalCode;
         if (isset($this->shipCountry)) $o['shipCountry'] = $this->shipCountry;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'PatchOrder'; }
     public function getMethod(): string { return 'PATCH'; }
@@ -6964,7 +7669,7 @@ class PatchOrderDetail implements IReturn, IPatch, IPatchDb, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->id)) $o['id'] = $this->id;
@@ -6973,7 +7678,7 @@ class PatchOrderDetail implements IReturn, IPatch, IPatchDb, JsonSerializable
         if (isset($this->unitPrice)) $o['unitPrice'] = $this->unitPrice;
         if (isset($this->quantity)) $o['quantity'] = $this->quantity;
         if (isset($this->discount)) $o['discount'] = $this->discount;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'PatchOrderDetail'; }
     public function getMethod(): string { return 'PATCH'; }
@@ -7046,7 +7751,7 @@ class PatchProduct implements IReturn, IPatch, IPatchDb, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->id)) $o['id'] = $this->id;
@@ -7059,7 +7764,7 @@ class PatchProduct implements IReturn, IPatch, IPatchDb, JsonSerializable
         if (isset($this->unitsOnOrder)) $o['unitsOnOrder'] = $this->unitsOnOrder;
         if (isset($this->reorderLevel)) $o['reorderLevel'] = $this->reorderLevel;
         if (isset($this->discontinued)) $o['discontinued'] = $this->discontinued;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'PatchProduct'; }
     public function getMethod(): string { return 'PATCH'; }
@@ -7092,12 +7797,12 @@ class PatchRegion implements IReturn, IPatch, IPatchDb, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->id)) $o['id'] = $this->id;
         if (isset($this->regionDescription)) $o['regionDescription'] = $this->regionDescription;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'PatchRegion'; }
     public function getMethod(): string { return 'PATCH'; }
@@ -7135,13 +7840,13 @@ class PatchShipper implements IReturn, IPatch, IPatchDb, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->id)) $o['id'] = $this->id;
         if (isset($this->companyName)) $o['companyName'] = $this->companyName;
         if (isset($this->phone)) $o['phone'] = $this->phone;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'PatchShipper'; }
     public function getMethod(): string { return 'PATCH'; }
@@ -7224,7 +7929,7 @@ class PatchSupplier implements IReturn, IPatch, IPatchDb, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->id)) $o['id'] = $this->id;
@@ -7239,7 +7944,7 @@ class PatchSupplier implements IReturn, IPatch, IPatchDb, JsonSerializable
         if (isset($this->phone)) $o['phone'] = $this->phone;
         if (isset($this->fax)) $o['fax'] = $this->fax;
         if (isset($this->homePage)) $o['homePage'] = $this->homePage;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'PatchSupplier'; }
     public function getMethod(): string { return 'PATCH'; }
@@ -7277,13 +7982,13 @@ class PatchTerritory implements IReturn, IPatch, IPatchDb, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->id)) $o['id'] = $this->id;
         if (isset($this->territoryDescription)) $o['territoryDescription'] = $this->territoryDescription;
         if (isset($this->regionId)) $o['regionId'] = $this->regionId;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'PatchTerritory'; }
     public function getMethod(): string { return 'PATCH'; }
@@ -7321,13 +8026,13 @@ class PatchTodo implements IReturn, IPatch, IPatchDb, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->id)) $o['id'] = $this->id;
         if (isset($this->text)) $o['text'] = $this->text;
         if (isset($this->isFinished)) $o['isFinished'] = $this->isFinished;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'PatchTodo'; }
     public function getMethod(): string { return 'PATCH'; }
@@ -7396,7 +8101,7 @@ class PatchUserAuthRole implements IReturn, IPatch, IPatchDb, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->id)) $o['id'] = $this->id;
@@ -7408,7 +8113,7 @@ class PatchUserAuthRole implements IReturn, IPatch, IPatchDb, JsonSerializable
         if (isset($this->refId)) $o['refId'] = $this->refId;
         if (isset($this->refIdStr)) $o['refIdStr'] = $this->refIdStr;
         if (isset($this->meta)) $o['meta'] = $this->meta;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'PatchUserAuthRole'; }
     public function getMethod(): string { return 'PATCH'; }
@@ -7501,7 +8206,7 @@ class PatchValidationRule implements IReturn, IPatch, IPatchDb, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->id)) $o['id'] = $this->id;
@@ -7518,7 +8223,7 @@ class PatchValidationRule implements IReturn, IPatch, IPatchDb, JsonSerializable
         if (isset($this->condition)) $o['condition'] = $this->condition;
         if (isset($this->errorCode)) $o['errorCode'] = $this->errorCode;
         if (isset($this->message)) $o['message'] = $this->message;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'PatchValidationRule'; }
     public function getMethod(): string { return 'PATCH'; }
@@ -7787,7 +8492,7 @@ class UpdateAppUser implements IReturn, IPut, IUpdateDb, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->id)) $o['id'] = $this->id;
@@ -7839,7 +8544,7 @@ class UpdateAppUser implements IReturn, IPut, IUpdateDb, JsonSerializable
         if (isset($this->refId)) $o['refId'] = $this->refId;
         if (isset($this->refIdStr)) $o['refIdStr'] = $this->refIdStr;
         if (isset($this->meta)) $o['meta'] = $this->meta;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'UpdateAppUser'; }
     public function getMethod(): string { return 'PUT'; }
@@ -7877,13 +8582,13 @@ class UpdateCategory implements IReturn, IPut, IUpdateDb, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->id)) $o['id'] = $this->id;
         if (isset($this->categoryName)) $o['categoryName'] = $this->categoryName;
         if (isset($this->description)) $o['description'] = $this->description;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'UpdateCategory'; }
     public function getMethod(): string { return 'PUT'; }
@@ -7961,7 +8666,7 @@ class UpdateCustomer implements IReturn, IPut, IUpdateDb, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->id)) $o['id'] = $this->id;
@@ -7975,7 +8680,7 @@ class UpdateCustomer implements IReturn, IPut, IUpdateDb, JsonSerializable
         if (isset($this->country)) $o['country'] = $this->country;
         if (isset($this->phone)) $o['phone'] = $this->phone;
         if (isset($this->fax)) $o['fax'] = $this->fax;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'UpdateCustomer'; }
     public function getMethod(): string { return 'PUT'; }
@@ -8088,7 +8793,7 @@ class UpdateEmployee implements IReturn, IPut, IUpdateDb, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->id)) $o['id'] = $this->id;
@@ -8109,7 +8814,7 @@ class UpdateEmployee implements IReturn, IPut, IUpdateDb, JsonSerializable
         if (isset($this->notes)) $o['notes'] = $this->notes;
         if (isset($this->reportsTo)) $o['reportsTo'] = $this->reportsTo;
         if (isset($this->photoPath)) $o['photoPath'] = $this->photoPath;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'UpdateEmployee'; }
     public function getMethod(): string { return 'PUT'; }
@@ -8147,13 +8852,13 @@ class UpdateEmployeeTerritory implements IReturn, IPut, IUpdateDb, JsonSerializa
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->id)) $o['id'] = $this->id;
         if (isset($this->employeeId)) $o['employeeId'] = $this->employeeId;
         if (isset($this->territoryId)) $o['territoryId'] = $this->territoryId;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'UpdateEmployeeTerritory'; }
     public function getMethod(): string { return 'PUT'; }
@@ -8206,7 +8911,7 @@ class UpdateFileSystemFile implements IReturn, IPut, IUpdateDb, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->id)) $o['id'] = $this->id;
@@ -8215,7 +8920,7 @@ class UpdateFileSystemFile implements IReturn, IPut, IUpdateDb, JsonSerializable
         if (isset($this->contentType)) $o['contentType'] = $this->contentType;
         if (isset($this->contentLength)) $o['contentLength'] = $this->contentLength;
         if (isset($this->fileSystemItemId)) $o['fileSystemItemId'] = $this->fileSystemItemId;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'UpdateFileSystemFile'; }
     public function getMethod(): string { return 'PUT'; }
@@ -8253,13 +8958,13 @@ class UpdateFileSystemItem implements IReturn, IPut, IUpdateDb, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->id)) $o['id'] = $this->id;
         if (isset($this->fileAccessType)) $o['fileAccessType'] = $this->fileAccessType;
         if (isset($this->appUserId)) $o['appUserId'] = $this->appUserId;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'UpdateFileSystemItem'; }
     public function getMethod(): string { return 'PUT'; }
@@ -8342,7 +9047,7 @@ class UpdateMigration implements IReturn, IPut, IUpdateDb, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->id)) $o['id'] = $this->id;
@@ -8357,7 +9062,7 @@ class UpdateMigration implements IReturn, IPut, IUpdateDb, JsonSerializable
         if (isset($this->errorMessage)) $o['errorMessage'] = $this->errorMessage;
         if (isset($this->errorStackTrace)) $o['errorStackTrace'] = $this->errorStackTrace;
         if (isset($this->meta)) $o['meta'] = $this->meta;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'UpdateMigration'; }
     public function getMethod(): string { return 'PUT'; }
@@ -8450,7 +9155,7 @@ class UpdateOrder implements IReturn, IPut, IUpdateDb, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->id)) $o['id'] = $this->id;
@@ -8467,7 +9172,7 @@ class UpdateOrder implements IReturn, IPut, IUpdateDb, JsonSerializable
         if (isset($this->shipRegion)) $o['shipRegion'] = $this->shipRegion;
         if (isset($this->shipPostalCode)) $o['shipPostalCode'] = $this->shipPostalCode;
         if (isset($this->shipCountry)) $o['shipCountry'] = $this->shipCountry;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'UpdateOrder'; }
     public function getMethod(): string { return 'PUT'; }
@@ -8520,7 +9225,7 @@ class UpdateOrderDetail implements IReturn, IPut, IUpdateDb, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->id)) $o['id'] = $this->id;
@@ -8529,7 +9234,7 @@ class UpdateOrderDetail implements IReturn, IPut, IUpdateDb, JsonSerializable
         if (isset($this->unitPrice)) $o['unitPrice'] = $this->unitPrice;
         if (isset($this->quantity)) $o['quantity'] = $this->quantity;
         if (isset($this->discount)) $o['discount'] = $this->discount;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'UpdateOrderDetail'; }
     public function getMethod(): string { return 'PUT'; }
@@ -8602,7 +9307,7 @@ class UpdateProduct implements IReturn, IPut, IUpdateDb, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->id)) $o['id'] = $this->id;
@@ -8615,7 +9320,7 @@ class UpdateProduct implements IReturn, IPut, IUpdateDb, JsonSerializable
         if (isset($this->unitsOnOrder)) $o['unitsOnOrder'] = $this->unitsOnOrder;
         if (isset($this->reorderLevel)) $o['reorderLevel'] = $this->reorderLevel;
         if (isset($this->discontinued)) $o['discontinued'] = $this->discontinued;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'UpdateProduct'; }
     public function getMethod(): string { return 'PUT'; }
@@ -8648,12 +9353,12 @@ class UpdateRegion implements IReturn, IPut, IUpdateDb, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->id)) $o['id'] = $this->id;
         if (isset($this->regionDescription)) $o['regionDescription'] = $this->regionDescription;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'UpdateRegion'; }
     public function getMethod(): string { return 'PUT'; }
@@ -8691,13 +9396,13 @@ class UpdateShipper implements IReturn, IPut, IUpdateDb, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->id)) $o['id'] = $this->id;
         if (isset($this->companyName)) $o['companyName'] = $this->companyName;
         if (isset($this->phone)) $o['phone'] = $this->phone;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'UpdateShipper'; }
     public function getMethod(): string { return 'PUT'; }
@@ -8780,7 +9485,7 @@ class UpdateSupplier implements IReturn, IPut, IUpdateDb, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->id)) $o['id'] = $this->id;
@@ -8795,7 +9500,7 @@ class UpdateSupplier implements IReturn, IPut, IUpdateDb, JsonSerializable
         if (isset($this->phone)) $o['phone'] = $this->phone;
         if (isset($this->fax)) $o['fax'] = $this->fax;
         if (isset($this->homePage)) $o['homePage'] = $this->homePage;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'UpdateSupplier'; }
     public function getMethod(): string { return 'PUT'; }
@@ -8833,13 +9538,13 @@ class UpdateTerritory implements IReturn, IPut, IUpdateDb, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->id)) $o['id'] = $this->id;
         if (isset($this->territoryDescription)) $o['territoryDescription'] = $this->territoryDescription;
         if (isset($this->regionId)) $o['regionId'] = $this->regionId;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'UpdateTerritory'; }
     public function getMethod(): string { return 'PUT'; }
@@ -8877,13 +9582,13 @@ class UpdateTodo implements IReturn, IPut, IUpdateDb, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->id)) $o['id'] = $this->id;
         if (isset($this->text)) $o['text'] = $this->text;
         if (isset($this->isFinished)) $o['isFinished'] = $this->isFinished;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'UpdateTodo'; }
     public function getMethod(): string { return 'PUT'; }
@@ -8952,7 +9657,7 @@ class UpdateUserAuthRole implements IReturn, IPut, IUpdateDb, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->id)) $o['id'] = $this->id;
@@ -8964,7 +9669,7 @@ class UpdateUserAuthRole implements IReturn, IPut, IUpdateDb, JsonSerializable
         if (isset($this->refId)) $o['refId'] = $this->refId;
         if (isset($this->refIdStr)) $o['refIdStr'] = $this->refIdStr;
         if (isset($this->meta)) $o['meta'] = $this->meta;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'UpdateUserAuthRole'; }
     public function getMethod(): string { return 'PUT'; }
@@ -9057,7 +9762,7 @@ class UpdateValidationRule implements IReturn, IPut, IUpdateDb, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->id)) $o['id'] = $this->id;
@@ -9074,7 +9779,7 @@ class UpdateValidationRule implements IReturn, IPut, IUpdateDb, JsonSerializable
         if (isset($this->condition)) $o['condition'] = $this->condition;
         if (isset($this->errorCode)) $o['errorCode'] = $this->errorCode;
         if (isset($this->message)) $o['message'] = $this->message;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'UpdateValidationRule'; }
     public function getMethod(): string { return 'PUT'; }
@@ -9106,12 +9811,12 @@ class CreateAlbums implements IReturn, IPost, ICreateDb, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->title)) $o['title'] = $this->title;
         if (isset($this->artistId)) $o['artistId'] = $this->artistId;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'CreateAlbums'; }
     public function getMethod(): string { return 'POST'; }
@@ -9137,11 +9842,11 @@ class CreateArtists implements IReturn, IPost, ICreateDb, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->name)) $o['name'] = $this->name;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'CreateArtists'; }
     public function getMethod(): string { return 'POST'; }
@@ -9200,7 +9905,7 @@ class CreateChinookCustomer implements IReturn, IPost, ICreateDb, JsonSerializab
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->firstName)) $o['firstName'] = $this->firstName;
@@ -9215,7 +9920,7 @@ class CreateChinookCustomer implements IReturn, IPost, ICreateDb, JsonSerializab
         if (isset($this->fax)) $o['fax'] = $this->fax;
         if (isset($this->email)) $o['email'] = $this->email;
         if (isset($this->supportRepId)) $o['supportRepId'] = $this->supportRepId;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'CreateChinookCustomer'; }
     public function getMethod(): string { return 'POST'; }
@@ -9267,8 +9972,8 @@ class CreateChinookEmployee implements IReturn, IPost, ICreateDb, JsonSerializab
         if (isset($o['firstName'])) $this->firstName = $o['firstName'];
         if (isset($o['title'])) $this->title = $o['title'];
         if (isset($o['reportsTo'])) $this->reportsTo = $o['reportsTo'];
-        if (isset($o['birthDate'])) $this->birthDate = $o['birthDate'];
-        if (isset($o['hireDate'])) $this->hireDate = $o['hireDate'];
+        if (isset($o['birthDate'])) $this->birthDate = JsonConverters::from('DateTime', $o['birthDate']);
+        if (isset($o['hireDate'])) $this->hireDate = JsonConverters::from('DateTime', $o['hireDate']);
         if (isset($o['address'])) $this->address = $o['address'];
         if (isset($o['city'])) $this->city = $o['city'];
         if (isset($o['state'])) $this->state = $o['state'];
@@ -9280,15 +9985,15 @@ class CreateChinookEmployee implements IReturn, IPost, ICreateDb, JsonSerializab
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->lastName)) $o['lastName'] = $this->lastName;
         if (isset($this->firstName)) $o['firstName'] = $this->firstName;
         if (isset($this->title)) $o['title'] = $this->title;
         if (isset($this->reportsTo)) $o['reportsTo'] = $this->reportsTo;
-        if (isset($this->birthDate)) $o['birthDate'] = $this->birthDate;
-        if (isset($this->hireDate)) $o['hireDate'] = $this->hireDate;
+        if (isset($this->birthDate)) $o['birthDate'] = JsonConverters::to('DateTime', $this->birthDate);
+        if (isset($this->hireDate)) $o['hireDate'] = JsonConverters::to('DateTime', $this->hireDate);
         if (isset($this->address)) $o['address'] = $this->address;
         if (isset($this->city)) $o['city'] = $this->city;
         if (isset($this->state)) $o['state'] = $this->state;
@@ -9297,7 +10002,7 @@ class CreateChinookEmployee implements IReturn, IPost, ICreateDb, JsonSerializab
         if (isset($this->phone)) $o['phone'] = $this->phone;
         if (isset($this->fax)) $o['fax'] = $this->fax;
         if (isset($this->email)) $o['email'] = $this->email;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'CreateChinookEmployee'; }
     public function getMethod(): string { return 'POST'; }
@@ -9323,11 +10028,11 @@ class CreateGenres implements IReturn, IPost, ICreateDb, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->name)) $o['name'] = $this->name;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'CreateGenres'; }
     public function getMethod(): string { return 'POST'; }
@@ -9362,14 +10067,14 @@ class CreateInvoiceItems implements IReturn, IPost, ICreateDb, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->invoiceId)) $o['invoiceId'] = $this->invoiceId;
         if (isset($this->trackId)) $o['trackId'] = $this->trackId;
         if (isset($this->unitPrice)) $o['unitPrice'] = $this->unitPrice;
         if (isset($this->quantity)) $o['quantity'] = $this->quantity;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'CreateInvoiceItems'; }
     public function getMethod(): string { return 'POST'; }
@@ -9416,7 +10121,7 @@ class CreateInvoices implements IReturn, IPost, ICreateDb, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->customerId)) $o['customerId'] = $this->customerId;
@@ -9427,7 +10132,7 @@ class CreateInvoices implements IReturn, IPost, ICreateDb, JsonSerializable
         if (isset($this->billingCountry)) $o['billingCountry'] = $this->billingCountry;
         if (isset($this->billingPostalCode)) $o['billingPostalCode'] = $this->billingPostalCode;
         if (isset($this->total)) $o['total'] = $this->total;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'CreateInvoices'; }
     public function getMethod(): string { return 'POST'; }
@@ -9453,11 +10158,11 @@ class CreateMediaTypes implements IReturn, IPost, ICreateDb, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->name)) $o['name'] = $this->name;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'CreateMediaTypes'; }
     public function getMethod(): string { return 'POST'; }
@@ -9483,11 +10188,11 @@ class CreatePlaylists implements IReturn, IPost, ICreateDb, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->name)) $o['name'] = $this->name;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'CreatePlaylists'; }
     public function getMethod(): string { return 'POST'; }
@@ -9534,7 +10239,7 @@ class CreateTracks implements IReturn, IPost, ICreateDb, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->name)) $o['name'] = $this->name;
@@ -9545,7 +10250,7 @@ class CreateTracks implements IReturn, IPost, ICreateDb, JsonSerializable
         if (isset($this->milliseconds)) $o['milliseconds'] = $this->milliseconds;
         if (isset($this->bytes)) $o['bytes'] = $this->bytes;
         if (isset($this->unitPrice)) $o['unitPrice'] = $this->unitPrice;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'CreateTracks'; }
     public function getMethod(): string { return 'POST'; }
@@ -9571,11 +10276,11 @@ class DeleteAlbums implements IReturn, IDelete, IDeleteDb, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->albumId)) $o['albumId'] = $this->albumId;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'DeleteAlbums'; }
     public function getMethod(): string { return 'DELETE'; }
@@ -9601,11 +10306,11 @@ class DeleteArtists implements IReturn, IDelete, IDeleteDb, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->artistId)) $o['artistId'] = $this->artistId;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'DeleteArtists'; }
     public function getMethod(): string { return 'DELETE'; }
@@ -9631,11 +10336,11 @@ class DeleteChinookCustomer implements IReturn, IDelete, IDeleteDb, JsonSerializ
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->customerId)) $o['customerId'] = $this->customerId;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'DeleteChinookCustomer'; }
     public function getMethod(): string { return 'DELETE'; }
@@ -9661,11 +10366,11 @@ class DeleteChinookEmployee implements IReturn, IDelete, IDeleteDb, JsonSerializ
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->employeeId)) $o['employeeId'] = $this->employeeId;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'DeleteChinookEmployee'; }
     public function getMethod(): string { return 'DELETE'; }
@@ -9691,11 +10396,11 @@ class DeleteGenres implements IReturn, IDelete, IDeleteDb, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->genreId)) $o['genreId'] = $this->genreId;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'DeleteGenres'; }
     public function getMethod(): string { return 'DELETE'; }
@@ -9721,11 +10426,11 @@ class DeleteInvoiceItems implements IReturn, IDelete, IDeleteDb, JsonSerializabl
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->invoiceLineId)) $o['invoiceLineId'] = $this->invoiceLineId;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'DeleteInvoiceItems'; }
     public function getMethod(): string { return 'DELETE'; }
@@ -9751,11 +10456,11 @@ class DeleteInvoices implements IReturn, IDelete, IDeleteDb, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->invoiceId)) $o['invoiceId'] = $this->invoiceId;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'DeleteInvoices'; }
     public function getMethod(): string { return 'DELETE'; }
@@ -9781,11 +10486,11 @@ class DeleteMediaTypes implements IReturn, IDelete, IDeleteDb, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->mediaTypeId)) $o['mediaTypeId'] = $this->mediaTypeId;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'DeleteMediaTypes'; }
     public function getMethod(): string { return 'DELETE'; }
@@ -9811,11 +10516,11 @@ class DeletePlaylists implements IReturn, IDelete, IDeleteDb, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->playlistId)) $o['playlistId'] = $this->playlistId;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'DeletePlaylists'; }
     public function getMethod(): string { return 'DELETE'; }
@@ -9841,11 +10546,11 @@ class DeleteTracks implements IReturn, IDelete, IDeleteDb, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->trackId)) $o['trackId'] = $this->trackId;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'DeleteTracks'; }
     public function getMethod(): string { return 'DELETE'; }
@@ -9877,13 +10582,13 @@ class PatchAlbums implements IReturn, IPatch, IPatchDb, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->albumId)) $o['albumId'] = $this->albumId;
         if (isset($this->title)) $o['title'] = $this->title;
         if (isset($this->artistId)) $o['artistId'] = $this->artistId;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'PatchAlbums'; }
     public function getMethod(): string { return 'PATCH'; }
@@ -9912,12 +10617,12 @@ class PatchArtists implements IReturn, IPatch, IPatchDb, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->artistId)) $o['artistId'] = $this->artistId;
         if (isset($this->name)) $o['name'] = $this->name;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'PatchArtists'; }
     public function getMethod(): string { return 'PATCH'; }
@@ -9979,7 +10684,7 @@ class PatchChinookCustomer implements IReturn, IPatch, IPatchDb, JsonSerializabl
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->customerId)) $o['customerId'] = $this->customerId;
@@ -9995,7 +10700,7 @@ class PatchChinookCustomer implements IReturn, IPatch, IPatchDb, JsonSerializabl
         if (isset($this->fax)) $o['fax'] = $this->fax;
         if (isset($this->email)) $o['email'] = $this->email;
         if (isset($this->supportRepId)) $o['supportRepId'] = $this->supportRepId;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'PatchChinookCustomer'; }
     public function getMethod(): string { return 'PATCH'; }
@@ -10050,8 +10755,8 @@ class PatchChinookEmployee implements IReturn, IPatch, IPatchDb, JsonSerializabl
         if (isset($o['firstName'])) $this->firstName = $o['firstName'];
         if (isset($o['title'])) $this->title = $o['title'];
         if (isset($o['reportsTo'])) $this->reportsTo = $o['reportsTo'];
-        if (isset($o['birthDate'])) $this->birthDate = $o['birthDate'];
-        if (isset($o['hireDate'])) $this->hireDate = $o['hireDate'];
+        if (isset($o['birthDate'])) $this->birthDate = JsonConverters::from('DateTime', $o['birthDate']);
+        if (isset($o['hireDate'])) $this->hireDate = JsonConverters::from('DateTime', $o['hireDate']);
         if (isset($o['address'])) $this->address = $o['address'];
         if (isset($o['city'])) $this->city = $o['city'];
         if (isset($o['state'])) $this->state = $o['state'];
@@ -10063,7 +10768,7 @@ class PatchChinookEmployee implements IReturn, IPatch, IPatchDb, JsonSerializabl
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->employeeId)) $o['employeeId'] = $this->employeeId;
@@ -10071,8 +10776,8 @@ class PatchChinookEmployee implements IReturn, IPatch, IPatchDb, JsonSerializabl
         if (isset($this->firstName)) $o['firstName'] = $this->firstName;
         if (isset($this->title)) $o['title'] = $this->title;
         if (isset($this->reportsTo)) $o['reportsTo'] = $this->reportsTo;
-        if (isset($this->birthDate)) $o['birthDate'] = $this->birthDate;
-        if (isset($this->hireDate)) $o['hireDate'] = $this->hireDate;
+        if (isset($this->birthDate)) $o['birthDate'] = JsonConverters::to('DateTime', $this->birthDate);
+        if (isset($this->hireDate)) $o['hireDate'] = JsonConverters::to('DateTime', $this->hireDate);
         if (isset($this->address)) $o['address'] = $this->address;
         if (isset($this->city)) $o['city'] = $this->city;
         if (isset($this->state)) $o['state'] = $this->state;
@@ -10081,7 +10786,7 @@ class PatchChinookEmployee implements IReturn, IPatch, IPatchDb, JsonSerializabl
         if (isset($this->phone)) $o['phone'] = $this->phone;
         if (isset($this->fax)) $o['fax'] = $this->fax;
         if (isset($this->email)) $o['email'] = $this->email;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'PatchChinookEmployee'; }
     public function getMethod(): string { return 'PATCH'; }
@@ -10110,12 +10815,12 @@ class PatchGenres implements IReturn, IPatch, IPatchDb, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->genreId)) $o['genreId'] = $this->genreId;
         if (isset($this->name)) $o['name'] = $this->name;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'PatchGenres'; }
     public function getMethod(): string { return 'PATCH'; }
@@ -10153,7 +10858,7 @@ class PatchInvoiceItems implements IReturn, IPatch, IPatchDb, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->invoiceLineId)) $o['invoiceLineId'] = $this->invoiceLineId;
@@ -10161,7 +10866,7 @@ class PatchInvoiceItems implements IReturn, IPatch, IPatchDb, JsonSerializable
         if (isset($this->trackId)) $o['trackId'] = $this->trackId;
         if (isset($this->unitPrice)) $o['unitPrice'] = $this->unitPrice;
         if (isset($this->quantity)) $o['quantity'] = $this->quantity;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'PatchInvoiceItems'; }
     public function getMethod(): string { return 'PATCH'; }
@@ -10211,7 +10916,7 @@ class PatchInvoices implements IReturn, IPatch, IPatchDb, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->invoiceId)) $o['invoiceId'] = $this->invoiceId;
@@ -10223,7 +10928,7 @@ class PatchInvoices implements IReturn, IPatch, IPatchDb, JsonSerializable
         if (isset($this->billingCountry)) $o['billingCountry'] = $this->billingCountry;
         if (isset($this->billingPostalCode)) $o['billingPostalCode'] = $this->billingPostalCode;
         if (isset($this->total)) $o['total'] = $this->total;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'PatchInvoices'; }
     public function getMethod(): string { return 'PATCH'; }
@@ -10252,12 +10957,12 @@ class PatchMediaTypes implements IReturn, IPatch, IPatchDb, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->mediaTypeId)) $o['mediaTypeId'] = $this->mediaTypeId;
         if (isset($this->name)) $o['name'] = $this->name;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'PatchMediaTypes'; }
     public function getMethod(): string { return 'PATCH'; }
@@ -10286,12 +10991,12 @@ class PatchPlaylists implements IReturn, IPatch, IPatchDb, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->playlistId)) $o['playlistId'] = $this->playlistId;
         if (isset($this->name)) $o['name'] = $this->name;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'PatchPlaylists'; }
     public function getMethod(): string { return 'PATCH'; }
@@ -10341,7 +11046,7 @@ class PatchTracks implements IReturn, IPatch, IPatchDb, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->trackId)) $o['trackId'] = $this->trackId;
@@ -10353,7 +11058,7 @@ class PatchTracks implements IReturn, IPatch, IPatchDb, JsonSerializable
         if (isset($this->milliseconds)) $o['milliseconds'] = $this->milliseconds;
         if (isset($this->bytes)) $o['bytes'] = $this->bytes;
         if (isset($this->unitPrice)) $o['unitPrice'] = $this->unitPrice;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'PatchTracks'; }
     public function getMethod(): string { return 'PATCH'; }
@@ -10385,13 +11090,13 @@ class UpdateAlbums implements IReturn, IPut, IUpdateDb, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->albumId)) $o['albumId'] = $this->albumId;
         if (isset($this->title)) $o['title'] = $this->title;
         if (isset($this->artistId)) $o['artistId'] = $this->artistId;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'UpdateAlbums'; }
     public function getMethod(): string { return 'PUT'; }
@@ -10420,12 +11125,12 @@ class UpdateArtists implements IReturn, IPut, IUpdateDb, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->artistId)) $o['artistId'] = $this->artistId;
         if (isset($this->name)) $o['name'] = $this->name;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'UpdateArtists'; }
     public function getMethod(): string { return 'PUT'; }
@@ -10487,7 +11192,7 @@ class UpdateChinookCustomer implements IReturn, IPut, IUpdateDb, JsonSerializabl
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->customerId)) $o['customerId'] = $this->customerId;
@@ -10503,7 +11208,7 @@ class UpdateChinookCustomer implements IReturn, IPut, IUpdateDb, JsonSerializabl
         if (isset($this->fax)) $o['fax'] = $this->fax;
         if (isset($this->email)) $o['email'] = $this->email;
         if (isset($this->supportRepId)) $o['supportRepId'] = $this->supportRepId;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'UpdateChinookCustomer'; }
     public function getMethod(): string { return 'PUT'; }
@@ -10558,8 +11263,8 @@ class UpdateChinookEmployee implements IReturn, IPut, IUpdateDb, JsonSerializabl
         if (isset($o['firstName'])) $this->firstName = $o['firstName'];
         if (isset($o['title'])) $this->title = $o['title'];
         if (isset($o['reportsTo'])) $this->reportsTo = $o['reportsTo'];
-        if (isset($o['birthDate'])) $this->birthDate = $o['birthDate'];
-        if (isset($o['hireDate'])) $this->hireDate = $o['hireDate'];
+        if (isset($o['birthDate'])) $this->birthDate = JsonConverters::from('DateTime', $o['birthDate']);
+        if (isset($o['hireDate'])) $this->hireDate = JsonConverters::from('DateTime', $o['hireDate']);
         if (isset($o['address'])) $this->address = $o['address'];
         if (isset($o['city'])) $this->city = $o['city'];
         if (isset($o['state'])) $this->state = $o['state'];
@@ -10571,7 +11276,7 @@ class UpdateChinookEmployee implements IReturn, IPut, IUpdateDb, JsonSerializabl
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->employeeId)) $o['employeeId'] = $this->employeeId;
@@ -10579,8 +11284,8 @@ class UpdateChinookEmployee implements IReturn, IPut, IUpdateDb, JsonSerializabl
         if (isset($this->firstName)) $o['firstName'] = $this->firstName;
         if (isset($this->title)) $o['title'] = $this->title;
         if (isset($this->reportsTo)) $o['reportsTo'] = $this->reportsTo;
-        if (isset($this->birthDate)) $o['birthDate'] = $this->birthDate;
-        if (isset($this->hireDate)) $o['hireDate'] = $this->hireDate;
+        if (isset($this->birthDate)) $o['birthDate'] = JsonConverters::to('DateTime', $this->birthDate);
+        if (isset($this->hireDate)) $o['hireDate'] = JsonConverters::to('DateTime', $this->hireDate);
         if (isset($this->address)) $o['address'] = $this->address;
         if (isset($this->city)) $o['city'] = $this->city;
         if (isset($this->state)) $o['state'] = $this->state;
@@ -10589,7 +11294,7 @@ class UpdateChinookEmployee implements IReturn, IPut, IUpdateDb, JsonSerializabl
         if (isset($this->phone)) $o['phone'] = $this->phone;
         if (isset($this->fax)) $o['fax'] = $this->fax;
         if (isset($this->email)) $o['email'] = $this->email;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'UpdateChinookEmployee'; }
     public function getMethod(): string { return 'PUT'; }
@@ -10618,12 +11323,12 @@ class UpdateGenres implements IReturn, IPut, IUpdateDb, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->genreId)) $o['genreId'] = $this->genreId;
         if (isset($this->name)) $o['name'] = $this->name;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'UpdateGenres'; }
     public function getMethod(): string { return 'PUT'; }
@@ -10654,11 +11359,11 @@ class QueryAppUsers extends QueryDb implements IReturn, IGet, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = parent::jsonSerialize();
         if (isset($this->id)) $o['id'] = $this->id;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'QueryAppUsers'; }
     public function getMethod(): string { return 'GET'; }
@@ -10688,11 +11393,11 @@ class QueryCategories extends QueryDb implements IReturn, IGet, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = parent::jsonSerialize();
         if (isset($this->id)) $o['id'] = $this->id;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'QueryCategories'; }
     public function getMethod(): string { return 'GET'; }
@@ -10722,11 +11427,11 @@ class QueryCustomers extends QueryDb implements IReturn, IGet, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = parent::jsonSerialize();
         if (isset($this->id)) $o['id'] = $this->id;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'QueryCustomers'; }
     public function getMethod(): string { return 'GET'; }
@@ -10756,11 +11461,11 @@ class QueryEmployees extends QueryDb implements IReturn, IGet, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = parent::jsonSerialize();
         if (isset($this->id)) $o['id'] = $this->id;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'QueryEmployees'; }
     public function getMethod(): string { return 'GET'; }
@@ -10790,11 +11495,11 @@ class QueryEmployeeTerritories extends QueryDb implements IReturn, IGet, JsonSer
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = parent::jsonSerialize();
         if (isset($this->id)) $o['id'] = $this->id;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'QueryEmployeeTerritories'; }
     public function getMethod(): string { return 'GET'; }
@@ -10824,11 +11529,11 @@ class QueryMigrations extends QueryDb implements IReturn, IGet, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = parent::jsonSerialize();
         if (isset($this->id)) $o['id'] = $this->id;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'QueryMigrations'; }
     public function getMethod(): string { return 'GET'; }
@@ -10858,11 +11563,11 @@ class QueryOrderDetails extends QueryDb implements IReturn, IGet, JsonSerializab
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = parent::jsonSerialize();
         if (isset($this->id)) $o['id'] = $this->id;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'QueryOrderDetails'; }
     public function getMethod(): string { return 'GET'; }
@@ -10892,11 +11597,11 @@ class QueryOrders extends QueryDb implements IReturn, IGet, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = parent::jsonSerialize();
         if (isset($this->id)) $o['id'] = $this->id;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'QueryOrders'; }
     public function getMethod(): string { return 'GET'; }
@@ -10926,11 +11631,11 @@ class QueryProducts extends QueryDb implements IReturn, IGet, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = parent::jsonSerialize();
         if (isset($this->id)) $o['id'] = $this->id;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'QueryProducts'; }
     public function getMethod(): string { return 'GET'; }
@@ -10960,11 +11665,11 @@ class QueryRegions extends QueryDb implements IReturn, IGet, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = parent::jsonSerialize();
         if (isset($this->id)) $o['id'] = $this->id;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'QueryRegions'; }
     public function getMethod(): string { return 'GET'; }
@@ -10994,11 +11699,11 @@ class QueryShippers extends QueryDb implements IReturn, IGet, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = parent::jsonSerialize();
         if (isset($this->id)) $o['id'] = $this->id;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'QueryShippers'; }
     public function getMethod(): string { return 'GET'; }
@@ -11028,11 +11733,11 @@ class QuerySuppliers extends QueryDb implements IReturn, IGet, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = parent::jsonSerialize();
         if (isset($this->id)) $o['id'] = $this->id;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'QuerySuppliers'; }
     public function getMethod(): string { return 'GET'; }
@@ -11062,11 +11767,11 @@ class QueryTerritories extends QueryDb implements IReturn, IGet, JsonSerializabl
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = parent::jsonSerialize();
         if (isset($this->id)) $o['id'] = $this->id;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'QueryTerritories'; }
     public function getMethod(): string { return 'GET'; }
@@ -11097,11 +11802,11 @@ class QueryUserAuthRoles extends QueryDb implements IReturn, IGet, JsonSerializa
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = parent::jsonSerialize();
         if (isset($this->id)) $o['id'] = $this->id;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'QueryUserAuthRoles'; }
     public function getMethod(): string { return 'GET'; }
@@ -11131,11 +11836,11 @@ class QueryValidationRules extends QueryDb implements IReturn, IGet, JsonSeriali
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = parent::jsonSerialize();
         if (isset($this->id)) $o['id'] = $this->id;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'QueryValidationRules'; }
     public function getMethod(): string { return 'GET'; }
@@ -11163,11 +11868,11 @@ class QueryAlbums extends QueryDb implements IReturn, IGet, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = parent::jsonSerialize();
         if (isset($this->albumId)) $o['albumId'] = $this->albumId;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'QueryAlbums'; }
     public function getMethod(): string { return 'GET'; }
@@ -11201,13 +11906,13 @@ class QueryArtists extends QueryDb implements IReturn, IGet, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = parent::jsonSerialize();
         if (isset($this->artistId)) $o['artistId'] = $this->artistId;
         if (isset($this->artistIdBetween)) $o['artistIdBetween'] = JsonConverters::toArray('int', $this->artistIdBetween);
         if (isset($this->nameStartsWith)) $o['nameStartsWith'] = $this->nameStartsWith;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'QueryArtists'; }
     public function getMethod(): string { return 'GET'; }
@@ -11235,11 +11940,11 @@ class QueryChinookCustomers extends QueryDb implements IReturn, IGet, JsonSerial
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = parent::jsonSerialize();
         if (isset($this->customerId)) $o['customerId'] = $this->customerId;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'QueryChinookCustomers'; }
     public function getMethod(): string { return 'GET'; }
@@ -11267,11 +11972,11 @@ class QueryChinookEmployees extends QueryDb implements IReturn, IGet, JsonSerial
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = parent::jsonSerialize();
         if (isset($this->employeeId)) $o['employeeId'] = $this->employeeId;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'QueryChinookEmployees'; }
     public function getMethod(): string { return 'GET'; }
@@ -11299,11 +12004,11 @@ class QueryGenres extends QueryDb implements IReturn, IGet, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = parent::jsonSerialize();
         if (isset($this->genreId)) $o['genreId'] = $this->genreId;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'QueryGenres'; }
     public function getMethod(): string { return 'GET'; }
@@ -11331,11 +12036,11 @@ class QueryInvoiceItems extends QueryDb implements IReturn, IGet, JsonSerializab
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = parent::jsonSerialize();
         if (isset($this->invoiceLineId)) $o['invoiceLineId'] = $this->invoiceLineId;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'QueryInvoiceItems'; }
     public function getMethod(): string { return 'GET'; }
@@ -11363,11 +12068,11 @@ class QueryInvoices extends QueryDb implements IReturn, IGet, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = parent::jsonSerialize();
         if (isset($this->invoiceId)) $o['invoiceId'] = $this->invoiceId;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'QueryInvoices'; }
     public function getMethod(): string { return 'GET'; }
@@ -11395,11 +12100,11 @@ class QueryMediaTypes extends QueryDb implements IReturn, IGet, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = parent::jsonSerialize();
         if (isset($this->mediaTypeId)) $o['mediaTypeId'] = $this->mediaTypeId;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'QueryMediaTypes'; }
     public function getMethod(): string { return 'GET'; }
@@ -11427,11 +12132,11 @@ class QueryPlaylists extends QueryDb implements IReturn, IGet, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = parent::jsonSerialize();
         if (isset($this->playlistId)) $o['playlistId'] = $this->playlistId;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'QueryPlaylists'; }
     public function getMethod(): string { return 'GET'; }
@@ -11462,12 +12167,12 @@ class QueryTracks extends QueryDb implements IReturn, IGet, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = parent::jsonSerialize();
         if (isset($this->trackId)) $o['trackId'] = $this->trackId;
         if (isset($this->nameContains)) $o['nameContains'] = $this->nameContains;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'QueryTracks'; }
     public function getMethod(): string { return 'GET'; }
@@ -11493,11 +12198,11 @@ class QueryJobApplicationAttachment extends QueryDb implements IReturn, JsonSeri
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = parent::jsonSerialize();
         if (isset($this->id)) $o['id'] = $this->id;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'QueryJobApplicationAttachment'; }
     public function getMethod(): string { return 'GET'; }
@@ -11523,11 +12228,11 @@ class QueryContacts extends QueryDb implements IReturn, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = parent::jsonSerialize();
         if (isset($this->id)) $o['id'] = $this->id;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'QueryContacts'; }
     public function getMethod(): string { return 'GET'; }
@@ -11556,12 +12261,12 @@ class QueryJob extends QueryDb implements IReturn, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = parent::jsonSerialize();
         if (isset($this->id)) $o['id'] = $this->id;
         if (isset($this->ids)) $o['ids'] = JsonConverters::toArray('int', $this->ids);
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'QueryJob'; }
     public function getMethod(): string { return 'GET'; }
@@ -11593,13 +12298,13 @@ class QueryJobApplication extends QueryDb implements IReturn, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = parent::jsonSerialize();
         if (isset($this->id)) $o['id'] = $this->id;
         if (isset($this->ids)) $o['ids'] = JsonConverters::toArray('int', $this->ids);
         if (isset($this->jobId)) $o['jobId'] = $this->jobId;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'QueryJobApplication'; }
     public function getMethod(): string { return 'GET'; }
@@ -11628,12 +12333,12 @@ class QueryPhoneScreen extends QueryDb implements IReturn, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = parent::jsonSerialize();
         if (isset($this->id)) $o['id'] = $this->id;
         if (isset($this->jobApplicationId)) $o['jobApplicationId'] = $this->jobApplicationId;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'QueryPhoneScreen'; }
     public function getMethod(): string { return 'GET'; }
@@ -11662,12 +12367,12 @@ class QueryInterview extends QueryDb implements IReturn, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = parent::jsonSerialize();
         if (isset($this->id)) $o['id'] = $this->id;
         if (isset($this->jobApplicationId)) $o['jobApplicationId'] = $this->jobApplicationId;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'QueryInterview'; }
     public function getMethod(): string { return 'GET'; }
@@ -11696,12 +12401,12 @@ class QueryJobOffer extends QueryDb implements IReturn, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = parent::jsonSerialize();
         if (isset($this->id)) $o['id'] = $this->id;
         if (isset($this->jobApplicationId)) $o['jobApplicationId'] = $this->jobApplicationId;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'QueryJobOffer'; }
     public function getMethod(): string { return 'GET'; }
@@ -11727,11 +12432,11 @@ class QueryJobAppEvents extends QueryDb implements IReturn, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = parent::jsonSerialize();
         if (isset($this->jobApplicationId)) $o['jobApplicationId'] = $this->jobApplicationId;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'QueryJobAppEvents'; }
     public function getMethod(): string { return 'GET'; }
@@ -11764,13 +12469,13 @@ class QueryAppUser extends QueryDb implements IReturn, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = parent::jsonSerialize();
         if (isset($this->emailContains)) $o['emailContains'] = $this->emailContains;
         if (isset($this->firstNameContains)) $o['firstNameContains'] = $this->firstNameContains;
         if (isset($this->lastNameContains)) $o['lastNameContains'] = $this->lastNameContains;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'QueryAppUser'; }
     public function getMethod(): string { return 'GET'; }
@@ -11796,11 +12501,11 @@ class QueryJobApplicationComments extends QueryDb implements IReturn, JsonSerial
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = parent::jsonSerialize();
         if (isset($this->jobApplicationId)) $o['jobApplicationId'] = $this->jobApplicationId;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'QueryJobApplicationComments'; }
     public function getMethod(): string { return 'GET'; }
@@ -11829,11 +12534,11 @@ class QueryBookings extends QueryDb implements IReturn, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = parent::jsonSerialize();
         if (isset($this->id)) $o['id'] = $this->id;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'QueryBookings'; }
     public function getMethod(): string { return 'GET'; }
@@ -11861,11 +12566,11 @@ class QueryCoupons extends QueryDb implements IReturn, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = parent::jsonSerialize();
         if (isset($this->id)) $o['id'] = $this->id;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'QueryCoupons'; }
     public function getMethod(): string { return 'GET'; }
@@ -11894,12 +12599,12 @@ class QueryFileSystemItems extends QueryDb implements IReturn, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = parent::jsonSerialize();
         if (isset($this->appUserId)) $o['appUserId'] = $this->appUserId;
         if (isset($this->fileAccessType)) $o['fileAccessType'] = JsonConverters::to('FileAccessType', $this->fileAccessType);
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'QueryFileSystemItems'; }
     public function getMethod(): string { return 'GET'; }
@@ -11914,10 +12619,10 @@ class QueryFileSystemFiles extends QueryDb implements IReturn, JsonSerializable
 {
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = parent::jsonSerialize();
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'QueryFileSystemFiles'; }
     public function getMethod(): string { return 'GET'; }
@@ -11932,10 +12637,10 @@ class QueryPlayer extends QueryDb implements IReturn, JsonSerializable
 {
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = parent::jsonSerialize();
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'QueryPlayer'; }
     public function getMethod(): string { return 'GET'; }
@@ -11950,10 +12655,10 @@ class QueryProfile extends QueryDb implements IReturn, JsonSerializable
 {
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = parent::jsonSerialize();
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'QueryProfile'; }
     public function getMethod(): string { return 'GET'; }
@@ -11979,11 +12684,11 @@ class QueryGameItem extends QueryDb implements IReturn, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = parent::jsonSerialize();
         if (isset($this->name)) $o['name'] = $this->name;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'QueryGameItem'; }
     public function getMethod(): string { return 'GET'; }
@@ -12015,13 +12720,13 @@ class QueryPlayerGameItem extends QueryDb implements IReturn, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = parent::jsonSerialize();
         if (isset($this->id)) $o['id'] = $this->id;
         if (isset($this->playerId)) $o['playerId'] = $this->playerId;
         if (isset($this->gameItemName)) $o['gameItemName'] = $this->gameItemName;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'QueryPlayerGameItem'; }
     public function getMethod(): string { return 'GET'; }
@@ -12047,11 +12752,11 @@ class QueryLevel extends QueryDb implements IReturn, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = parent::jsonSerialize();
         if (isset($this->id)) $o['id'] = $this->id;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'QueryLevel'; }
     public function getMethod(): string { return 'GET'; }
@@ -12067,10 +12772,10 @@ class QueryTodos extends QueryDb implements IReturn, JsonSerializable
 {
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = parent::jsonSerialize();
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'QueryTodos'; }
     public function getMethod(): string { return 'GET'; }
@@ -12334,7 +13039,7 @@ class CreateAppUser implements IReturn, IPost, ICreateDb, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->displayName)) $o['displayName'] = $this->displayName;
@@ -12385,7 +13090,7 @@ class CreateAppUser implements IReturn, IPost, ICreateDb, JsonSerializable
         if (isset($this->refId)) $o['refId'] = $this->refId;
         if (isset($this->refIdStr)) $o['refIdStr'] = $this->refIdStr;
         if (isset($this->meta)) $o['meta'] = $this->meta;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'CreateAppUser'; }
     public function getMethod(): string { return 'POST'; }
@@ -12423,13 +13128,13 @@ class CreateCategory implements IReturn, IPost, ICreateDb, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->id)) $o['id'] = $this->id;
         if (isset($this->categoryName)) $o['categoryName'] = $this->categoryName;
         if (isset($this->description)) $o['description'] = $this->description;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'CreateCategory'; }
     public function getMethod(): string { return 'POST'; }
@@ -12507,7 +13212,7 @@ class CreateCustomer implements IReturn, IPost, ICreateDb, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->id)) $o['id'] = $this->id;
@@ -12521,7 +13226,7 @@ class CreateCustomer implements IReturn, IPost, ICreateDb, JsonSerializable
         if (isset($this->country)) $o['country'] = $this->country;
         if (isset($this->phone)) $o['phone'] = $this->phone;
         if (isset($this->fax)) $o['fax'] = $this->fax;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'CreateCustomer'; }
     public function getMethod(): string { return 'POST'; }
@@ -12634,7 +13339,7 @@ class CreateEmployee implements IReturn, IPost, ICreateDb, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->id)) $o['id'] = $this->id;
@@ -12655,7 +13360,7 @@ class CreateEmployee implements IReturn, IPost, ICreateDb, JsonSerializable
         if (isset($this->notes)) $o['notes'] = $this->notes;
         if (isset($this->reportsTo)) $o['reportsTo'] = $this->reportsTo;
         if (isset($this->photoPath)) $o['photoPath'] = $this->photoPath;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'CreateEmployee'; }
     public function getMethod(): string { return 'POST'; }
@@ -12693,13 +13398,13 @@ class CreateEmployeeTerritory implements IReturn, IPost, ICreateDb, JsonSerializ
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->id)) $o['id'] = $this->id;
         if (isset($this->employeeId)) $o['employeeId'] = $this->employeeId;
         if (isset($this->territoryId)) $o['territoryId'] = $this->territoryId;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'CreateEmployeeTerritory'; }
     public function getMethod(): string { return 'POST'; }
@@ -12747,7 +13452,7 @@ class CreateFileSystemFile implements IReturn, IPost, ICreateDb, JsonSerializabl
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->fileName)) $o['fileName'] = $this->fileName;
@@ -12755,7 +13460,7 @@ class CreateFileSystemFile implements IReturn, IPost, ICreateDb, JsonSerializabl
         if (isset($this->contentType)) $o['contentType'] = $this->contentType;
         if (isset($this->contentLength)) $o['contentLength'] = $this->contentLength;
         if (isset($this->fileSystemItemId)) $o['fileSystemItemId'] = $this->fileSystemItemId;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'CreateFileSystemFile'; }
     public function getMethod(): string { return 'POST'; }
@@ -12833,7 +13538,7 @@ class CreateMigration implements IReturn, IPost, ICreateDb, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->name)) $o['name'] = $this->name;
@@ -12847,7 +13552,7 @@ class CreateMigration implements IReturn, IPost, ICreateDb, JsonSerializable
         if (isset($this->errorMessage)) $o['errorMessage'] = $this->errorMessage;
         if (isset($this->errorStackTrace)) $o['errorStackTrace'] = $this->errorStackTrace;
         if (isset($this->meta)) $o['meta'] = $this->meta;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'CreateMigration'; }
     public function getMethod(): string { return 'POST'; }
@@ -12940,7 +13645,7 @@ class CreateOrder implements IReturn, IPost, ICreateDb, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->id)) $o['id'] = $this->id;
@@ -12957,7 +13662,7 @@ class CreateOrder implements IReturn, IPost, ICreateDb, JsonSerializable
         if (isset($this->shipRegion)) $o['shipRegion'] = $this->shipRegion;
         if (isset($this->shipPostalCode)) $o['shipPostalCode'] = $this->shipPostalCode;
         if (isset($this->shipCountry)) $o['shipCountry'] = $this->shipCountry;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'CreateOrder'; }
     public function getMethod(): string { return 'POST'; }
@@ -13010,7 +13715,7 @@ class CreateOrderDetail implements IReturn, IPost, ICreateDb, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->id)) $o['id'] = $this->id;
@@ -13019,7 +13724,7 @@ class CreateOrderDetail implements IReturn, IPost, ICreateDb, JsonSerializable
         if (isset($this->unitPrice)) $o['unitPrice'] = $this->unitPrice;
         if (isset($this->quantity)) $o['quantity'] = $this->quantity;
         if (isset($this->discount)) $o['discount'] = $this->discount;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'CreateOrderDetail'; }
     public function getMethod(): string { return 'POST'; }
@@ -13092,7 +13797,7 @@ class CreateProduct implements IReturn, IPost, ICreateDb, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->id)) $o['id'] = $this->id;
@@ -13105,7 +13810,7 @@ class CreateProduct implements IReturn, IPost, ICreateDb, JsonSerializable
         if (isset($this->unitsOnOrder)) $o['unitsOnOrder'] = $this->unitsOnOrder;
         if (isset($this->reorderLevel)) $o['reorderLevel'] = $this->reorderLevel;
         if (isset($this->discontinued)) $o['discontinued'] = $this->discontinued;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'CreateProduct'; }
     public function getMethod(): string { return 'POST'; }
@@ -13138,12 +13843,12 @@ class CreateRegion implements IReturn, IPost, ICreateDb, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->id)) $o['id'] = $this->id;
         if (isset($this->regionDescription)) $o['regionDescription'] = $this->regionDescription;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'CreateRegion'; }
     public function getMethod(): string { return 'POST'; }
@@ -13181,13 +13886,13 @@ class CreateShipper implements IReturn, IPost, ICreateDb, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->id)) $o['id'] = $this->id;
         if (isset($this->companyName)) $o['companyName'] = $this->companyName;
         if (isset($this->phone)) $o['phone'] = $this->phone;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'CreateShipper'; }
     public function getMethod(): string { return 'POST'; }
@@ -13270,7 +13975,7 @@ class CreateSupplier implements IReturn, IPost, ICreateDb, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->id)) $o['id'] = $this->id;
@@ -13285,7 +13990,7 @@ class CreateSupplier implements IReturn, IPost, ICreateDb, JsonSerializable
         if (isset($this->phone)) $o['phone'] = $this->phone;
         if (isset($this->fax)) $o['fax'] = $this->fax;
         if (isset($this->homePage)) $o['homePage'] = $this->homePage;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'CreateSupplier'; }
     public function getMethod(): string { return 'POST'; }
@@ -13323,13 +14028,13 @@ class CreateTerritory implements IReturn, IPost, ICreateDb, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->id)) $o['id'] = $this->id;
         if (isset($this->territoryDescription)) $o['territoryDescription'] = $this->territoryDescription;
         if (isset($this->regionId)) $o['regionId'] = $this->regionId;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'CreateTerritory'; }
     public function getMethod(): string { return 'POST'; }
@@ -13362,12 +14067,12 @@ class CreateTodo implements IReturn, IPost, ICreateDb, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->text)) $o['text'] = $this->text;
         if (isset($this->isFinished)) $o['isFinished'] = $this->isFinished;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'CreateTodo'; }
     public function getMethod(): string { return 'POST'; }
@@ -13431,7 +14136,7 @@ class CreateUserAuthRole implements IReturn, IPost, ICreateDb, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->userAuthId)) $o['userAuthId'] = $this->userAuthId;
@@ -13442,7 +14147,7 @@ class CreateUserAuthRole implements IReturn, IPost, ICreateDb, JsonSerializable
         if (isset($this->refId)) $o['refId'] = $this->refId;
         if (isset($this->refIdStr)) $o['refIdStr'] = $this->refIdStr;
         if (isset($this->meta)) $o['meta'] = $this->meta;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'CreateUserAuthRole'; }
     public function getMethod(): string { return 'POST'; }
@@ -13530,7 +14235,7 @@ class CreateValidationRule implements IReturn, IPost, ICreateDb, JsonSerializabl
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->type)) $o['type'] = $this->type;
@@ -13546,7 +14251,7 @@ class CreateValidationRule implements IReturn, IPost, ICreateDb, JsonSerializabl
         if (isset($this->condition)) $o['condition'] = $this->condition;
         if (isset($this->errorCode)) $o['errorCode'] = $this->errorCode;
         if (isset($this->message)) $o['message'] = $this->message;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'CreateValidationRule'; }
     public function getMethod(): string { return 'POST'; }
@@ -13575,11 +14280,11 @@ class DeleteAppUser implements IReturn, IDelete, IDeleteDb, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->id)) $o['id'] = $this->id;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'DeleteAppUser'; }
     public function getMethod(): string { return 'DELETE'; }
@@ -13607,11 +14312,11 @@ class DeleteCategory implements IReturn, IDelete, IDeleteDb, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->id)) $o['id'] = $this->id;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'DeleteCategory'; }
     public function getMethod(): string { return 'DELETE'; }
@@ -13639,11 +14344,11 @@ class DeleteCustomer implements IReturn, IDelete, IDeleteDb, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->id)) $o['id'] = $this->id;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'DeleteCustomer'; }
     public function getMethod(): string { return 'DELETE'; }
@@ -13671,11 +14376,11 @@ class DeleteEmployee implements IReturn, IDelete, IDeleteDb, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->id)) $o['id'] = $this->id;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'DeleteEmployee'; }
     public function getMethod(): string { return 'DELETE'; }
@@ -13703,11 +14408,11 @@ class DeleteEmployeeTerritory implements IReturn, IDelete, IDeleteDb, JsonSerial
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->id)) $o['id'] = $this->id;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'DeleteEmployeeTerritory'; }
     public function getMethod(): string { return 'DELETE'; }
@@ -13735,11 +14440,11 @@ class DeleteFileSystemFile implements IReturn, IDelete, IDeleteDb, JsonSerializa
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->id)) $o['id'] = $this->id;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'DeleteFileSystemFile'; }
     public function getMethod(): string { return 'DELETE'; }
@@ -13767,11 +14472,11 @@ class DeleteFileSystemItem implements IReturn, IDelete, IDeleteDb, JsonSerializa
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->id)) $o['id'] = $this->id;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'DeleteFileSystemItem'; }
     public function getMethod(): string { return 'DELETE'; }
@@ -13799,11 +14504,11 @@ class DeleteMigration implements IReturn, IDelete, IDeleteDb, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->id)) $o['id'] = $this->id;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'DeleteMigration'; }
     public function getMethod(): string { return 'DELETE'; }
@@ -13831,11 +14536,11 @@ class DeleteOrder implements IReturn, IDelete, IDeleteDb, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->id)) $o['id'] = $this->id;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'DeleteOrder'; }
     public function getMethod(): string { return 'DELETE'; }
@@ -13863,11 +14568,11 @@ class DeleteOrderDetail implements IReturn, IDelete, IDeleteDb, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->id)) $o['id'] = $this->id;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'DeleteOrderDetail'; }
     public function getMethod(): string { return 'DELETE'; }
@@ -13895,11 +14600,11 @@ class DeleteProduct implements IReturn, IDelete, IDeleteDb, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->id)) $o['id'] = $this->id;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'DeleteProduct'; }
     public function getMethod(): string { return 'DELETE'; }
@@ -13927,11 +14632,11 @@ class DeleteRegion implements IReturn, IDelete, IDeleteDb, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->id)) $o['id'] = $this->id;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'DeleteRegion'; }
     public function getMethod(): string { return 'DELETE'; }
@@ -13959,11 +14664,11 @@ class DeleteShipper implements IReturn, IDelete, IDeleteDb, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->id)) $o['id'] = $this->id;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'DeleteShipper'; }
     public function getMethod(): string { return 'DELETE'; }
@@ -13991,11 +14696,11 @@ class DeleteSupplier implements IReturn, IDelete, IDeleteDb, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->id)) $o['id'] = $this->id;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'DeleteSupplier'; }
     public function getMethod(): string { return 'DELETE'; }
@@ -14023,11 +14728,11 @@ class DeleteTerritory implements IReturn, IDelete, IDeleteDb, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->id)) $o['id'] = $this->id;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'DeleteTerritory'; }
     public function getMethod(): string { return 'DELETE'; }
@@ -14055,11 +14760,11 @@ class DeleteTodo implements IReturn, IDelete, IDeleteDb, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->id)) $o['id'] = $this->id;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'DeleteTodo'; }
     public function getMethod(): string { return 'DELETE'; }
@@ -14088,11 +14793,11 @@ class DeleteUserAuthRole implements IReturn, IDelete, IDeleteDb, JsonSerializabl
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->id)) $o['id'] = $this->id;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'DeleteUserAuthRole'; }
     public function getMethod(): string { return 'DELETE'; }
@@ -14120,11 +14825,11 @@ class DeleteValidationRule implements IReturn, IDelete, IDeleteDb, JsonSerializa
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->id)) $o['id'] = $this->id;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'DeleteValidationRule'; }
     public function getMethod(): string { return 'DELETE'; }
@@ -14393,7 +15098,7 @@ class PatchAppUser implements IReturn, IPatch, IPatchDb, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->id)) $o['id'] = $this->id;
@@ -14445,7 +15150,7 @@ class PatchAppUser implements IReturn, IPatch, IPatchDb, JsonSerializable
         if (isset($this->refId)) $o['refId'] = $this->refId;
         if (isset($this->refIdStr)) $o['refIdStr'] = $this->refIdStr;
         if (isset($this->meta)) $o['meta'] = $this->meta;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'PatchAppUser'; }
     public function getMethod(): string { return 'PATCH'; }
@@ -14483,13 +15188,13 @@ class PatchCategory implements IReturn, IPatch, IPatchDb, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->id)) $o['id'] = $this->id;
         if (isset($this->categoryName)) $o['categoryName'] = $this->categoryName;
         if (isset($this->description)) $o['description'] = $this->description;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'PatchCategory'; }
     public function getMethod(): string { return 'PATCH'; }
@@ -14567,7 +15272,7 @@ class PatchCustomer implements IReturn, IPatch, IPatchDb, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->id)) $o['id'] = $this->id;
@@ -14581,7 +15286,7 @@ class PatchCustomer implements IReturn, IPatch, IPatchDb, JsonSerializable
         if (isset($this->country)) $o['country'] = $this->country;
         if (isset($this->phone)) $o['phone'] = $this->phone;
         if (isset($this->fax)) $o['fax'] = $this->fax;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'PatchCustomer'; }
     public function getMethod(): string { return 'PATCH'; }
@@ -14694,7 +15399,7 @@ class PatchEmployee implements IReturn, IPatch, IPatchDb, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->id)) $o['id'] = $this->id;
@@ -14715,7 +15420,7 @@ class PatchEmployee implements IReturn, IPatch, IPatchDb, JsonSerializable
         if (isset($this->notes)) $o['notes'] = $this->notes;
         if (isset($this->reportsTo)) $o['reportsTo'] = $this->reportsTo;
         if (isset($this->photoPath)) $o['photoPath'] = $this->photoPath;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'PatchEmployee'; }
     public function getMethod(): string { return 'PATCH'; }
@@ -14753,13 +15458,13 @@ class PatchEmployeeTerritory implements IReturn, IPatch, IPatchDb, JsonSerializa
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->id)) $o['id'] = $this->id;
         if (isset($this->employeeId)) $o['employeeId'] = $this->employeeId;
         if (isset($this->territoryId)) $o['territoryId'] = $this->territoryId;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'PatchEmployeeTerritory'; }
     public function getMethod(): string { return 'PATCH'; }
@@ -14812,7 +15517,7 @@ class PatchFileSystemFile implements IReturn, IPatch, IPatchDb, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->id)) $o['id'] = $this->id;
@@ -14821,7 +15526,7 @@ class PatchFileSystemFile implements IReturn, IPatch, IPatchDb, JsonSerializable
         if (isset($this->contentType)) $o['contentType'] = $this->contentType;
         if (isset($this->contentLength)) $o['contentLength'] = $this->contentLength;
         if (isset($this->fileSystemItemId)) $o['fileSystemItemId'] = $this->fileSystemItemId;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'PatchFileSystemFile'; }
     public function getMethod(): string { return 'PATCH'; }
@@ -14859,13 +15564,13 @@ class PatchFileSystemItem implements IReturn, IPatch, IPatchDb, JsonSerializable
     }
     
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->id)) $o['id'] = $this->id;
         if (isset($this->fileAccessType)) $o['fileAccessType'] = $this->fileAccessType;
         if (isset($this->appUserId)) $o['appUserId'] = $this->appUserId;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'PatchFileSystemItem'; }
     public function getMethod(): string { return 'PATCH'; }

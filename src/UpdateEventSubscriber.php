@@ -33,12 +33,12 @@ class UpdateEventSubscriber implements IPost, JsonSerializable
     }
 
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->id)) $o['id'] = $this->id;
         if (isset($this->subscribeChannels)) $o['subscribeChannels'] = JsonConverters::toArray('string', $this->subscribeChannels);
         if (isset($this->unsubscribeChannels)) $o['unsubscribeChannels'] = JsonConverters::toArray('string', $this->unsubscribeChannels);
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
 }

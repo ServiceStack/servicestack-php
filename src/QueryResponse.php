@@ -51,7 +51,7 @@ class QueryResponse implements JsonSerializable
     }
 
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->offset)) $o['offset'] = $this->offset;
@@ -59,6 +59,6 @@ class QueryResponse implements JsonSerializable
         if (isset($this->results)) $o['results'] = JsonConverters::toArray($this->genericArgs[0], $this->results);
         if (isset($this->meta)) $o['meta'] = JsonConverters::to(JsonConverters::context('Dictionary',genericArgs:['string','string']), $this->meta);
         if (isset($this->responseStatus)) $o['responseStatus'] = JsonConverters::to('ResponseStatus', $this->responseStatus);
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
 }

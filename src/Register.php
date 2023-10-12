@@ -70,7 +70,7 @@ class Register implements IReturn, IPost, JsonSerializable
     }
 
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->userName)) $o['userName'] = $this->userName;
@@ -83,7 +83,7 @@ class Register implements IReturn, IPost, JsonSerializable
         if (isset($this->autoLogin)) $o['autoLogin'] = $this->autoLogin;
         if (isset($this->errorView)) $o['errorView'] = $this->errorView;
         if (isset($this->meta)) $o['meta'] = JsonConverters::to(JsonConverters::context('Dictionary',genericArgs:['string','string']), $this->meta);
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'Register'; }
     public function getMethod(): string { return 'POST'; }

@@ -37,13 +37,13 @@ class UserApiKey implements JsonSerializable
     }
 
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->key)) $o['key'] = $this->key;
         if (isset($this->keyType)) $o['keyType'] = $this->keyType;
         if (isset($this->expiryDate)) $o['expiryDate'] = $this->expiryDate;
         if (isset($this->meta)) $o['meta'] = JsonConverters::to(JsonConverters::context('Dictionary',genericArgs:['string','string']), $this->meta);
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
 }

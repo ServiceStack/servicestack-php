@@ -41,7 +41,7 @@ class ResponseStatus implements JsonSerializable
     }
 
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->errorCode)) $o['errorCode'] = $this->errorCode;
@@ -49,6 +49,6 @@ class ResponseStatus implements JsonSerializable
         if (isset($this->stackTrace)) $o['stackTrace'] = $this->stackTrace;
         if (isset($this->errors)) $o['errors'] = JsonConverters::toArray('ResponseError', $this->errors);
         if (isset($this->meta)) $o['meta'] = JsonConverters::to(JsonConverters::context('Dictionary',genericArgs:['string','string']), $this->meta);
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
 }

@@ -35,14 +35,14 @@ class AssignRoles implements IReturn, IPost, JsonSerializable
         if (isset($o['meta'])) $this->meta = JsonConverters::from(JsonConverters::context('Dictionary',genericArgs:['string','string']), $o['meta']);
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->userName)) $o['userName'] = $this->userName;
         if (isset($this->permissions)) $o['permissions'] = JsonConverters::toArray('string', $this->permissions);
         if (isset($this->roles)) $o['roles'] = JsonConverters::toArray('string', $this->roles);
         if (isset($this->meta)) $o['meta'] = JsonConverters::to(JsonConverters::context('Dictionary',genericArgs:['string','string']), $this->meta);
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'AssignRoles'; }
     public function getMethod(): string { return 'POST'; }

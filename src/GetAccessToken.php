@@ -28,12 +28,12 @@ class GetAccessToken implements IReturn, IPost, JsonSerializable
     }
 
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->refreshToken)) $o['refreshToken'] = $this->refreshToken;
         if (isset($this->meta)) $o['meta'] = JsonConverters::to(JsonConverters::context('Dictionary',genericArgs:['string','string']), $this->meta);
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'GetAccessToken'; }
     public function getMethod(): string { return 'POST'; }

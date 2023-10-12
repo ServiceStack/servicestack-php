@@ -49,7 +49,7 @@ class NavItem implements JsonSerializable
     }
 
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->label)) $o['label'] = $this->label;
@@ -63,6 +63,6 @@ class NavItem implements JsonSerializable
         if (isset($this->hide)) $o['hide'] = $this->hide;
         if (isset($this->children)) $o['children'] = JsonConverters::toArray('NavItem', $this->children);
         if (isset($this->meta)) $o['meta'] = JsonConverters::to(JsonConverters::context('Dictionary',genericArgs:['string','string']), $this->meta);
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
 }

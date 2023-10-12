@@ -29,12 +29,12 @@ class GetApiKeys implements IReturn, IGet, JsonSerializable
     }
 
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->environment)) $o['environment'] = $this->environment;
         if (isset($this->meta)) $o['meta'] = JsonConverters::to(JsonConverters::context('Dictionary',genericArgs:['string','string']), $this->meta);
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'GetApiKeys'; }
     public function getMethod(): string { return 'GET'; }

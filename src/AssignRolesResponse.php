@@ -33,13 +33,13 @@ class AssignRolesResponse implements JsonSerializable
         if (isset($o['responseStatus'])) $this->responseStatus = JsonConverters::from('ResponseStatus', $o['responseStatus']);
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->allRoles)) $o['allRoles'] = JsonConverters::toArray('string', $this->allRoles);
         if (isset($this->allPermissions)) $o['allPermissions'] = JsonConverters::toArray('string', $this->allPermissions);
         if (isset($this->meta)) $o['meta'] = JsonConverters::to(JsonConverters::context('Dictionary',genericArgs:['string','string']), $this->meta);
         if (isset($this->responseStatus)) $o['responseStatus'] = JsonConverters::to('ResponseStatus', $this->responseStatus);
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
 }

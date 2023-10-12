@@ -45,9 +45,9 @@ class QueryData2 extends QueryBase implements JsonSerializable
     }
 
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = parent::jsonSerialize();
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
 }

@@ -38,14 +38,13 @@ class UnAssignRoles implements IReturn, IPost, JsonSerializable
     }
 
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->userName)) $o['userName'] = $this->userName;
         if (isset($this->permissions)) $o['permissions'] = JsonConverters::toArray('string', $this->permissions);
         if (isset($this->roles)) $o['roles'] = JsonConverters::toArray('string', $this->roles);
-        if (isset($this->meta)) $o['meta'] = JsonConverters::to(JsonConverters::context('Dictionary',genericArgs:['string','string']), $this->meta);
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'UnAssignRoles'; }
     public function getMethod(): string { return 'POST'; }

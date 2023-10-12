@@ -36,13 +36,13 @@ class ResponseError implements JsonSerializable
     }
 
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->errorCode)) $o['errorCode'] = $this->errorCode;
         if (isset($this->fieldName)) $o['fieldName'] = $this->fieldName;
         if (isset($this->message)) $o['message'] = $this->message;
         if (isset($this->meta)) $o['meta'] = JsonConverters::to(JsonConverters::context('Dictionary',genericArgs:['string','string']), $this->meta);
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
 }

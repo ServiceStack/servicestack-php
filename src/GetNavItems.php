@@ -21,10 +21,10 @@ class GetNavItems implements JsonSerializable
     }
 
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->name)) $o['name'] = $this->name;
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
 }

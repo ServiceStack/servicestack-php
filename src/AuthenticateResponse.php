@@ -73,7 +73,7 @@ class AuthenticateResponse implements IHasSessionId, IHasBearerToken, JsonSerial
         if (isset($o['meta'])) $this->meta = JsonConverters::from(JsonConverters::context('Dictionary',genericArgs:['string','string']), $o['meta']);
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->userId)) $o['userId'] = $this->userId;
@@ -88,6 +88,6 @@ class AuthenticateResponse implements IHasSessionId, IHasBearerToken, JsonSerial
         if (isset($this->permissions)) $o['permissions'] = JsonConverters::toArray('string', $this->permissions);
         if (isset($this->responseStatus)) $o['responseStatus'] = JsonConverters::to('ResponseStatus', $this->responseStatus);
         if (isset($this->meta)) $o['meta'] = JsonConverters::to(JsonConverters::context('Dictionary',genericArgs:['string','string']), $this->meta);
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
 }

@@ -33,11 +33,11 @@ class KeyValuePair2 implements JsonSerializable
     }
 
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->key)) $o['key'] = JsonConverters::from($this->genericArgs[0], $this->key);
         if (isset($this->value)) $o['value'] = JsonConverters::from($this->genericArgs[1], $this->value);
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
 }

@@ -37,12 +37,12 @@ class Tuple3 implements JsonSerializable
     }
 
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->item1)) $o['item1'] = JsonConverters::from($this->genericArgs[0], $this->item1);
         if (isset($this->item2)) $o['item2'] = JsonConverters::from($this->genericArgs[1], $this->item2);
         if (isset($this->item3)) $o['item3'] = JsonConverters::from($this->genericArgs[2], $this->item3);
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
 }

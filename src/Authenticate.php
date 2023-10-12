@@ -114,7 +114,7 @@ class Authenticate implements IReturn, IPost, JsonSerializable
         if (isset($o['meta'])) $this->meta = JsonConverters::from(JsonConverters::context('Dictionary',genericArgs:['string','string']), $o['meta']);
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->provider)) $o['provider'] = $this->provider;
@@ -136,7 +136,7 @@ class Authenticate implements IReturn, IPost, JsonSerializable
         if (isset($this->scope)) $o['scope'] = $this->scope;
         if (isset($this->returnUrl)) $o['returnUrl'] = $this->returnUrl;
         if (isset($this->meta)) $o['meta'] = JsonConverters::to(JsonConverters::context('Dictionary',genericArgs:['string','string']), $this->meta);
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
     public function getTypeName(): string { return 'Authenticate'; }
     public function getMethod(): string { return 'POST'; }

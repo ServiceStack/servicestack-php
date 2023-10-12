@@ -21,10 +21,10 @@ class UpdateEventSubscriberResponse implements JsonSerializable
     }
 
     /** @throws Exception */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         $o = [];
         if (isset($this->responseStatus)) $o['responseStatus'] = JsonConverters::to('ResponseStatus', $this->responseStatus);
-        return $o;
+        return empty($o) ? new class(){} : $o;
     }
 }

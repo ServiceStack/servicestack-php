@@ -62,12 +62,18 @@ function resolveResponseType($request): mixed
 
 function parseHeaders(?array $headers): array
 {
+    $cookies = [];
     $head = [];
     if (isset($headers)) {
         foreach ($headers as $k => $v) {
             $t = explode(':', $v, 2);
             if (isset($t[1])) {
-                $head[trim($t[0])] = trim($t[1]);
+                $key = trim($t[0]);
+                $head[$key] = trim($t[1]);
+                if ($key == "Set-Cookie") {
+                    $cookie = parseCookie($head[$key]);
+                    $cookies[$cookie['name']] = $cookie;
+                }
             } else {
                 $head[] = $v;
                 if (preg_match("#HTTP/[0-9\.]+\s+([0-9]+)#", $v, $out))
@@ -75,7 +81,23 @@ function parseHeaders(?array $headers): array
             }
         }
     }
-    return $head;
+    return [$head,$cookies];
+}
+
+function parseCookie($str) {
+    $cookies = [];
+    $tok     = strtok($str, ';');
+    while ($tok !== false) {
+        $a                     = sscanf($tok, "%[^=]=%[^;]");
+        if (empty($cookies)) {
+            $cookies['name'] = ltrim($a[0]);
+            $cookies['value'] = urldecode($a[1]);
+        } else {
+            $cookies[ltrim($a[0])] = urldecode($a[1]);
+        }
+        $tok                   = strtok(';');
+    }
+    return $cookies;
 }
 
 class HttpMethods
@@ -86,6 +108,15 @@ class HttpMethods
     const PATCH = "PATCH";
     const DELETE = "DELETE";
     const OPTIONS = "OPTIONS";
+}
+
+class HttpHeaders
+{
+    const AUTHORIZATION = "Authorization";
+    const COOKIE = "Cookie";
+    const SET_COOKIE = "Set-Cookie";
+    const CONTENT_LENGTH = "Content-Length";
+    const CONTENT_TYPE = "Content-Type";
 }
 
 interface RequestFilter
@@ -103,6 +134,10 @@ interface ExceptionFilter
     public function call(mixed $response, Exception $e);
 }
 
+interface Callback
+{
+    public function call(): void;
+}
 
 class WebServiceException extends Exception
 {
@@ -134,6 +169,7 @@ class SendContext
 {
     public function __construct(
         public ?array                         $headers = [],
+        public ?array                         $cookies = [],
         public ?string                        $method = "POST",
         public array|IReturn|IReturnVoid|null $request = null,
         public ?string                        $url = null,
@@ -142,6 +178,7 @@ class SendContext
         public ?string                        $bodyString = null,
         public mixed                          $responseAs = null,
         public ?array                         $responseHeaders = null,
+        public ?array                         $responseCookies = null,
         public ?RequestFilter                 $requestFilter = null,
         public ?ResponseFilter                $responseFilter = null)
     {
@@ -181,10 +218,14 @@ class SendContext
                     : $this->body
                 : $this->bodyString;
             $opts['http']['content'] = $json;
-            $headers["Content-Length"] = strlen($json);
+            $headers[HttpHeaders::CONTENT_LENGTH] = strlen($json);
         } else {
-            if (isset($headers["Content-Type"]))
-                unset($headers["Content-Type"]);
+            if (isset($headers[HttpHeaders::CONTENT_TYPE]))
+                unset($headers[HttpHeaders::CONTENT_TYPE]);
+        }
+        if (!empty($this->cookies)) {
+            $headers['Cookie'] = implode("; ",
+                array_map(fn($name,$cookie):string => $name . "=" . $cookie['value'], array_keys($this->cookies), $this->cookies));
         }
         $opts['http']['header'] = implode("\r\n",
             array_map(fn($key, $val): string => "$key: $val", array_keys($headers), $headers));
@@ -193,15 +234,20 @@ class SendContext
         $context = stream_context_create($opts);
         $response = file_get_contents($this->url, false, $context);
         if ($response === false) {
-            throw new WebServiceException(statusCode:500, statusDescription:"Request Failed",
-                message:"Request to $this->url failed");
+            throw new WebServiceException(statusCode: 500, statusDescription: "Request Failed",
+                message: "Request to $this->url failed");
         }
-        $responseHeaders = parseHeaders($http_response_header);
+        [$responseHeaders,$cookies] = parseHeaders($http_response_header);
+        $this->responseCookies = $cookies;
         $this->responseHeaders = $responseHeaders;
         Log::debug("RESPONSE HEADERS:");
-        Log::debug($responseHeaders);
+        if (!empty($this->responseCookies)) {
+            Log::debug("COOKIES:");
+            Log::debug($this->responseCookies);
+        }
         Log::debug("RESPONSE: " . ($responseHeaders['statusCode'] ?? ""));
         Log::debug($responseHeaders);
+        Log::debug($response);
         return [$response, $responseHeaders];
     }
 }
@@ -214,6 +260,7 @@ class JsonServiceClient
     public ?ResponseFilter $responseFilter;
     public static ?ExceptionFilter $globalExceptionFilter;
     public ?ExceptionFilter $exceptionFilter;
+    public ?Callback $onAuthenticationRequired;
 
     public string $baseUrl = '';
     public string $replyBaseUrl = '';
@@ -225,6 +272,7 @@ class JsonServiceClient
     public ?string $refreshTokenUri = null;
     public bool $useTokenCookie = false;
     public array $headers = [];
+    public array $cookies = [];
 
     public static $HttpStatusCodes = [
         100 => "Continue",
@@ -345,6 +393,7 @@ class JsonServiceClient
             $arr = JsonConverters::to(get_class($request), $request);
             $qs = "";
             foreach ($arr as $key => $val) {
+                if (!isset($val)) continue;
                 $qs .= empty($qs) ? "?" : "&";
                 $qs .= $key . "=" . $this->qsValue($val);
             }
@@ -567,7 +616,8 @@ class JsonServiceClient
     }
 
     /** @throws Exception */
-    public function sendAllOneWay(array $requestDtos): void {
+    public function sendAllOneWay(array $requestDtos): void
+    {
         if (!is_array($requestDtos))
             throw new Exception(JsonConverters::getClass($requestDtos) . " is not an array of Request DTOs");
 
@@ -634,28 +684,25 @@ class JsonServiceClient
         return $info;
     }
 
-    /**
-     * @throws Exception
-     */
-    function resendRequest(SendContext $info)
-    {
-        if (isset($this->bearerToken))
-            $info->headers['Authorization'] = "Bearer " . $this->bearerToken;
-        if (isset($this->userName))
-            $info->headers['Authorization'] = "Basic " . base64_encode($this->userName . ":" . $this->password);
+    public function createResponseStatus($o, $headers) {
+        $desc = JsonServiceClient::$HttpStatusCodes[$headers['statusCode']] ?? "Unknown Error";
+        $status = new ResponseStatus(errorCode: $headers['statusCode'], message: $desc);
+        if (isset($o['responseStatus'])) {
+            $status->fromMap($o['responseStatus']);
+            Log::debug("responseStatus:");
+            Log::debug($status->errors);
+        }
+        return $status;
+    }
 
-        [$response, $headers] = $info->exec();
+    /** @throws Exception */
+    function assertSuccessResponse($response, $headers): void {
         if ($headers['statusCode'] >= 400) {
             $status = null;
             $desc = JsonServiceClient::$HttpStatusCodes[$headers['statusCode']] ?? "Unknown Error";
             try {
                 $o = json_decode($response, associative: true);
-                $status = new ResponseStatus(errorCode: $headers['statusCode'], message: $desc);
-                if (isset($o['responseStatus'])) {
-                    $status->fromMap($o['responseStatus']);
-                    Log::debug("responseStatus:");
-                    Log::debug($status->errors);
-                }
+                $status = $this->createResponseStatus($o, $headers);
             } catch (Exception $ex) {
                 Log::error("Could not parse ResponseStatus", error: $ex);
             }
@@ -669,6 +716,45 @@ class JsonServiceClient
                 responseStatus: $status
             ));
         }
+    }
+
+    function executeRequest(SendContext $info) {
+        $info->cookies = isset($info->cookies)
+            ? array_replace([], $this->cookies, $info->cookies)
+            : $this->cookies;
+        [$response, $headers] = $info->exec();
+
+        if (isset($info->responseCookies)) {
+            foreach ($info->responseCookies as $name => $cookie) {
+                if (isset($cookie['expires'])) {
+                    $expires = strtotime($cookie['expires']);
+                    if ($expires < time()) {
+                        if (isset($this->cookies[$name]))
+                        {
+                            unset($this->cookies[$name]);
+                            continue;
+                        }
+                    }
+                }
+                $this->cookies[$name] = $cookie;
+            }
+        }
+        $info->cookies = array_replace([], $this->cookies);
+        return [$response, $headers];
+    }
+
+    /**
+     * @throws Exception
+     */
+    function resendRequest(SendContext $info)
+    {
+        if (isset($this->bearerToken))
+            $info->headers[HttpHeaders::AUTHORIZATION] = "Bearer " . $this->bearerToken;
+        if (isset($this->userName))
+            $info->headers[HttpHeaders::AUTHORIZATION] = "Basic " . base64_encode($this->userName . ":" . $this->password);
+
+        [$response, $headers] = $this->executeRequest($info);
+        $this->assertSuccessResponse($response, $headers);
 
         $dto = $this->createResponse($response, $info);
         return [$dto, $headers];
@@ -680,12 +766,57 @@ class JsonServiceClient
     function sendRequest(SendContext $info): mixed
     {
         $info = $this->createRequest($info);
+        $dto = null;
+        $headers = null;
 
         try {
             [$dto, $headers] = $this->resendRequest($info);
             return $dto;
         } catch (Exception $e) {
-            throw $e;
+            Log::debug("sendRequest Exception: " . $e->getMessage());
+
+            $hasRefreshTokenCookie = false;
+            if (isset($this->refreshToken) || $this->useTokenCookie || $hasRefreshTokenCookie) {
+                Log::debug("attempting to refresh bearer_token with refresh_token");
+                $jwtRequest = new GetAccessToken(refreshToken: $this->refreshToken);
+                $url = $this->refreshTokenUri ?? $this->createUrlFromDto(HttpMethods::POST, $jwtRequest);
+
+                try {
+                    $jwtInfo = $this->createRequest(new SendContext(
+                        headers: array_replace([], $this->headers),
+                        method: HttpMethods::POST,
+                        request: $jwtRequest,
+                        url: $url,
+                        responseAs: resolveResponseType($jwtRequest),
+                    ));
+                    [$jwtRes, $jwtHeaders] = $this->executeRequest($jwtInfo);
+                    $this->assertSuccessResponse($jwtRes, $jwtHeaders);
+
+                    /** @var GetAccessTokenResponse $jwtResponse */
+                    $jwtResponse = $this->createResponse($jwtRes, $info);
+                    $this->bearerToken = $jwtResponse->accessToken;
+                    Log::debug("sendRequest: bearerToken refreshed");
+                    if (isset($info->headers[HttpHeaders::AUTHORIZATION]))
+                        unset($info->headers[HttpHeaders::AUTHORIZATION]);
+                    [$dto, $headers] = $this->resendRequest($info);
+                    return $dto;
+                } catch (Exception $jwtEx) {
+                    Log::debug("sendRequest: jwtExt: " . $jwtEx->getMessage());
+                    $this->handleError($dto, new RefreshTokenException(
+                        statusCode:$headers['statusCode'] ?? 401,
+                        statusDescription: $jwtEx->getMessage(),
+                        responseStatus: ($jwtEx instanceof WebServiceException
+                            ? $jwtEx->responseStatus
+                            : null) ?? $this->createResponseStatus($dto, $headers),
+                        previous:$jwtEx));
+                }
+            }
+            if (isset($this->onAuthenticationRequired)) {
+                $this->onAuthenticationRequired->call();
+                [$dto, $headers] = $this->resendRequest($info);
+                return $dto;
+            }
+            $this->handleError($dto, $e);
         }
     }
 
@@ -728,6 +859,16 @@ class JsonServiceClient
             return $into;
         }
         throw new WebServiceException(message: "Failed to deserialize into '$ctx->class'");
+    }
+
+    public function getTokenCookie()
+    {
+        return $this->cookies['ss-tok'] ?? null;
+    }
+
+    public function getRefreshTokenCookie()
+    {
+        return $this->cookies['ss-reftok'] ?? null;
     }
 
 }
