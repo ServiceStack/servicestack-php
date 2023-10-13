@@ -100,6 +100,60 @@ function parseCookie($str) {
     return $cookies;
 }
 
+
+/** @throws Exception */
+function qsValue($arg): string
+{
+    if (!isset($arg))
+        return "";
+    if (is_bool($arg))
+        return $arg ? "true" : "false";
+    if (is_array($arg)) {
+        if (array_is_list($arg))
+            return "[" . implode(",", array_map(fn($x): string => qsValue($x), $arg)) . "]";
+        return "{" . implode(",",
+                array_map(fn($key, $val): string => $key . ":" . qsValue($val), array_keys($arg), $arg))
+            . "}";
+    }
+    if (is_string($arg))
+        return urlencode($arg);
+    if (is_object($arg)) {
+        $cls = get_class($arg);
+        $converter = JsonConverters::getConverter($cls);
+        if ($converter) {
+            $val = $converter->toJson($arg, new TypeContext(class: $cls));
+            return qsValue($val);
+        }
+        if ($arg instanceof JsonSerializable) {
+            return qsValue($arg->jsonSerialize());
+        }
+        if ($arg instanceof Stringable) {
+            return urlencode($arg->__toString());
+        }
+        throw new Exception("Could not convert unknown object '$cls' to string");
+    }
+    return urlencode("$arg");
+}
+
+/** @throws Exception */
+function appendQueryString(string $url, mixed $args): string
+{
+    if (isset($args)) {
+        if ($args instanceof JsonSerializable)
+            $args = $args->jsonSerialize();
+
+        foreach ($args as $key => $val) {
+            if ($val == null)
+                continue;
+            $url .= str_contains($url, '?') ? '&' : '?';
+            $qsVal = qsValue($val);
+            $url .= $key . "=" . $qsVal;
+        }
+    }
+
+    return $url;
+}
+
 class HttpMethods
 {
     const GET = "GET";
@@ -116,7 +170,9 @@ class HttpHeaders
     const COOKIE = "Cookie";
     const SET_COOKIE = "Set-Cookie";
     const CONTENT_LENGTH = "Content-Length";
+    const ACCEPT = "Accept";
     const CONTENT_TYPE = "Content-Type";
+    const USER_AGENT = "User-Agent";
 }
 
 interface RequestFilter
@@ -348,8 +404,8 @@ class JsonServiceClient
         $this->replyBaseUrl = combinePaths($this->baseUrl, 'json/reply') . '/';
         $this->oneWayBaseUrl = combinePaths($this->baseUrl, 'json/oneway') . '/';
         $this->headers = [
-            'Accept' => 'application/json',
-            'User-Agent' => 'servicestack/php',
+            HttpHeaders::ACCEPT => 'application/json',
+            HttpHeaders::USER_AGENT => 'servicestack/php',
         ];
     }
 
@@ -395,7 +451,7 @@ class JsonServiceClient
             foreach ($arr as $key => $val) {
                 if (!isset($val)) continue;
                 $qs .= empty($qs) ? "?" : "&";
-                $qs .= $key . "=" . $this->qsValue($val);
+                $qs .= $key . "=" . qsValue($val);
             }
             $url .= $qs;
         }
@@ -406,7 +462,8 @@ class JsonServiceClient
     {
         $to = new JsonServiceClient($baseUrl);
         $to->setBasePath('api');
-        $to->headers = [];
+        if (isset($to->headers[HttpHeaders::ACCEPT]))
+            unset($to->headers[HttpHeaders::ACCEPT]);
         return $to;
     }
 
@@ -458,60 +515,6 @@ class JsonServiceClient
     public function postUrl(string $path, mixed $responseAs = null, mixed $body = null, ?array $args = null): mixed
     {
         return $this->sendUrl($path, method: HttpMethods::POST, responseAs: $responseAs, body: $body, args: $args);
-    }
-
-    /**
-     * @throws Exception
-     */
-    public function qsValue($arg): string
-    {
-        if (!isset($arg))
-            return "";
-        if (is_bool($arg))
-            return $arg ? "true" : "false";
-        if (is_array($arg)) {
-            if (array_is_list($arg))
-                return "[" . implode(",", array_map(fn($x): string => $this->qsValue($x), $arg)) . "]";
-            return "{" . implode(",",
-                    array_map(fn($key, $val): string => $key . ":" . $this->qsValue($val), array_keys($arg), $arg))
-                . "}";
-        }
-        if (is_string($arg))
-            return urlencode($arg);
-        if (is_object($arg)) {
-            $cls = get_class($arg);
-            $converter = JsonConverters::getConverter($cls);
-            if ($converter) {
-                $val = $converter->toJson($arg, new TypeContext(class: $cls));
-                return $this->qsValue($val);
-            }
-            if ($arg instanceof JsonSerializable) {
-                return $this->qsValue($arg->jsonSerialize());
-            }
-            if ($arg instanceof Stringable) {
-                return urlencode($arg->__toString());
-            }
-            throw new Exception("Could not convert unknown object '$cls' to string");
-        }
-        return urlencode("$arg");
-    }
-
-    function appendQueryString(string $url, mixed $args): string
-    {
-        if (isset($args)) {
-            if ($args instanceof JsonSerializable)
-                $args = $args->jsonSerialize();
-
-            foreach ($args as $key => $val) {
-                if ($val == null)
-                    continue;
-                $url .= str_contains($url, '?') ? '&' : '?';
-                $qsVal = $this->qsValue($val);
-                $url .= $key . "=" . $qsVal;
-            }
-        }
-
-        return $url;
     }
 
     function raiseError(mixed $res, Exception $e): Exception
@@ -657,7 +660,7 @@ class JsonServiceClient
             if (empty($url))
                 throw new Exception("URL is empty");
             if (isset($info->args))
-                $url = $this->appendQueryString($url, $info->args);
+                $url = appendQueryString($url, $info->args);
         } catch (Exception $e) {
             $this->handleError(null, $e);
         }

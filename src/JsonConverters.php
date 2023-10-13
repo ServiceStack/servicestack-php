@@ -16,7 +16,7 @@ class JsonConverters
     }
 
     public array $converters = [];
-    public array $namespaces = ["ServiceStack"];
+    public array $namespaces = ["ServiceStack", "dtos"];
 
     public static function getInstance(): JsonConverters
     {
@@ -104,7 +104,7 @@ class JsonConverters
      */
     public static function from(TypeContext|string $class, $val): mixed
     {
-        if (!isset($val) || $val == null) return null;
+        if (!isset($val)) return null;
         $ctx = is_string($class)
             ? new TypeContext(class: $class)
             : $class;

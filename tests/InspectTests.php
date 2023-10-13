@@ -4,7 +4,7 @@ require_once __DIR__ . '/../vendor/autoload.php'; // Autoload files using Compos
 use PHPUnit\Framework\TestCase;
 use Servicestack\Inspect;
 
-final class InspectTest extends TestCase
+final class InspectTests extends TestCase
 {
     public function testCanUseInspect()
     {

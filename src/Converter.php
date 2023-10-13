@@ -6,6 +6,7 @@ use DateInterval;
 use DateTime;
 use Exception;
 use ReflectionEnum;
+use UnitEnum;
 
 interface Converter
 {
@@ -36,7 +37,10 @@ class DictionaryConverter implements Converter
             $valType = new TypeContext($ctx->genericArgs[1]);
             $to = [];
             foreach ($o as $key => $val) {
-                $to[JsonConverters::convert($keyType, $key)] = JsonConverters::convert($valType, $val);
+                $toKey = JsonConverters::convert($keyType, $key);
+                if ($toKey instanceof UnitEnum)
+                    $toKey = $toKey->name;
+                $to[$toKey] = JsonConverters::convert($valType, $val);
             }
             return $to;
         }
@@ -190,6 +194,13 @@ class EnumConverter implements Converter
 
         if ($r->hasCase($o)) {
             return $r->getCase($o)->getValue();
+        }
+
+        if (is_int($o) || is_string($o)) {
+            foreach ($r->getCases() as $case) {
+                if ($case->getBackingValue() === $o)
+                    return $case->getValue();
+            }
         }
 
         throw new Exception("Invalid $ctx->class Enum '$o'");

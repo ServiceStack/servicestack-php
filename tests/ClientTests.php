@@ -41,6 +41,7 @@ use Servicestack\ResponseFilter;
 use Servicestack\ResponseStatus;
 use Servicestack\SendContext;
 use Servicestack\WebServiceException;
+use function Servicestack\qsValue;
 
 final class ClientTests extends TestCase
 {
@@ -175,12 +176,12 @@ final class ClientTests extends TestCase
 
     public function testQsValue()
     {
-        $this->assertEquals("a", $this->client->qsValue('a'));
-        $this->assertEquals("1", $this->client->qsValue(1));
-        $this->assertEquals("[1,2,3]", $this->client->qsValue([1, 2, 3]));
-        $this->assertEquals("[a,b,c]", $this->client->qsValue(['a', 'b', 'c']));
-        $this->assertEquals("{a:1,b:2}", $this->client->qsValue(['a' => 1, 'b' => 2]));
-        $this->assertEquals("{id:1,name:foo}", $this->client->qsValue(new SubType(id: 1, name: "foo")));
+        $this->assertEquals("a", qsValue('a'));
+        $this->assertEquals("1", qsValue(1));
+        $this->assertEquals("[1,2,3]", qsValue([1, 2, 3]));
+        $this->assertEquals("[a,b,c]", qsValue(['a', 'b', 'c']));
+        $this->assertEquals("{a:1,b:2}", qsValue(['a' => 1, 'b' => 2]));
+        $this->assertEquals("{id:1,name:foo}", qsValue(new SubType(id: 1, name: "foo")));
     }
 
     public function testCanGetHello()

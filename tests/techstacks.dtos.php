@@ -1,9 +1,9 @@
 <?php namespace dtos;
 /* Options:
-Date: 2023-10-13 18:22:21
+Date: 2023-10-13 10:22:22
 Version: 6.111
 Tip: To override a DTO option, remove "//" prefix before updating
-BaseUrl: https://localhost:5001
+BaseUrl: https://techstacks.io
 
 GlobalNamespace: dtos
 //MakePropertiesOptional: False
@@ -3545,32 +3545,6 @@ class GetPageStatsResponse implements JsonSerializable
     }
 }
 
-class HourlyTaskResponse implements JsonSerializable
-{
-    public function __construct(
-        /** @var array<string,string>|null */
-        public ?array $meta=null,
-        /** @var ResponseStatus|null */
-        public ?ResponseStatus $responseStatus=null
-    ) {
-    }
-
-    /** @throws Exception */
-    public function fromMap($o): void {
-        if (isset($o['meta'])) $this->meta = JsonConverters::from(JsonConverters::context('Dictionary',genericArgs:['string','string']), $o['meta']);
-        if (isset($o['responseStatus'])) $this->responseStatus = JsonConverters::from('ResponseStatus', $o['responseStatus']);
-    }
-    
-    /** @throws Exception */
-    public function jsonSerialize(): mixed
-    {
-        $o = [];
-        if (isset($this->meta)) $o['meta'] = JsonConverters::to(JsonConverters::context('Dictionary',genericArgs:['string','string']), $this->meta);
-        if (isset($this->responseStatus)) $o['responseStatus'] = JsonConverters::to('ResponseStatus', $this->responseStatus);
-        return empty($o) ? new class(){} : $o;
-    }
-}
-
 class OverviewResponse implements JsonSerializable
 {
     public function __construct(
@@ -6502,49 +6476,6 @@ class GetPageStats implements IReturn, IGet, JsonSerializable
     public function getTypeName(): string { return 'GetPageStats'; }
     public function getMethod(): string { return 'GET'; }
     public function createResponse(): mixed { return new GetPageStatsResponse(); }
-}
-
-// @Route("/cache/clear")
-#[Returns('string')]
-class ClearCache implements IReturn, IGet, JsonSerializable
-{
-    
-    /** @throws Exception */
-    public function jsonSerialize(): mixed
-    {
-        $o = [];
-        return empty($o) ? new class(){} : $o;
-    }
-    public function getTypeName(): string { return 'ClearCache'; }
-    public function getMethod(): string { return 'GET'; }
-    public function createResponse(): mixed { return 'string'; }
-}
-
-// @Route("/tasks/hourly")
-#[Returns('HourlyTaskResponse')]
-class HourlyTask implements IReturn, IGet, JsonSerializable
-{
-    public function __construct(
-        /** @var bool|null */
-        public ?bool $force=null
-    ) {
-    }
-
-    /** @throws Exception */
-    public function fromMap($o): void {
-        if (isset($o['force'])) $this->force = $o['force'];
-    }
-    
-    /** @throws Exception */
-    public function jsonSerialize(): mixed
-    {
-        $o = [];
-        if (isset($this->force)) $o['force'] = $this->force;
-        return empty($o) ? new class(){} : $o;
-    }
-    public function getTypeName(): string { return 'HourlyTask'; }
-    public function getMethod(): string { return 'GET'; }
-    public function createResponse(): mixed { return new HourlyTaskResponse(); }
 }
 
 // @Route("/techstacks/search")
