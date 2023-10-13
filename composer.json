@@ -91,5 +91,8 @@
     },
     "require-dev": {
         "phpunit/phpunit": "*"
+    },
+    "scripts": {
+        "test": "vendor/bin/phpunit --colors=always --configuration phpunit.xml"
     }
 }

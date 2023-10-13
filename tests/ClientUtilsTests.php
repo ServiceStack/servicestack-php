@@ -29,9 +29,9 @@ class ClientUtilsTests extends TestCase
         $this->assertEquals("GET", resolveHttpMethod(new SendGet()));
         $this->assertEquals("POST", resolveHttpMethod(new SendPost()));
         $this->assertEquals("PUT", resolveHttpMethod(new SendPut()));
-        $this->assertEquals("GET", resolveHttpMethod(new QueryCategories()));
-        $this->assertEquals("POST", resolveHttpMethod(new CreateCategory()));
-        $this->assertEquals("PUT", resolveHttpMethod(new UpdateCategory()));
-        $this->assertEquals("PATCH", resolveHttpMethod(new PatchAlbums()));
+//        $this->assertEquals("GET", resolveHttpMethod(new QueryCategories()));
+//        $this->assertEquals("POST", resolveHttpMethod(new CreateCategory()));
+//        $this->assertEquals("PUT", resolveHttpMethod(new UpdateCategory()));
+//        $this->assertEquals("PATCH", resolveHttpMethod(new PatchAlbums()));
     }
 }

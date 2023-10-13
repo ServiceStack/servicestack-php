@@ -3,14 +3,14 @@
 require_once __DIR__ . '/../vendor/autoload.php'; // Autoload files using Composer autoload
 require_once 'techstacks.dtos.php';
 
-use dtos\CreateTechnology;
-use dtos\FindTechnologies;
-use dtos\GetAllTechnologies;
-use dtos\GetAllTechnologiesResponse;
-use dtos\Overview;
-use dtos\OverviewResponse;
-use dtos\QueryPosts;
-use dtos\TechnologyView;
+use techstacks\CreateTechnology;
+use techstacks\FindTechnologies;
+use techstacks\GetAllTechnologies;
+use techstacks\GetAllTechnologiesResponse;
+use techstacks\Overview;
+use techstacks\OverviewResponse;
+use techstacks\QueryPosts;
+use techstacks\TechnologyView;
 use PHPUnit\Framework\TestCase;
 use Servicestack\ConsoleLogger;
 use Servicestack\JsonServiceClient;

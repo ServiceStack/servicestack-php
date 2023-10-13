@@ -1,6 +1,7 @@
 <?php declare(strict_types=1);
 
 require_once __DIR__ . '/../vendor/autoload.php'; // Autoload files using Composer autoload
+require_once 'Config.php';
 require_once 'dtos.php';
 
 use dtos\AltQueryItems;
@@ -49,79 +50,9 @@ final class ClientTests extends TestCase
 
     protected function setUp(): void
     {
-        $this->client = $this->createTestClient();
-        Log::$logger = new ConsoleLogger();
-        Log::$levels[] = LogLevel::Debug;
-    }
-
-    public function createTestClient(): JsonServiceClient
-    {
-        return new JsonServiceClient("https://localhost:5001");
-//        return new JsonServiceClient("https://test.servicestack.net");
-    }
-
-    public function createHelloAllTypes()
-    {
-        return new HelloAllTypes(name:"name",
-            allTypes: $this->createAllTypes(),
-            allCollectionTypes: $this->createAllCollectionTypes());
-    }
-
-    public function createAllTypes(): AllTypes
-    {
-        return new AllTypes(
-            id: 1,
-            byte: 2,
-            short: 3,
-            int: 4,
-            long: 5,
-            uShort: 6,
-            uInt: 7,
-            uLong: 8,
-            float: 1.1,
-            double: 2.2,
-            decimal: 3.0,
-            string: 'string',
-            dateTime: new DateTime("2001-01-01"),
-            timeSpan: new DateInterval("PT1H"),
-            dateTimeOffset: new DateTime("2001-01-01"),
-            guid: "ea762009b66c410b9bf5ce21ad519249",
-            char: 'c',
-            stringList: ["A", "B", "C"],
-            stringArray: ["D", "E", "F"],
-            stringMap: ["A" => "D", "B" => "E", "C" => "F"],
-            intStringMap: [1 => "A", 2 => "B", 3 => "C"],
-            subType: new SubType(id: 1, name: "name"));
-    }
-
-    public function createAllCollectionTypes(): AllCollectionTypes
-    {
-        return new AllCollectionTypes(
-            intArray: [1, 2, 3],
-            intList: [1, 2, 3],
-            stringArray: ["A", "B", "C"],
-            stringList: ["D", "E", "F"],
-            byteArray: new ByteArray(b"ABC"),  # base64(ABC)
-            pocoArray: [$this->createPoco("pocoArray")],
-            pocoList: [$this->createPoco("pocoArray")],
-            pocoLookup: ["A" => [$this->createPoco("B"), $this->createPoco("C")]],
-            pocoLookupMap: ["A" => [["B" => $this->createPoco("C"), "D" => $this->createPoco("E")]]]
-        );
-    }
-
-    public function createPoco(string $name): Poco
-    {
-        return new Poco(name: $name);
-    }
-
-    public function createEchoComplexTypes(): EchoComplexTypes
-    {
-        return new EchoComplexTypes(
-            subType: new SubType(id: 1, name: "foo"),
-            subTypes: [new SubType(id: 2, name: "bar"), new SubType(id: 3, name: "baz")],
-            subTypeMap: ["a" => new SubType(id: 4, name: "qux")],
-            stringMap: ["a" => "b"],
-            intStringMap: [1 => "A"]);
+        $this->client = Config::createTestClient();
+//        Log::$logger = new ConsoleLogger();
+//        Log::$levels[] = LogLevel::Debug;
     }
 
     public function testHello()
@@ -157,14 +88,14 @@ final class ClientTests extends TestCase
     public function assertAllCollectionTypes(AllCollectionTypes $dto): void
     {
         $this->assertEquals([1, 2, 3], $dto->intArray);
-        $this->assertEquals([1, 2, 3], $dto->intList);
+        $this->assertEquals([4, 5, 6], $dto->intList);
         $this->assertEquals(["A", "B", "C"], $dto->stringArray);
         $this->assertEquals(["D", "E", "F"], $dto->stringList);
-        $this->assertEquals(new ByteArray(b"ABC"), $dto->byteArray);
-        $this->assertEquals([$this->createPoco("pocoArray")], $dto->pocoArray);
-        $this->assertEquals([$this->createPoco("pocoArray")], $dto->pocoList);
-        $this->assertEquals(["A" => [$this->createPoco("B"), $this->createPoco("C")]], $dto->pocoLookup);
-        $this->assertEquals(["A" => [["B" => $this->createPoco("C"), "D" => $this->createPoco("E")]]], $dto->pocoLookupMap);
+        $this->assertEquals(ByteArray::fromRaw(b"ABC"), $dto->byteArray);
+        $this->assertEquals([Config::createPoco("pocoArray")], $dto->pocoArray);
+        $this->assertEquals([Config::createPoco("pocoList")], $dto->pocoList);
+        $this->assertEquals(["A" => [Config::createPoco("B"), Config::createPoco("C")]], $dto->pocoLookup);
+        $this->assertEquals(["A" => [["B" => Config::createPoco("C")], ["D" => Config::createPoco("E")]]], $dto->pocoLookupMap);
     }
 
     public function assertHelloAllTypesResponse(HelloAllTypesResponse $dto): void
@@ -207,7 +138,7 @@ final class ClientTests extends TestCase
 
     public function testDoesFireRequestAndResponseFilters()
     {
-        $client = $this->createTestClient();
+        $client = Config::createTestClient();
         $events = [];
 
         JsonServiceClient::$globalRequestFilter = new class($events) implements RequestFilter {
@@ -274,27 +205,27 @@ final class ClientTests extends TestCase
     }
 
     public function testCanSerializeAllTypes() {
-        $dto = $this->createAllTypes();
+        $dto = Config::createAllTypes();
         $json = json_encode($dto->jsonSerialize());
         $this->assertNotEmpty($json);
     }
 
     public function testCanSerializeAllCollectionTypes() {
-        $dto = $this->createAllCollectionTypes();
+        $dto = Config::createAllCollectionTypes();
         $json = json_encode($dto->jsonSerialize());
         echo $json . "\n";
         $this->assertNotEmpty($json);
     }
 
     public function testCanPostHelloAllTypes() {
-        $request = $this->createHelloAllTypes();
+        $request = Config::createHelloAllTypes();
         /** @var HelloAllTypesResponse $response */
         $response  = $this->client->post($request);
         $this->assertHelloAllTypesResponse($response);
     }
 
     public function testCanPutHelloAllTypes() {
-        $request = $this->createHelloAllTypes();
+        $request = Config::createHelloAllTypes();
         /** @var HelloAllTypesResponse $response */
         $response  = $this->client->put($request);
         $this->assertHelloAllTypesResponse($response);
@@ -349,7 +280,7 @@ final class ClientTests extends TestCase
     }
 
     public function testCanSendReturnVoid() {
-        $client = $this->createTestClient();
+        $client = Config::createTestClient();
         $sentMethods = [];
         $client->requestFilter = new class($sentMethods) implements RequestFilter {
             public function __construct(public array &$sentMethods) {}
@@ -390,7 +321,7 @@ final class ClientTests extends TestCase
     }
 
     public function testCanSendRawJsonAsObject() {
-        $client = $this->createTestClient();
+        $client = Config::createTestClient();
 
         $request = new SendJson(id:1,name:"name");
         $xargs = '';
@@ -409,7 +340,7 @@ final class ClientTests extends TestCase
     }
 
     public function testCanSendRawString() {
-        $client = $this->createTestClient();
+        $client = Config::createTestClient();
 
         $body = "foo";
         $request = new SendText(id:1, name:"name", contentType:"text/plain");
@@ -451,7 +382,7 @@ final class ClientTests extends TestCase
     }
 
     public function testCanSendAllBatchRequest() {
-        $client = $this->createTestClient();
+        $client = Config::createTestClient();
 
         $header = '';
         $client->responseFilter = new class($header) implements ResponseFilter {
@@ -468,7 +399,7 @@ final class ClientTests extends TestCase
     }
 
     public function testCanSendAllOneWayIReturnBatchRequest() {
-        $client = $this->createTestClient();
+        $client = Config::createTestClient();
 
         $url = '';
         $client->requestFilter = new class($url) implements RequestFilter {

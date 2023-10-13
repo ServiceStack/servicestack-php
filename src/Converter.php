@@ -153,7 +153,7 @@ class IntConverter implements Converter
 
     function toJson($value, TypeContext $ctx): mixed
     {
-        return "$value";
+        return $value;
     }
 }
 
@@ -166,7 +166,7 @@ class FloatConverter implements Converter
 
     function toJson($value, TypeContext $ctx): mixed
     {
-        return "$value";
+        return $value;
     }
 }
 

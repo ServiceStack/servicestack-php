@@ -52,14 +52,14 @@ class ClientAuthTests extends TestCase
     protected function setUp(): void
     {
         $this->client = $this->createTestClient();
-        Log::$logger = new ConsoleLogger();
-        Log::$levels[] = LogLevel::Debug;
+//        Log::$logger = new ConsoleLogger();
+//        Log::$levels[] = LogLevel::Debug;
     }
 
     public function createTestClient(): JsonServiceClient
     {
-        return new JsonServiceClient("https://localhost:5001");
-//        return new JsonServiceClient("https://test.servicestack.net");
+//        return new JsonServiceClient("https://localhost:5001");
+        return new JsonServiceClient("https://test.servicestack.net");
     }
 
     public function testCanAuthWithJwt()

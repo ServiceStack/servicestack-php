@@ -1,11 +1,11 @@
-<?php namespace dtos;
+<?php namespace techstacks;
 /* Options:
-Date: 2023-10-13 10:22:22
+Date: 2023-10-13 14:42:50
 Version: 6.111
 Tip: To override a DTO option, remove "//" prefix before updating
 BaseUrl: https://techstacks.io
 
-GlobalNamespace: dtos
+GlobalNamespace: techstacks
 //MakePropertiesOptional: False
 //AddServiceStackTypes: True
 //AddResponseStatus: False

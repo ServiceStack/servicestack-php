@@ -14,12 +14,6 @@ use Servicestack\JsonConverters;
 
 class EnumTests extends TestCase
 {
-
-    public function setUp(): void
-    {
-        JsonConverters::registerNamespace('dtos');
-    }
-
     public function assertHelloWithEnum(HelloWithEnum $actual, HelloWithEnum $expected) {
         $this->assertEquals($expected->enumProp, $actual->enumProp);
         $this->assertEquals($expected->enumWithValues, $actual->enumWithValues);
