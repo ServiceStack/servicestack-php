@@ -3,6 +3,7 @@
 /.gistrun
 /vendor/*
 /config/app.php
+*.log
 
 /tmp/cache/models/*
 !/tmp/cache/models/empty
