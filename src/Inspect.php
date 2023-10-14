@@ -32,7 +32,7 @@ class Inspect {
         echo Inspect::dump($obj) . "\n";
     }
 
-    public static function dumpTable($rows): string
+    public static function table($rows): string
     {
         $mapRows = Inspect::toArrayList($rows);
         $keys = Inspect::allKeys($mapRows);
@@ -79,9 +79,9 @@ class Inspect {
         return join("\n", $sb);
     }
 
-    public static function printDumpTable($rows): void
+    public static function printTable($rows): void
     {
-        echo Inspect::dumpTable($rows) . "\n";
+        echo Inspect::table($rows) . "\n";
     }
 
     public static function toArrayList($rows): array

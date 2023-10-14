@@ -44,7 +44,7 @@ class TechStacksTests extends TestCase
         foreach ($response->topTechnologies as $tech) {
             $tech->logoUrl = null;
         }
-        Inspect::printDumpTable($response->topTechnologies);
+        Inspect::printTable($response->topTechnologies);
         $this->assertGreaterThan(0, count($response->topTechnologies));
     }
 

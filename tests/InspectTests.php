@@ -25,7 +25,7 @@ final class InspectTests extends TestCase
 
         Inspect::vars($args);
 
-        Inspect::printDumpTable($args);
+        Inspect::printTable($args);
 
         $orgName = "php";
 
@@ -53,7 +53,7 @@ final class InspectTests extends TestCase
         Inspect::printDump(array_slice($orgRepos, 0, 3));
 
         echo  "\nTop 10 {$orgName} GitHub Repos:\n";
-        Inspect::printDumpTable(array_map(function($x) {
+        Inspect::printTable(array_map(function($x) {
             return [
                 "name"        => $x["name"],
                 "lang"        => $x["lang"],

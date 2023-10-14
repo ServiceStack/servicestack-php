@@ -163,6 +163,7 @@ class HttpMethods
     const PATCH = "PATCH";
     const DELETE = "DELETE";
     const OPTIONS = "OPTIONS";
+    const HEAD = "HEAD";
 }
 
 class HttpHeaders
@@ -507,6 +508,18 @@ class JsonServiceClient
     }
 
     /** @throws Exception */
+    public function options(IReturn|IReturnVoid|string $request, ?array $args = null): mixed
+    {
+        return $this->send($request, method: HttpMethods::OPTIONS, args: $args);
+    }
+
+    /** @throws Exception */
+    public function head(IReturn|IReturnVoid|string $request, ?array $args = null): mixed
+    {
+        return $this->send($request, method: HttpMethods::HEAD, args: $args);
+    }
+
+    /** @throws Exception */
     public function getUrl(string $path, mixed $responseAs = null, mixed $args = null): mixed
     {
         return $this->sendUrl($path, method: HttpMethods::GET, responseAs: $responseAs, args: $args);
@@ -516,6 +529,36 @@ class JsonServiceClient
     public function postUrl(string $path, mixed $responseAs = null, mixed $body = null, ?array $args = null): mixed
     {
         return $this->sendUrl($path, method: HttpMethods::POST, responseAs: $responseAs, body: $body, args: $args);
+    }
+
+    /** @throws Exception */
+    public function putUrl(string $path, mixed $responseAs = null, mixed $body = null, ?array $args = null): mixed
+    {
+        return $this->sendUrl($path, method: HttpMethods::PUT, responseAs: $responseAs, body: $body, args: $args);
+    }
+
+    /** @throws Exception */
+    public function patchUrl(string $path, mixed $responseAs = null, mixed $body = null, ?array $args = null): mixed
+    {
+        return $this->sendUrl($path, method: HttpMethods::PATCH, responseAs: $responseAs, body: $body, args: $args);
+    }
+
+    /** @throws Exception */
+    public function deleteUrl(string $path, mixed $responseAs = null, mixed $args = null): mixed
+    {
+        return $this->sendUrl($path, method: HttpMethods::DELETE, responseAs: $responseAs, args: $args);
+    }
+
+    /** @throws Exception */
+    public function optionsUrl(string $path, mixed $responseAs = null, mixed $args = null): mixed
+    {
+        return $this->sendUrl($path, method: HttpMethods::OPTIONS, responseAs: $responseAs, args: $args);
+    }
+
+    /** @throws Exception */
+    public function headUrl(string $path, mixed $responseAs = null, mixed $args = null): mixed
+    {
+        return $this->sendUrl($path, method: HttpMethods::HEAD, responseAs: $responseAs, args: $args);
     }
 
     function raiseError(mixed $res, Exception $e): Exception
