@@ -3,6 +3,7 @@
 require_once __DIR__ . '/../vendor/autoload.php'; // Autoload files using Composer autoload
 require_once 'techstacks.dtos.php';
 
+use Servicestack\Inspect;
 use techstacks\CreateTechnology;
 use techstacks\FindTechnologies;
 use techstacks\GetAllTechnologies;
@@ -34,14 +35,16 @@ class TechStacksTests extends TestCase
     public function testShouldGetTechsResponse() {
         /** @var GetAllTechnologiesResponse $response */
         $response = $this->client->get(new GetAllTechnologies());
-        print_r($response);
         $this->assertGreaterThan(0, count($response->results));
     }
 
     public function testShouldGetTechStacksOverview() {
         /** @var OverviewResponse $response */
         $response = $this->client->get(new Overview());
-        print_r($response);
+        foreach ($response->topTechnologies as $tech) {
+            $tech->logoUrl = null;
+        }
+        Inspect::printDumpTable($response->topTechnologies);
         $this->assertGreaterThan(0, count($response->topTechnologies));
     }
 

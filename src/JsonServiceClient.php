@@ -81,21 +81,22 @@ function parseHeaders(?array $headers): array
             }
         }
     }
-    return [$head,$cookies];
+    return [$head, $cookies];
 }
 
-function parseCookie($str) {
+function parseCookie($str)
+{
     $cookies = [];
-    $tok     = strtok($str, ';');
+    $tok = strtok($str, ';');
     while ($tok !== false) {
-        $a                     = sscanf($tok, "%[^=]=%[^;]");
+        $a = sscanf($tok, "%[^=]=%[^;]");
         if (empty($cookies)) {
             $cookies['name'] = ltrim($a[0]);
             $cookies['value'] = urldecode($a[1]);
         } else {
-            $cookies[ltrim($a[0])] = urldecode($a[1]);
+            $cookies[ltrim($a[0])] = urldecode($a[1] ?? "");
         }
-        $tok                   = strtok(';');
+        $tok = strtok(';');
     }
     return $cookies;
 }
@@ -281,7 +282,7 @@ class SendContext
         }
         if (!empty($this->cookies)) {
             $headers['Cookie'] = implode("; ",
-                array_map(fn($name,$cookie):string => $name . "=" . $cookie['value'], array_keys($this->cookies), $this->cookies));
+                array_map(fn($name, $cookie): string => $name . "=" . $cookie['value'], array_keys($this->cookies), $this->cookies));
         }
         $opts['http']['header'] = implode("\r\n",
             array_map(fn($key, $val): string => "$key: $val", array_keys($headers), $headers));
@@ -293,7 +294,7 @@ class SendContext
             throw new WebServiceException(statusCode: 500, statusDescription: "Request Failed",
                 message: "Request to $this->url failed");
         }
-        [$responseHeaders,$cookies] = parseHeaders($http_response_header);
+        [$responseHeaders, $cookies] = parseHeaders($http_response_header);
         $this->responseCookies = $cookies;
         $this->responseHeaders = $responseHeaders;
         Log::debug("RESPONSE HEADERS:");
@@ -687,7 +688,8 @@ class JsonServiceClient
         return $info;
     }
 
-    public function createResponseStatus($o, $headers) {
+    public function createResponseStatus($o, $headers)
+    {
         $desc = JsonServiceClient::$HttpStatusCodes[$headers['statusCode']] ?? "Unknown Error";
         $status = new ResponseStatus(errorCode: $headers['statusCode'], message: $desc);
         if (isset($o['responseStatus'])) {
@@ -699,7 +701,8 @@ class JsonServiceClient
     }
 
     /** @throws Exception */
-    function assertSuccessResponse($response, $headers): void {
+    function assertSuccessResponse($response, $headers): void
+    {
         if ($headers['statusCode'] >= 400) {
             $status = null;
             $desc = JsonServiceClient::$HttpStatusCodes[$headers['statusCode']] ?? "Unknown Error";
@@ -721,7 +724,8 @@ class JsonServiceClient
         }
     }
 
-    function executeRequest(SendContext $info) {
+    function executeRequest(SendContext $info)
+    {
         $info->cookies = isset($info->cookies)
             ? array_replace([], $this->cookies, $info->cookies)
             : $this->cookies;
@@ -732,8 +736,7 @@ class JsonServiceClient
                 if (isset($cookie['expires'])) {
                     $expires = strtotime($cookie['expires']);
                     if ($expires < time()) {
-                        if (isset($this->cookies[$name]))
-                        {
+                        if (isset($this->cookies[$name])) {
                             unset($this->cookies[$name]);
                             continue;
                         }
@@ -806,12 +809,12 @@ class JsonServiceClient
                 } catch (Exception $jwtEx) {
                     Log::debug("sendRequest: jwtExt: " . $jwtEx->getMessage());
                     $this->handleError($dto, new RefreshTokenException(
-                        statusCode:$headers['statusCode'] ?? 401,
+                        statusCode: $headers['statusCode'] ?? 401,
                         statusDescription: $jwtEx->getMessage(),
                         responseStatus: ($jwtEx instanceof WebServiceException
-                            ? $jwtEx->responseStatus
-                            : null) ?? $this->createResponseStatus($dto, $headers),
-                        previous:$jwtEx));
+                        ? $jwtEx->responseStatus
+                        : null) ?? $this->createResponseStatus($dto, $headers),
+                        previous: $jwtEx));
                 }
             }
             if (isset($this->onAuthenticationRequired)) {
