@@ -2,37 +2,36 @@
 
 ServiceStack's **Add ServiceStack Reference** feature allows clients to generate Native Types from directly within PhpStorm using [ServiceStack IntelliJ Plugin](https://plugins.jetbrains.com/plugin/7749-servicestack/) - providing a simple way to give clients typed access to your ServiceStack Services.
 
-
-[![](https://docs.servicestack.net/images/servicestack-reference/python-add-servicestack-reference-youtube-splash.png)](https://youtu.be/WjbhfH45i5k)
+[![](https://docs.servicestack.net/img/pages/servicestack-reference/python-add-servicestack-reference-youtube-splash.png)](https://youtu.be/WjbhfH45i5k)
 
 > YouTube: [youtu.be/WjbhfH45i5k](https://youtu.be/WjbhfH45i5k)
 
 ### First class development experience
 
-[PHP](https://www.php.net) is one of the worlds most popular programming languages thanks to its ease of use, 
+[PHP](https://www.php.net) is one of the worlds most popular programming languages thanks to its ease of use,
 platform independence, large standard library, flexibility and fast development experience which sees it excels as
 a popular language for web development and for development of popular CMS products like WordPress, Drupal and Joomla
 thanks to its flexibility, embeddability and ease of customization.
 
-To maximize the experience for calling ServiceStack APIs within these environments ServiceStack now supports PHP as a 
-1st class Add ServiceStack Reference supported language which gives PHP developers an end-to-end typed API for consuming 
-ServiceStack APIs, complete with IDE integration in [PhpStorm](https://www.jetbrains.com/phpstorm/) as well as 
-[built-in support in x dotnet tool](https://docs.servicestack.net/dotnet-tool#addupdate-servicestack-references) 
+To maximize the experience for calling ServiceStack APIs within these environments ServiceStack now supports PHP as a
+1st class Add ServiceStack Reference supported language which gives PHP developers an end-to-end typed API for consuming
+ServiceStack APIs, complete with IDE integration in [PhpStorm](https://www.jetbrains.com/phpstorm/) as well as
+[built-in support in x dotnet tool](https://docs.servicestack.net/dotnet-tool#addupdate-servicestack-references)
 to generate Typed and annotated PHP DTOs for a remote ServiceStack instance from a single command-line.
 
 ### Ideal idiomatic Typed Message-based API
 
-To maximize the utility of PHP DTOs and enable richer tooling support and greater development experience, PHP DTOs are generated as 
-Typed [JsonSerializable](https://www.php.net/manual/en/class.jsonserializable.php) classes with 
+To maximize the utility of PHP DTOs and enable richer tooling support and greater development experience, PHP DTOs are generated as
+Typed [JsonSerializable](https://www.php.net/manual/en/class.jsonserializable.php) classes with
 [promoted constructors](https://www.php.net/manual/en/language.oop5.decon.php#language.oop5.decon.constructor.promotion)
-and annotated with [PHPDoc Types](https://phpstan.org/writing-php-code/phpdoc-types) - that's invaluable when scaling 
-large PHP code-bases and greatly improves discoverability of a remote API. DTOs are also enriched with interface markers 
+and annotated with [PHPDoc Types](https://phpstan.org/writing-php-code/phpdoc-types) - that's invaluable when scaling
+large PHP code-bases and greatly improves discoverability of a remote API. DTOs are also enriched with interface markers
 and Annotations which enables its optimal end-to-end typed API:
 
-The PHP DTOs and `JsonServiceClient` library follow 
-[PHP naming conventions](https://infinum.com/handbook/wordpress/coding-standards/php-coding-standards/naming) 
-so they'll naturally fit into existing PHP code bases. Here's a sample of [techstacks.io](https://techstacks.io) 
-generated PHP DTOs containing string and int Enums, an example AutoQuery and a standard Request & Response DTO showcasing 
+The PHP DTOs and `JsonServiceClient` library follow
+[PHP naming conventions](https://infinum.com/handbook/wordpress/coding-standards/php-coding-standards/naming)
+so they'll naturally fit into existing PHP code bases. Here's a sample of [techstacks.io](https://techstacks.io)
+generated PHP DTOs containing string and int Enums, an example AutoQuery and a standard Request & Response DTO showcasing
 the rich typing annotations and naming conventions used:
 
 ```php
@@ -136,11 +135,11 @@ class DeleteOrganization implements IReturnVoid, IDelete, JsonSerializable
 }
 ```
 
-The smart PHP `JsonServiceClient` available in the [servicestack/client](https://packagist.org/packages/servicestack/client) 
-packagist package enables the same productive, typed API development experience available in our other 1st-class supported 
-client platforms. 
+The smart PHP `JsonServiceClient` available in the [servicestack/client](https://packagist.org/packages/servicestack/client)
+packagist package enables the same productive, typed API development experience available in our other 1st-class supported
+client platforms.
 
-Using promoted constructors enables DTOs to be populated using a single constructor expression utilizing named parameters 
+Using promoted constructors enables DTOs to be populated using a single constructor expression utilizing named parameters
 which together with the generic `JsonServiceClient` enables end-to-end typed API Requests in a single LOC:
 
 ```php
@@ -159,7 +158,7 @@ $response = client->get(new Hello(name:"World"));
 
 Ensure you have [PHP](https://www.php.net/manual/en/install.php) and [Composer](https://getcomposer.org/doc/00-intro.md) installed.
 
-The only requirements for PHP apps to perform typed API Requests are the generated PHP DTOs and the generic `JsonServiceClient` 
+The only requirements for PHP apps to perform typed API Requests are the generated PHP DTOs and the generic `JsonServiceClient`
 which can be installed in Composer projects with:
 
 ```bash
@@ -178,18 +177,18 @@ Or by adding the package to your `composer.json` then installing the dependencie
 
 ### PhpStorm ServiceStack Plugin
 
-PHP developers of [PhpStorm](https://www.jetbrains.com/phpstorm/) can get a simplified development experience for consuming 
+PHP developers of [PhpStorm](https://www.jetbrains.com/phpstorm/) can get a simplified development experience for consuming
 ServiceStack Services by installing the [ServiceStack Plugin](https://plugins.jetbrains.com/plugin/7749-servicestack) from the JetBrains Marketplace:
 
 [![](https://docs.servicestack.net/img/pages/servicestack-reference/pycharm-servicestack-plugin.png)](https://plugins.jetbrains.com/plugin/7749-servicestack)
 
 Where you'll be able to right-click on a directory and click on **ServiceStack Reference** on the context menu:
 
-![](https://docs.servicestack.net/images/servicestack-reference/pycharm-add-servicestack-reference.png)
+![](https://docs.servicestack.net/img/pages/servicestack-reference/pycharm-add-servicestack-reference.png)
 
 To launch the **Add PHP ServiceStack Reference** dialog where you can enter the remote URL of the ServiceStack endpoint you wish to call to generate the Typed PHP DTOs for all APIs which by default will saved to `dtos.php`:
 
-![](https://docs.servicestack.net/images/servicestack-reference/pycharm-add-servicestack-reference-dialog.png)
+![](https://docs.servicestack.net/img/pages/servicestack-reference/pycharm-add-servicestack-reference-dialog.png)
 
 Then just import the DTOs and `JsonServiceClient` to be able to consume any of the remote ServiceStack APIs:
 
@@ -213,7 +212,7 @@ print_r($response);
 
 If any of the the remote APIs change their DTOs can be updated by right-clicking on `dtos.php` and clicking **Update ServiceStack Reference**:
 
-![](https://docs.servicestack.net/images/servicestack-reference/pycharm-update-servicestack-reference.png)
+![](https://docs.servicestack.net/img/pages/servicestack-reference/pycharm-update-servicestack-reference.png)
 
 ### Simple command-line utility for PHP
 
@@ -255,7 +254,7 @@ Result:
 
     Updated: dtos.php
 
-Which will update the File with the latest PHP Server DTOs from [techstacks.io](https://techstacks.io). 
+Which will update the File with the latest PHP Server DTOs from [techstacks.io](https://techstacks.io).
 You can also customize how DTOs are generated by uncommenting the [PHP DTO Customization Options](https://docs.servicestack.net/#dto-customization-options) and updating them again.
 
 ### Updating all PHP DTOs
@@ -273,20 +272,20 @@ Result:
 
 ### Smart Generic JsonServiceClient
 
-The generic `JsonServiceClient` is a 1st class client with the same rich feature-set of the smart ServiceClients in other 
-[1st class supported languages](https://docs.servicestack.net/add-servicestack-reference#supported-languages) sporting a terse, 
-typed flexible API with support for additional untyped params, custom URLs and HTTP Methods, dynamic response types including 
-consuming API responses in raw text and binary data formats. Clients can be decorated to support generic functionality 
+The generic `JsonServiceClient` is a 1st class client with the same rich feature-set of the smart ServiceClients in other
+[1st class supported languages](https://docs.servicestack.net/add-servicestack-reference#supported-languages) sporting a terse,
+typed flexible API with support for additional untyped params, custom URLs and HTTP Methods, dynamic response types including
+consuming API responses in raw text and binary data formats. Clients can be decorated to support generic functionality
 using instance and static Request, Response and Exception Filters.
 
-It includes built-in support for a number of [ServiceStack Auth options](https://docs.servicestack.net/authentication-and-authorization) 
-including [HTTP Basic Auth](https://en.wikipedia.org/wiki/Basic_access_authentication) and stateless Bearer Token Auth Providers like 
-[API Key](https://docs.servicestack.net/api-key-authprovider) and [JWT Auth](https://docs.servicestack.net/jwt-authprovider) as well as 
-[stateful Sessions](https://docs.servicestack.net/sessions) used by the popular **credentials** Auth Provider and an 
-`onAuthenticationRequired` callback for enabling custom authentication methods. 
+It includes built-in support for a number of [ServiceStack Auth options](https://docs.servicestack.net/authentication-and-authorization)
+including [HTTP Basic Auth](https://en.wikipedia.org/wiki/Basic_access_authentication) and stateless Bearer Token Auth Providers like
+[API Key](https://docs.servicestack.net/api-key-authprovider) and [JWT Auth](https://docs.servicestack.net/jwt-authprovider) as well as
+[stateful Sessions](https://docs.servicestack.net/sessions) used by the popular **credentials** Auth Provider and an
+`onAuthenticationRequired` callback for enabling custom authentication methods.
 
-The built-in auth options include auto-retry support for transparently authenticating and retrying authentication required 
-requests as well as [Refresh Token Cookie](https://docs.servicestack.net/jwt-authprovider#refresh-token-cookies-supported-in-all-service-clients) 
+The built-in auth options include auto-retry support for transparently authenticating and retrying authentication required
+requests as well as [Refresh Token Cookie](https://docs.servicestack.net/jwt-authprovider#refresh-token-cookies-supported-in-all-service-clients)
 support where it will transparently fetch new JWT Bearer Tokens automatically behind-the-scenes for friction-less stateless JWT support.
 
 A snapshot of these above features is captured in the high-level public API below:
@@ -362,10 +361,10 @@ PhpGenerator.ServiceStackImports.Add("MyNamespace\\Type");
 
 ### Customize DTO Type generation
 
-Additional PHP specific customization can be statically configured like `PreTypeFilter`, `InnerTypeFilter` & `PostTypeFilter` 
-(available in all languages) can be used to inject custom code in the generated DTOs output. 
+Additional PHP specific customization can be statically configured like `PreTypeFilter`, `InnerTypeFilter` & `PostTypeFilter`
+(available in all languages) can be used to inject custom code in the generated DTOs output.
 
-Use the `PreTypeFilter` to generate source code before and after a Type definition, e.g. this will append a custom `MyAnnotation` 
+Use the `PreTypeFilter` to generate source code before and after a Type definition, e.g. this will append a custom `MyAnnotation`
 annotation on non enum & interface types:
 
 ```csharp
@@ -436,7 +435,7 @@ Whilst the generic `[EmitCode]` attribute lets you emit the same code in multipl
 
 ### PHP Reference Example
 
-Lets walk through a simple example to see how we can use ServiceStack's PHP DTO annotations in our PHP `JsonServiceClient`. 
+Lets walk through a simple example to see how we can use ServiceStack's PHP DTO annotations in our PHP `JsonServiceClient`.
 
 Firstly we'll need to add a PHP Reference to the remote ServiceStack Service by **right-clicking** on a project folder and clicking on `ServiceStack Reference...` (as seen in the above screenshot).
 
@@ -540,10 +539,10 @@ $request = new GetTechnology();
 
 ### Making Typed API Requests
 
-Making API Requests in PHP is the same as all other [ServiceStack's Service Clients](https://docs.servicestack.net/clients-overview) 
+Making API Requests in PHP is the same as all other [ServiceStack's Service Clients](https://docs.servicestack.net/clients-overview)
 by sending a populated Request DTO using a `JsonServiceClient` which returns typed Response DTO.
 
-So the only things we need to make any API Request is the `JsonServiceClient` from the `servicestack/client` package and any 
+So the only things we need to make any API Request is the `JsonServiceClient` from the `servicestack/client` package and any
 DTO's we're using from generated PHP ServiceStack Reference, e.g:
 
 ```php
@@ -571,7 +570,7 @@ print_r($response->technologyStacks);
 ### PHPDoc Typed Annotations
 
 Whilst PHP is a dynamic language with limited support for static typing and generics included in the PHP language itself,
-you can get many of the static type and intelli-sense benefits of a typed language by using 
+you can get many of the static type and intelli-sense benefits of a typed language by using
 [PHPDoc type hints](https://phpstan.org/writing-php-code/phpdoc-types) to annotate the APIs Typed Responses which lights
 up static analysis and intelli-sense benefits in smart IDEs like PhpStorm:
 
@@ -590,7 +589,7 @@ echo $results[0]->name . PHP_EOL; //intelli-sense
 
 ### Constructors Initializer
 
-All PHP Reference DTOs also implements promoted constructors making them much nicer to populate using a 
+All PHP Reference DTOs also implements promoted constructors making them much nicer to populate using a
 constructor expression with named params syntax we're used to in C#, so instead of:
 
 ```php
@@ -614,8 +613,8 @@ $response = $client->post(new Authenticate(
 
 ### Sending additional arguments with Typed API Requests
 
-Many AutoQuery Services utilize [implicit conventions](https://docs.servicestack.net/autoquery-rdbms#implicit-conventions) 
-to query fields that aren't explicitly defined on AutoQuery Request DTOs, these can be queried by specifying additional arguments 
+Many AutoQuery Services utilize [implicit conventions](https://docs.servicestack.net/autoquery-rdbms#implicit-conventions)
+to query fields that aren't explicitly defined on AutoQuery Request DTOs, these can be queried by specifying additional arguments
 with the typed Request DTO, e.g:
 
 ```php
@@ -648,7 +647,7 @@ $client->postUrl("http://example.org/custom-path", $request);
 
 ### Raw Data Responses
 
-The `JsonServiceClient` also supports Raw Data responses like `string` and `byte[]` which also get a Typed API once 
+The `JsonServiceClient` also supports Raw Data responses like `string` and `byte[]` which also get a Typed API once
 declared on Request DTOs using the `IReturn<T>` marker:
 
 ```csharp
@@ -682,8 +681,8 @@ Or use `$client->setCredentials()` to have them set both together.
 
 ### Authenticating using Credentials
 
-Alternatively you can authenticate using userName/password credentials by 
-[adding a PHP Reference](#add-php-reference) 
+Alternatively you can authenticate using userName/password credentials by
+[adding a PHP Reference](#add-php-reference)
 to your remote ServiceStack Instance and sending a populated `Authenticate` Request DTO, e.g:
 
 ```php
@@ -696,12 +695,12 @@ $request->remember_me = true;
 $response = client->post(request);
 ```
 
-This will populate the `JsonServiceClient` with [Session Cookies](https://docs.servicestack.net/sessions#cookie-session-ids) 
+This will populate the `JsonServiceClient` with [Session Cookies](https://docs.servicestack.net/sessions#cookie-session-ids)
 which will transparently be sent on subsequent requests to make authenticated requests.
 
 ### Authenticating using JWT
 
-Use the `bearerToken` property to Authenticate with a [ServiceStack JWT Provider](https://docs.servicestack.net/jwt-authprovider) 
+Use the `bearerToken` property to Authenticate with a [ServiceStack JWT Provider](https://docs.servicestack.net/jwt-authprovider)
 using a JWT Token:
 
 ```php
@@ -726,7 +725,7 @@ $client->bearerToken = $apiKey;
 
 ### Transparently handle 401 Unauthorized Responses
 
-If the server returns a 401 Unauthorized Response either because the client was Unauthenticated or the 
+If the server returns a 401 Unauthorized Response either because the client was Unauthenticated or the
 configured Bearer Token or API Key used had expired or was invalidated, you can use `onAuthenticationRequired`
 callback to re-configure the client before automatically retrying the original request, e.g:
 
@@ -748,8 +747,8 @@ $response = client->get(new Secured());
 
 ### Automatically refresh Access Tokens
 
-With the [Refresh Token support in JWT](https://docs.servicestack.net/jwt-authprovider#refresh-tokens) 
-you can use the `refresh_token` property to instruct the Service Client to automatically fetch new JWT Tokens behind 
+With the [Refresh Token support in JWT](https://docs.servicestack.net/jwt-authprovider#refresh-tokens)
+you can use the `refresh_token` property to instruct the Service Client to automatically fetch new JWT Tokens behind
 the scenes before automatically retrying failed requests due to invalid or expired JWTs, e.g:
 
 ```php
@@ -773,17 +772,17 @@ $client->refreshToken = $refreshToken;
 $client->refreshTokenUri = AUTH_URL . "/access-token";
 ```
 
-## DTO Customization Options 
+## DTO Customization Options
 
-In most cases you'll just use the generated PHP DTO's as-is, however you can further customize how the DTO's are generated 
+In most cases you'll just use the generated PHP DTO's as-is, however you can further customize how the DTO's are generated
 by overriding the default options.
 
-The header in the generated DTO's show the different options PHP native types support with their defaults. 
-Default values are shown with the comment prefix of `//`. To override a value, remove the `//` and specify the value to 
+The header in the generated DTO's show the different options PHP native types support with their defaults.
+Default values are shown with the comment prefix of `//`. To override a value, remove the `//` and specify the value to
 the right of the `:`. Any uncommented value will be sent to the server to override any server defaults.
 
-The DTO comments allows for customizations for how DTOs are generated. The default options that were used to generate the 
-DTO's are repeated in the header comments of the generated DTOs, options that are preceded by a PHP comment `//` are defaults 
+The DTO comments allows for customizations for how DTOs are generated. The default options that were used to generate the
+DTO's are repeated in the header comments of the generated DTOs, options that are preceded by a PHP comment `//` are defaults
 from the server, any uncommented value will be sent to the server to override any server defaults.
 
 ```php
@@ -810,7 +809,7 @@ We'll go through and cover each of the above options to see how they affect the 
 
 ### Change Default Server Configuration
 
-The above defaults are also overridable on the ServiceStack Server by modifying the default config on the 
+The above defaults are also overridable on the ServiceStack Server by modifying the default config on the
 `NativeTypesFeature` Plugin, e.g:
 
 ```csharp
@@ -824,7 +823,7 @@ We'll go through and cover each of the above options to see how they affect the 
 
 ### GlobalNamespace
 
-This lets you specify which namespace you want the DTOs to be generated in: 
+This lets you specify which namespace you want the DTOs to be generated in:
 
 ```php
 <?php namespace dtos;
@@ -845,7 +844,7 @@ class GetTechnologyResponse implements JsonSerializable
 
 ### AddImplicitVersion
 
-Lets you specify the Version number to be automatically populated in all Request DTOs sent from the client: 
+Lets you specify the Version number to be automatically populated in all Request DTOs sent from the client:
 
 ```php
 class GetTechnology implements IReturn, IRegisterStats, IGet, JsonSerializable
@@ -855,8 +854,8 @@ class GetTechnology implements IReturn, IRegisterStats, IGet, JsonSerializable
 }
 ```
 
-This lets you know what Version of the Service Contract that existing clients are using making it easy to 
-implement ServiceStack's [recommended versioning strategy](http://stackoverflow.com/a/12413091/85785). 
+This lets you know what Version of the Service Contract that existing clients are using making it easy to
+implement ServiceStack's [recommended versioning strategy](http://stackoverflow.com/a/12413091/85785).
 
 ### IncludeTypes
 
@@ -879,7 +878,7 @@ class GetTechnologyResponse implements JsonSerializable
 
 #### Include Generic Types
 
-Use .NET's Type Name to include Generic Types, i.e. the Type name separated by the backtick followed by the number of 
+Use .NET's Type Name to include Generic Types, i.e. the Type name separated by the backtick followed by the number of
 generic arguments, e.g:
 
 ```
@@ -906,11 +905,11 @@ If your DTOs are grouped into different namespaces they can be all included usin
 IncludeTypes: MyApp.ServiceModel.Admin/*
 ```
 
-This will include all DTOs within the `MyApp.ServiceModel.Admin` C# namespace. 
+This will include all DTOs within the `MyApp.ServiceModel.Admin` C# namespace.
 
 #### Include All Services in a Tag Group
 
-Services [grouped by Tag](https://docs.servicestack.net/api-design#group-services-by-tag) can be used in the `IncludeTypes` 
+Services [grouped by Tag](https://docs.servicestack.net/api-design#group-services-by-tag) can be used in the `IncludeTypes`
 where tags can be specified using braces in the format `{tag}` or `{tag1,tag2,tag3}`, e.g:
 
 ```
@@ -954,7 +953,7 @@ use MyType;
 
 ## Customize Serialization
 
-The `servicestack/client` client lib allows for flexible serialization customization where you can change how different 
+The `servicestack/client` client lib allows for flexible serialization customization where you can change how different
 .NET Types are serialized and deserialized into native PHP types.
 
 To illustrate this we'll walk through how serialization of properties containing binary data to Base64 is implemented.
@@ -966,7 +965,7 @@ PhpGenerator.TypeAliases[typeof(byte[]).Name] = "ByteArray";
 PhpGenerator.TypeAliases[typeof(Stream).Name] = "ByteArray";
 ```
 
-In the PHP app we can then specify the serializers and deserializers to use for deserializing properties with the `ByteArray` 
+In the PHP app we can then specify the serializers and deserializers to use for deserializing properties with the `ByteArray`
 data type which converts binary data to/from Base64:
 
 ```php
@@ -990,10 +989,10 @@ class ByteArray implements JsonSerializable
 
 ## Inspect Utils
 
-To help clients with inspecting API Responses the `servicestack/client` library also includes a number of helpful utils 
+To help clients with inspecting API Responses the `servicestack/client` library also includes a number of helpful utils
 to quickly visualizing API outputs.
 
-For a basic indented object graph you can use `Inspect::dump` to capture and `Inspect::printDump` to print the output 
+For a basic indented object graph you can use `Inspect::dump` to capture and `Inspect::printDump` to print the output
 of any API Response, e.g:
 
 ```php
@@ -1065,7 +1064,7 @@ Top 3 php GitHub Repos:
 ]
 ```
 
-For tabular result-sets you can use `Inspect::table` to capture and `Inspect::printTable` to print API result-sets in a 
+For tabular result-sets you can use `Inspect::table` to capture and `Inspect::printTable` to print API result-sets in a
 human-friendly markdown table, e.g:
 
 ```php
