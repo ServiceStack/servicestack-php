@@ -8,15 +8,15 @@ use dtos\SecuredResponse;
 use dtos\TestAuth;
 use dtos\TestAuthResponse;
 use PHPUnit\Framework\TestCase;
-use Servicestack\Authenticate;
-use Servicestack\AuthenticateResponse;
-use Servicestack\ConsoleLogger;
-use Servicestack\JsonServiceClient;
-use Servicestack\Log;
-use Servicestack\LogLevel;
-use Servicestack\Callback;
-use Servicestack\RefreshTokenException;
-use Servicestack\WebServiceException;
+use ServiceStack\Authenticate;
+use ServiceStack\AuthenticateResponse;
+use ServiceStack\ConsoleLogger;
+use ServiceStack\JsonServiceClient;
+use ServiceStack\Log;
+use ServiceStack\LogLevel;
+use ServiceStack\Callback;
+use ServiceStack\RefreshTokenException;
+use ServiceStack\WebServiceException;
 
 require_once __DIR__ . '/../vendor/autoload.php'; // Autoload files using Composer autoload
 require_once 'dtos.php';
@@ -93,7 +93,7 @@ class ClientAuthTests extends TestCase
             }
         };
 
-        $this->webServiceException = '\Servicestack\WebServiceException';
+        $this->webServiceException = '\ServiceStack\WebServiceException';
         try {
             $client->get(new TestAuth());
             $this->fail("should throw");

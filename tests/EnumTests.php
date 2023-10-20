@@ -10,7 +10,7 @@ use dtos\EnumWithValues;
 use dtos\HelloWithEnum;
 use dtos\HelloWithEnumMap;
 use PHPUnit\Framework\TestCase;
-use Servicestack\JsonConverters;
+use ServiceStack\JsonConverters;
 
 class EnumTests extends TestCase
 {

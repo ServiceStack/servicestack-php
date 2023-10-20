@@ -143,7 +143,7 @@ Using promoted constructors enables DTOs to be populated using a single construc
 which together with the generic `JsonServiceClient` enables end-to-end typed API Requests in a single LOC:
 
 ```php
-use Servicestack\JsonServiceClient;
+use ServiceStack\JsonServiceClient;
 use dtos\Hello;
 
 $client = new JsonServiceClient("https://test.servicestack.net");
@@ -199,7 +199,7 @@ require_once __DIR__ . '/vendor/autoload.php'; // Autoload files using Composer 
 require_once 'dtos.php';
 
 use dtos\FindTechnologies;
-use Servicestack\JsonServiceClient;
+use ServiceStack\JsonServiceClient;
 
 $client = JsonServiceClient::create("https://techstacks.io");
 
@@ -553,7 +553,7 @@ require_once 'dtos.php';
 
 use dtos\GetTechnology;
 use dtos\GetTechnologyResponse;
-use Servicestack\JsonServiceClient;
+use ServiceStack\JsonServiceClient;
 
 $client = JsonServiceClient::create("https://techstacks.io");
 

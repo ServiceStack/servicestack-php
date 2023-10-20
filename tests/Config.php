@@ -6,8 +6,8 @@ use dtos\EchoComplexTypes;
 use dtos\HelloAllTypes;
 use dtos\Poco;
 use dtos\SubType;
-use Servicestack\ByteArray;
-use Servicestack\JsonServiceClient;
+use ServiceStack\ByteArray;
+use ServiceStack\JsonServiceClient;
 
 class Config
 {

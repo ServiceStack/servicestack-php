@@ -3,7 +3,7 @@
 require_once __DIR__ . '/../vendor/autoload.php'; // Autoload files using Composer autoload
 require_once 'techstacks.dtos.php';
 
-use Servicestack\Inspect;
+use ServiceStack\Inspect;
 use techstacks\CreateTechnology;
 use techstacks\FindTechnologies;
 use techstacks\GetAllTechnologies;
@@ -13,12 +13,12 @@ use techstacks\OverviewResponse;
 use techstacks\QueryPosts;
 use techstacks\TechnologyView;
 use PHPUnit\Framework\TestCase;
-use Servicestack\ConsoleLogger;
-use Servicestack\JsonServiceClient;
-use Servicestack\Log;
-use Servicestack\LogLevel;
-use Servicestack\QueryResponse;
-use Servicestack\WebServiceException;
+use ServiceStack\ConsoleLogger;
+use ServiceStack\JsonServiceClient;
+use ServiceStack\Log;
+use ServiceStack\LogLevel;
+use ServiceStack\QueryResponse;
+use ServiceStack\WebServiceException;
 
 class TechStacksTests extends TestCase
 {

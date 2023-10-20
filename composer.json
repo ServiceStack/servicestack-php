@@ -5,7 +5,7 @@
     "license": "BSD-3-Clause-Attribution",
     "autoload": {
         "psr-4": {
-            "Servicestack\\": "src/"
+            "ServiceStack\\": "src/"
         },
         "files": [
             "src/Returns.php",

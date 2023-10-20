@@ -11,9 +11,9 @@ use dtos\SendPost;
 use dtos\SendPut;
 use dtos\UpdateCategory;
 use PHPUnit\Framework\TestCase;
-use Servicestack\ByteArray;
-use function Servicestack\qsValue;
-use function Servicestack\resolveHttpMethod;
+use ServiceStack\ByteArray;
+use function ServiceStack\qsValue;
+use function ServiceStack\resolveHttpMethod;
 
 class ClientUtilsTests extends TestCase
 {

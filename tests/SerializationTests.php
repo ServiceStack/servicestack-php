@@ -8,8 +8,8 @@ use dtos\AllCollectionTypes;
 use dtos\AllTypes;
 use dtos\SubType;
 use PHPUnit\Framework\TestCase;
-use Servicestack\ByteArray;
-use Servicestack\JsonConverters;
+use ServiceStack\ByteArray;
+use ServiceStack\JsonConverters;
 
 class SerializationTests extends TestCase
 {

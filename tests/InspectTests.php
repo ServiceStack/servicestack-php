@@ -2,7 +2,7 @@
 
 require_once __DIR__ . '/../vendor/autoload.php'; // Autoload files using Composer autoload
 use PHPUnit\Framework\TestCase;
-use Servicestack\Inspect;
+use ServiceStack\Inspect;
 
 final class InspectTests extends TestCase
 {

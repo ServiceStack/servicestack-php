@@ -24,9 +24,9 @@ use dtos\SendText;
 use dtos\ThrowType;
 use dtos\ThrowValidation;
 use PHPUnit\Framework\TestCase;
-use Servicestack\ArrayList;
-use Servicestack\ByteArray;
-use Servicestack\ConsoleLogger;
+use ServiceStack\ArrayList;
+use ServiceStack\ByteArray;
+use ServiceStack\ConsoleLogger;
 use ServiceStack\JsonServiceClient;
 use dtos\Hello;
 use dtos\HelloResponse;
@@ -35,14 +35,14 @@ use dtos\AllTypes;
 use dtos\EchoComplexTypes;
 use dtos\Poco;
 use dtos\SubType;
-use Servicestack\Log;
-use Servicestack\LogLevel;
-use Servicestack\RequestFilter;
-use Servicestack\ResponseFilter;
-use Servicestack\ResponseStatus;
-use Servicestack\SendContext;
-use Servicestack\WebServiceException;
-use function Servicestack\qsValue;
+use ServiceStack\Log;
+use ServiceStack\LogLevel;
+use ServiceStack\RequestFilter;
+use ServiceStack\ResponseFilter;
+use ServiceStack\ResponseStatus;
+use ServiceStack\SendContext;
+use ServiceStack\WebServiceException;
+use function ServiceStack\qsValue;
 
 final class ClientTests extends TestCase
 {
