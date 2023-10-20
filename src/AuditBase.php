@@ -1,6 +1,6 @@
 <?php
 
-namespace Servicestack;
+namespace ServiceStack;
 
 use DateTime;
 use JsonSerializable;

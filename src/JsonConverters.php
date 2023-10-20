@@ -1,6 +1,6 @@
 <?php
 
-namespace Servicestack;
+namespace ServiceStack;
 
 use Exception;
 use ReflectionClass;

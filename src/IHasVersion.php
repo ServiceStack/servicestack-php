@@ -1,6 +1,6 @@
 <?php
 
-namespace Servicestack;
+namespace ServiceStack;
 
 /**
  * @property int|null $version
