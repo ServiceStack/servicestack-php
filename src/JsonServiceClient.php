@@ -235,6 +235,7 @@ class SendContext
         public mixed                          $args = null,
         public ?string                        $bodyString = null,
         public mixed                          $responseAs = null,
+        public array                          $options = [],
         public ?array                         $responseHeaders = null,
         public ?array                         $responseCookies = null,
         public ?RequestFilter                 $requestFilter = null,
@@ -289,6 +290,10 @@ class SendContext
             array_map(fn($key, $val): string => "$key: $val", array_keys($headers), $headers));
         Log::debug("REQUEST: " . $this->url);
         Log::debug($opts);
+
+        if (!empty($this->options)) {
+            $opts = array_merge($opts, $this->options);
+        }
         $context = stream_context_create($opts);
         $response = file_get_contents($this->url, false, $context);
         if ($response === false) {
@@ -331,6 +336,7 @@ class JsonServiceClient
     public bool $useTokenCookie = false;
     public array $headers = [];
     public array $cookies = [];
+    public array $options = [];
 
     public static $HttpStatusCodes = [
         100 => "Continue",
@@ -601,6 +607,7 @@ class JsonServiceClient
             body: $body,
             args: $args,
             responseAs: $responseAs,
+            options: $this->options
         ));
     }
 
@@ -619,6 +626,7 @@ class JsonServiceClient
             body: $body,
             args: $args,
             responseAs: resolveResponseType($request),
+            options: $this->options,
         ));
     }
 
@@ -658,6 +666,7 @@ class JsonServiceClient
             request: $requestDtos,
             url: $url,
             responseAs: ArrayList::create([nameof($itemResponseAs)]),
+            options: $this->options,
         ));
         return $arrayList->jsonSerialize();
     }
@@ -684,6 +693,7 @@ class JsonServiceClient
             request: $requestDtos,
             url: $url,
             responseAs: null,
+            options: $this->options,
         ));
     }
 
@@ -837,6 +847,7 @@ class JsonServiceClient
                         request: $jwtRequest,
                         url: $url,
                         responseAs: resolveResponseType($jwtRequest),
+                        options: $this->options,
                     ));
                     [$jwtRes, $jwtHeaders] = $this->executeRequest($jwtInfo);
                     $this->assertSuccessResponse($jwtRes, $jwtHeaders);
