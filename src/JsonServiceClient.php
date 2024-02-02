@@ -409,12 +409,11 @@ class JsonServiceClient
         if ($baseUrl[-1] != '/')
             $baseUrl .= '/';
         $this->baseUrl = $baseUrl;
-        $this->replyBaseUrl = combinePaths($this->baseUrl, 'json/reply') . '/';
-        $this->oneWayBaseUrl = combinePaths($this->baseUrl, 'json/oneway') . '/';
         $this->headers = [
             HttpHeaders::ACCEPT => 'application/json',
             HttpHeaders::USER_AGENT => 'servicestack/php',
         ];
+        $this->setBasePath('api');
     }
 
     public function setBasePath($path): void
