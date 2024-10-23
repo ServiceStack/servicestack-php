@@ -315,6 +315,16 @@ class SendContext
     }
 }
 
+// Simple DTO to represent file uploads
+class UploadFile {
+    public function __construct(
+        public mixed $filePath,
+        public string $fileName,
+        public ?string $fieldName = null,
+        public ?string $contentType = null
+    ) {}
+}
+
 class JsonServiceClient
 {
     public static ?RequestFilter $globalRequestFilter;
@@ -564,6 +574,73 @@ class JsonServiceClient
     public function headUrl(string $path, mixed $responseAs = null, mixed $args = null): mixed
     {
         return $this->sendUrl($path, method: HttpMethods::HEAD, responseAs: $responseAs, args: $args);
+    }
+
+    // Extension method for JsonServiceClient
+    /**
+     * Post files with a request DTO using multipart/form-data
+     * @throws Exception
+     */
+    public function postFilesWithRequest(string $requestUri, mixed $request, UploadFile|array $files): mixed
+    {
+        // Normalize single file to array
+        if ($files instanceof UploadFile) {
+            $files = [$files];
+        }
+
+        // Generate boundary
+        $boundary = '-------------' . uniqid();
+
+        // Create headers
+        $headers = array_replace([], $this->headers);
+        $headers['Accept'] = 'application/json';
+        $headers['Content-Type'] = 'multipart/form-data; boundary=' . $boundary;
+
+        if (isset($this->bearerToken)) {
+            $headers[HttpHeaders::AUTHORIZATION] = "Bearer " . $this->bearerToken;
+        }
+
+        // Convert request to array using existing JsonConverters
+        $requestDict = JsonConverters::to(nameof($request), $request);
+
+        // Build multipart body
+        $body = '';
+
+        // Add request data
+        foreach ($requestDict as $key => $value) {
+            if (!isset($value)) continue;
+            $body .= "--$boundary\r\n";
+            $body .= "Content-Disposition: form-data; name=\"$key\"\r\n\r\n";
+            $body .= is_bool($value) ? ($value ? "true" : "false") : $value;
+            $body .= "\r\n";
+        }
+
+        // Add files
+        foreach ($files as $file) {
+            if (!file_exists($file->filePath)) {
+                throw new Exception("File not found: " . $file->filePath);
+            }
+
+            $fieldName = $file->fieldName ?? 'upload';
+            $contentType = $file->contentType ?? $this->getMimeType($file->filePath);
+
+            $body .= "--$boundary\r\n";
+            $body .= "Content-Disposition: form-data; name=\"$fieldName\"; filename=\"{$file->fileName}\"\r\n";
+            $body .= "Content-Type: $contentType\r\n\r\n";
+            $body .= file_get_contents($file->filePath);
+            $body .= "\r\n";
+        }
+
+        $body .= "--$boundary--\r\n";
+
+        return $this->sendRequest(new SendContext(
+            headers: array_replace([], $headers),
+            method: $method ?? resolveHttpMethod($request),
+            request: $request,
+            body: $body,
+            responseAs: resolveResponseType($request),
+            options: $this->options,
+        ));
     }
 
     function raiseError(mixed $res, Exception $e): Exception
@@ -928,6 +1005,39 @@ class JsonServiceClient
     public function getRefreshTokenCookie()
     {
         return $this->cookies['ss-reftok'] ?? null;
+    }
+
+    /**
+     * Get MIME type of file
+     */
+    private function getMimeType(string $filePath): string
+    {
+        $mimeTypes = [
+            'txt' => 'text/plain',
+            'htm' => 'text/html',
+            'html' => 'text/html',
+            'php' => 'text/html',
+            'css' => 'text/css',
+            'js' => 'application/javascript',
+            'json' => 'application/json',
+            'xml' => 'application/xml',
+            'png' => 'image/png',
+            'jpe' => 'image/jpeg',
+            'jpeg' => 'image/jpeg',
+            'jpg' => 'image/jpeg',
+            'gif' => 'image/gif',
+            'bmp' => 'image/bmp',
+            'ico' => 'image/vnd.microsoft.icon',
+            'pdf' => 'application/pdf',
+            'doc' => 'application/msword',
+            'docx' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+            'xls' => 'application/vnd.ms-excel',
+            'xlsx' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            'zip' => 'application/zip',
+        ];
+
+        $ext = strtolower(pathinfo($filePath, PATHINFO_EXTENSION));
+        return $mimeTypes[$ext] ?? 'application/octet-stream';
     }
 
 }
