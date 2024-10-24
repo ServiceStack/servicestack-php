@@ -1,7 +1,7 @@
 <?php namespace dtos;
 /* Options:
-Date: 2023-10-13 14:42:48
-Version: 6.111
+Date: 2024-10-24 05:59:33
+Version: 8.41
 Tip: To override a DTO option, remove "//" prefix before updating
 BaseUrl: https://test.servicestack.net
 
@@ -231,6 +231,14 @@ class FluentSingleValidation implements JsonSerializable
         if (isset($this->value)) $o['value'] = $this->value;
         return empty($o) ? new class(){} : $o;
     }
+}
+
+/**
+ * @property string|null $refId
+ * @property string|null $tag
+ */
+interface IGeneration
+{
 }
 
 /**
@@ -959,17 +967,6 @@ enum ScopeType : int
     case Sale = 2;
 }
 
-class PingService implements JsonSerializable
-{
-    
-    /** @throws Exception */
-    public function jsonSerialize(): mixed
-    {
-        $o = [];
-        return empty($o) ? new class(){} : $o;
-    }
-}
-
 class Channel implements JsonSerializable
 {
     public function __construct(
@@ -1669,6 +1666,104 @@ class MessageCrud implements IReturnVoid, ISaveDb, JsonSerializable
     public function createResponse(): void {}
 }
 
+/** @description Output object for generated artifacts */
+class ArtifactOutput implements JsonSerializable
+{
+    public function __construct(
+        /** @description URL to access the generated image */
+        // @ApiMember(Description="URL to access the generated image")
+        /** @var string|null */
+        public ?string $url=null,
+
+        /** @description Filename of the generated image */
+        // @ApiMember(Description="Filename of the generated image")
+        /** @var string|null */
+        public ?string $fileName=null,
+
+        /** @description Provider used for image generation */
+        // @ApiMember(Description="Provider used for image generation")
+        /** @var string|null */
+        public ?string $provider=null
+    ) {
+    }
+
+    /** @throws Exception */
+    public function fromMap($o): void {
+        if (isset($o['url'])) $this->url = $o['url'];
+        if (isset($o['fileName'])) $this->fileName = $o['fileName'];
+        if (isset($o['provider'])) $this->provider = $o['provider'];
+    }
+    
+    /** @throws Exception */
+    public function jsonSerialize(): mixed
+    {
+        $o = [];
+        if (isset($this->url)) $o['url'] = $this->url;
+        if (isset($this->fileName)) $o['fileName'] = $this->fileName;
+        if (isset($this->provider)) $o['provider'] = $this->provider;
+        return empty($o) ? new class(){} : $o;
+    }
+}
+
+/** @description Output object for generated text */
+class TextOutput implements JsonSerializable
+{
+    public function __construct(
+        /** @description The generated text */
+        // @ApiMember(Description="The generated text")
+        /** @var string|null */
+        public ?string $text=null
+    ) {
+    }
+
+    /** @throws Exception */
+    public function fromMap($o): void {
+        if (isset($o['text'])) $this->text = $o['text'];
+    }
+    
+    /** @throws Exception */
+    public function jsonSerialize(): mixed
+    {
+        $o = [];
+        if (isset($this->text)) $o['text'] = $this->text;
+        return empty($o) ? new class(){} : $o;
+    }
+}
+
+class UploadInfo implements JsonSerializable
+{
+    public function __construct(
+        /** @var string */
+        public string $name='',
+        /** @var string */
+        public string $fileName='',
+        /** @var int */
+        public int $contentLength=0,
+        /** @var string */
+        public string $contentType=''
+    ) {
+    }
+
+    /** @throws Exception */
+    public function fromMap($o): void {
+        if (isset($o['name'])) $this->name = $o['name'];
+        if (isset($o['fileName'])) $this->fileName = $o['fileName'];
+        if (isset($o['contentLength'])) $this->contentLength = $o['contentLength'];
+        if (isset($o['contentType'])) $this->contentType = $o['contentType'];
+    }
+    
+    /** @throws Exception */
+    public function jsonSerialize(): mixed
+    {
+        $o = [];
+        if (isset($this->name)) $o['name'] = $this->name;
+        if (isset($this->fileName)) $o['fileName'] = $this->fileName;
+        if (isset($this->contentLength)) $o['contentLength'] = $this->contentLength;
+        if (isset($this->contentType)) $o['contentType'] = $this->contentType;
+        return empty($o) ? new class(){} : $o;
+    }
+}
+
 class MetadataTestNestedChild implements JsonSerializable
 {
     public function __construct(
@@ -2365,7 +2460,7 @@ class CustomHttpErrorResponse implements JsonSerializable
 }
 
 /**
- * @template Item
+ * @template T
  */
 class QueryResponseAlt implements JsonSerializable
 {
@@ -2394,7 +2489,7 @@ class QueryResponseAlt implements JsonSerializable
     public function fromMap($o): void {
         if (isset($o['offset'])) $this->offset = $o['offset'];
         if (isset($o['total'])) $this->total = $o['total'];
-        if (isset($o['results'])) $this->results = JsonConverters::fromArray($this->genericArgs[0], $o['results']);
+        if (isset($o['results'])) $this->results = JsonConverters::fromArray('Item', $o['results']);
         if (isset($o['meta'])) $this->meta = JsonConverters::from(JsonConverters::context('Dictionary',genericArgs:['string','string']), $o['meta']);
         if (isset($o['responseStatus'])) $this->responseStatus = JsonConverters::from('ResponseStatus', $o['responseStatus']);
     }
@@ -2405,7 +2500,7 @@ class QueryResponseAlt implements JsonSerializable
         $o = [];
         if (isset($this->offset)) $o['offset'] = $this->offset;
         if (isset($this->total)) $o['total'] = $this->total;
-        if (isset($this->results)) $o['results'] = JsonConverters::toArray($this->genericArgs[0], $this->results);
+        if (isset($this->results)) $o['results'] = JsonConverters::toArray('Item', $this->results);
         if (isset($this->meta)) $o['meta'] = JsonConverters::to(JsonConverters::context('Dictionary',genericArgs:['string','string']), $this->meta);
         if (isset($this->responseStatus)) $o['responseStatus'] = JsonConverters::to('ResponseStatus', $this->responseStatus);
         return empty($o) ? new class(){} : $o;
@@ -2529,6 +2624,79 @@ class ThrowBusinessErrorResponse implements JsonSerializable
     public function jsonSerialize(): mixed
     {
         $o = [];
+        if (isset($this->responseStatus)) $o['responseStatus'] = JsonConverters::to('ResponseStatus', $this->responseStatus);
+        return empty($o) ? new class(){} : $o;
+    }
+}
+
+/** @description Response object for generation requests */
+class GenerationResponse implements JsonSerializable
+{
+    public function __construct(
+        /** @description List of generated outputs */
+        // @ApiMember(Description="List of generated outputs")
+        /** @var array<ArtifactOutput>|null */
+        public ?array $outputs=null,
+
+        /** @description List of generated text outputs */
+        // @ApiMember(Description="List of generated text outputs")
+        /** @var array<TextOutput>|null */
+        public ?array $textOutputs=null,
+
+        /** @description Detailed response status information */
+        // @ApiMember(Description="Detailed response status information")
+        /** @var ResponseStatus|null */
+        public ?ResponseStatus $responseStatus=null
+    ) {
+    }
+
+    /** @throws Exception */
+    public function fromMap($o): void {
+        if (isset($o['outputs'])) $this->outputs = JsonConverters::fromArray('ArtifactOutput', $o['outputs']);
+        if (isset($o['textOutputs'])) $this->textOutputs = JsonConverters::fromArray('TextOutput', $o['textOutputs']);
+        if (isset($o['responseStatus'])) $this->responseStatus = JsonConverters::from('ResponseStatus', $o['responseStatus']);
+    }
+    
+    /** @throws Exception */
+    public function jsonSerialize(): mixed
+    {
+        $o = [];
+        if (isset($this->outputs)) $o['outputs'] = JsonConverters::toArray('ArtifactOutput', $this->outputs);
+        if (isset($this->textOutputs)) $o['textOutputs'] = JsonConverters::toArray('TextOutput', $this->textOutputs);
+        if (isset($this->responseStatus)) $o['responseStatus'] = JsonConverters::to('ResponseStatus', $this->responseStatus);
+        return empty($o) ? new class(){} : $o;
+    }
+}
+
+class TestFileUploadsResponse implements JsonSerializable
+{
+    public function __construct(
+        /** @var int|null */
+        public ?int $id=null,
+        /** @var string|null */
+        public ?string $refId=null,
+        /** @var array<UploadInfo>|null */
+        public ?array $files=null,
+        /** @var ResponseStatus|null */
+        public ?ResponseStatus $responseStatus=null
+    ) {
+    }
+
+    /** @throws Exception */
+    public function fromMap($o): void {
+        if (isset($o['id'])) $this->id = $o['id'];
+        if (isset($o['refId'])) $this->refId = $o['refId'];
+        if (isset($o['files'])) $this->files = JsonConverters::fromArray('UploadInfo', $o['files']);
+        if (isset($o['responseStatus'])) $this->responseStatus = JsonConverters::from('ResponseStatus', $o['responseStatus']);
+    }
+    
+    /** @throws Exception */
+    public function jsonSerialize(): mixed
+    {
+        $o = [];
+        if (isset($this->id)) $o['id'] = $this->id;
+        if (isset($this->refId)) $o['refId'] = $this->refId;
+        if (isset($this->files)) $o['files'] = JsonConverters::toArray('UploadInfo', $this->files);
         if (isset($this->responseStatus)) $o['responseStatus'] = JsonConverters::to('ResponseStatus', $this->responseStatus);
         return empty($o) ? new class(){} : $o;
     }
@@ -2773,6 +2941,31 @@ class GetRandomIdsResponse implements JsonSerializable
 class HelloResponse implements JsonSerializable
 {
     public function __construct(
+        /** @var string|null */
+        public ?string $result=null
+    ) {
+    }
+
+    /** @throws Exception */
+    public function fromMap($o): void {
+        if (isset($o['result'])) $this->result = $o['result'];
+    }
+    
+    /** @throws Exception */
+    public function jsonSerialize(): mixed
+    {
+        $o = [];
+        if (isset($this->result)) $o['result'] = $this->result;
+        return empty($o) ? new class(){} : $o;
+    }
+}
+
+/** @description Description on HelloAllResponse type */
+// @DataContract
+class HelloAnnotatedResponse implements JsonSerializable
+{
+    public function __construct(
+        // @DataMember
         /** @var string|null */
         public ?string $result=null
     ) {
@@ -4753,6 +4946,81 @@ class ThrowBusinessError implements IReturn, JsonSerializable
     public function createResponse(): mixed { return new ThrowBusinessErrorResponse(); }
 }
 
+/** @description Convert speech to text */
+// @Api(Description="Convert speech to text")
+#[Returns('GenerationResponse')]
+class SpeechToText implements IReturn, IGeneration, JsonSerializable
+{
+    public function __construct(
+        /** @description The audio stream containing the speech to be transcribed */
+        // @ApiMember(Description="The audio stream containing the speech to be transcribed")
+        // @Required()
+        /** @var ByteArray|null */
+        public ?ByteArray $audio=null,
+
+        /** @description Optional client-provided identifier for the request */
+        // @ApiMember(Description="Optional client-provided identifier for the request")
+        /** @var string|null */
+        public ?string $refId=null,
+
+        /** @description Tag to identify the request */
+        // @ApiMember(Description="Tag to identify the request")
+        /** @var string|null */
+        public ?string $tag=null
+    ) {
+    }
+
+    /** @throws Exception */
+    public function fromMap($o): void {
+        if (isset($o['audio'])) $this->audio = JsonConverters::from('ByteArray', $o['audio']);
+        if (isset($o['refId'])) $this->refId = $o['refId'];
+        if (isset($o['tag'])) $this->tag = $o['tag'];
+    }
+    
+    /** @throws Exception */
+    public function jsonSerialize(): mixed
+    {
+        $o = [];
+        if (isset($this->audio)) $o['audio'] = JsonConverters::to('ByteArray', $this->audio);
+        if (isset($this->refId)) $o['refId'] = $this->refId;
+        if (isset($this->tag)) $o['tag'] = $this->tag;
+        return empty($o) ? new class(){} : $o;
+    }
+    public function getTypeName(): string { return 'SpeechToText'; }
+    public function getMethod(): string { return 'POST'; }
+    public function createResponse(): mixed { return new GenerationResponse(); }
+}
+
+#[Returns('TestFileUploadsResponse')]
+class TestFileUploads implements IReturn, JsonSerializable
+{
+    public function __construct(
+        /** @var int|null */
+        public ?int $id=null,
+        /** @var string|null */
+        public ?string $refId=null
+    ) {
+    }
+
+    /** @throws Exception */
+    public function fromMap($o): void {
+        if (isset($o['id'])) $this->id = $o['id'];
+        if (isset($o['refId'])) $this->refId = $o['refId'];
+    }
+    
+    /** @throws Exception */
+    public function jsonSerialize(): mixed
+    {
+        $o = [];
+        if (isset($this->id)) $o['id'] = $this->id;
+        if (isset($this->refId)) $o['refId'] = $this->refId;
+        return empty($o) ? new class(){} : $o;
+    }
+    public function getTypeName(): string { return 'TestFileUploads'; }
+    public function getMethod(): string { return 'POST'; }
+    public function createResponse(): mixed { return new TestFileUploadsResponse(); }
+}
+
 class RootPathRoutes implements JsonSerializable
 {
     public function __construct(
@@ -5570,6 +5838,35 @@ class HelloSecure implements IReturn, JsonSerializable
     public function createResponse(): mixed { return new HelloResponse(); }
 }
 
+/** @description Description on HelloAll type */
+// @DataContract
+#[Returns('HelloAnnotatedResponse')]
+class HelloAnnotated implements IReturn, JsonSerializable
+{
+    public function __construct(
+        // @DataMember
+        /** @var string|null */
+        public ?string $name=null
+    ) {
+    }
+
+    /** @throws Exception */
+    public function fromMap($o): void {
+        if (isset($o['name'])) $this->name = $o['name'];
+    }
+    
+    /** @throws Exception */
+    public function jsonSerialize(): mixed
+    {
+        $o = [];
+        if (isset($this->name)) $o['name'] = $this->name;
+        return empty($o) ? new class(){} : $o;
+    }
+    public function getTypeName(): string { return 'HelloAnnotated'; }
+    public function getMethod(): string { return 'POST'; }
+    public function createResponse(): mixed { return new HelloAnnotatedResponse(); }
+}
+
 #[Returns('HelloResponse')]
 class HelloWithNestedClass implements IReturn, JsonSerializable
 {
@@ -5839,27 +6136,35 @@ class HelloWithEnumMap implements JsonSerializable
     public function createResponse():void {}
 }
 
-class HelloExternal implements JsonSerializable
+class RestrictedAttributes implements JsonSerializable
 {
     public function __construct(
+        /** @var int */
+        public int $id=0,
         /** @var string|null */
-        public ?string $name=null
+        public ?string $name=null,
+        /** @var Hello|null */
+        public ?Hello $hello=null
     ) {
     }
 
     /** @throws Exception */
     public function fromMap($o): void {
+        if (isset($o['id'])) $this->id = $o['id'];
         if (isset($o['name'])) $this->name = $o['name'];
+        if (isset($o['hello'])) $this->hello = JsonConverters::from('Hello', $o['hello']);
     }
     
     /** @throws Exception */
     public function jsonSerialize(): mixed
     {
         $o = [];
+        if (isset($this->id)) $o['id'] = $this->id;
         if (isset($this->name)) $o['name'] = $this->name;
+        if (isset($this->hello)) $o['hello'] = JsonConverters::to('Hello', $this->hello);
         return empty($o) ? new class(){} : $o;
     }
-    public function getTypeName(): string { return 'HelloExternal'; }
+    public function getTypeName(): string { return 'RestrictedAttributes'; }
     public function getMethod(): string { return 'POST'; }
     public function createResponse():void {}
 }
