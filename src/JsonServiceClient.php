@@ -576,12 +576,16 @@ class JsonServiceClient
         return $this->sendUrl($path, method: HttpMethods::HEAD, responseAs: $responseAs, args: $args);
     }
 
+    public function postFilesWithRequest(IReturn|IReturnVoid|string $request, UploadFile|array $files): mixed
+    {
+        return $this->postFilesWithRequestUrl($this->createUrlFromDto("POST", $request), $request, $files);
+    }
     // Extension method for JsonServiceClient
     /**
      * Post files with a request DTO using multipart/form-data
      * @throws Exception
      */
-    public function postFilesWithRequest(string $requestUri, mixed $request, UploadFile|array $files): mixed
+    public function postFilesWithRequestUrl(string $requestUri, mixed $request, UploadFile|array $files): mixed
     {
         // Normalize single file to array
         if ($files instanceof UploadFile) {

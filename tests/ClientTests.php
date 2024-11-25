@@ -532,6 +532,73 @@ final class ClientTests extends TestCase
         }
     }
 
+    public function testCanPostMultipleFilesWithRequestUrl()
+    {
+        try {
+            $request = new TestFileUploads();
+            $request->id = 1;
+            $request->refId = "zid";
+
+            // Create temporary text file
+            $textContent = "Hello World";
+            $textTempFile = tempnam(sys_get_temp_dir(), 'test_');
+            file_put_contents($textTempFile, $textContent);
+
+            // Create temporary markdown file
+            $markdownContent = "## Heading";
+            $markdownTempFile = tempnam(sys_get_temp_dir(), 'test_');
+            file_put_contents($markdownTempFile, $markdownContent);
+
+            $uploads = [
+                new UploadFile(
+                    filePath: $textTempFile,
+                    fileName: 'test.txt',
+                    fieldName: 'audio',
+                    contentType: 'text/plain'
+                ),
+                new UploadFile(
+                    filePath: $markdownTempFile,
+                    fileName: 'test.md',
+                    fieldName: 'content',
+                    contentType: 'text/markdown'
+                )
+            ];
+
+            /** @var TestFileUploadsResponse $response */
+            $response = $this->client->postFilesWithRequestUrl(
+                '/api/TestFileUploads',
+                $request,
+                $uploads
+            );
+
+            // Clean up temporary files
+            unlink($textTempFile);
+            unlink($markdownTempFile);
+
+            $this->assertNotNull($response, "Response should not be null");
+            $this->assertEquals(1, $response->id, "Id should match");
+            $this->assertEquals("zid", $response->refId, "RefId should match");
+            $this->assertCount(2, $response->files, "Should have correct number of files");
+
+            // Verify first file
+            $file1 = $response->files[0];
+            $this->assertEquals("audio", $file1->name, "First file name should match");
+            $this->assertEquals("test.txt", $file1->fileName, "First filename should match");
+            $this->assertEquals(strlen("Hello World"), $file1->contentLength, "First file content length should match");
+            $this->assertEquals("text/plain", $file1->contentType, "First file content type should match");
+
+            // Verify second file
+            $file2 = $response->files[1];
+            $this->assertEquals("content", $file2->name, "Second file name should match");
+            $this->assertEquals("test.md", $file2->fileName, "Second filename should match");
+            $this->assertEquals(strlen("## Heading"), $file2->contentLength, "Second file content length should match");
+            $this->assertEquals("text/markdown", $file2->contentType, "Second file content type should match");
+
+        } catch (Exception $e) {
+            $this->fail("Error during test: " . $e->getMessage());
+        }
+    }
+
     public function testCanPostMultipleFilesWithRequest()
     {
         try {
@@ -566,7 +633,6 @@ final class ClientTests extends TestCase
 
             /** @var TestFileUploadsResponse $response */
             $response = $this->client->postFilesWithRequest(
-                '/api/TestFileUploads',
                 $request,
                 $uploads
             );

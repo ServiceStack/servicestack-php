@@ -52,6 +52,49 @@ class AiServerTests extends TestCase
         }
     }
 
+    public function testCanSpeechToTextUrl()
+    {
+        $audioFile = __DIR__ . '/files/test_audio.wav';
+        // Log audio file path
+        Log::debug("Audio file path: " . $audioFile);
+        $this->assertFileExists($audioFile, 'Test audio file not found');
+
+        $request = new SpeechToText();
+
+        $upload = new UploadFile(
+            filePath: $audioFile,
+            fileName: 'test_audio.wav',
+            fieldName: 'audio',
+            contentType: 'audio/wav'
+        );
+
+        /** @var GenerationResponse $response */
+        $response = self::$client->postFilesWithRequestUrl(
+            '/api/SpeechToText',
+            $request,
+            $upload
+        );
+
+        // Verify response structure
+        $this->assertNotNull($response);
+        $this->assertTrue(property_exists($response, 'textOutputs'));
+        $this->assertIsArray($response->textOutputs);
+        $this->assertCount(2, $response->textOutputs);
+
+        // Get both text outputs
+        $textWithTimestamps = $response->textOutputs[1]->text;
+        $textOnly = $response->textOutputs[0]->text;
+
+        // Basic validation of outputs
+        $this->assertNotNull($textWithTimestamps);
+        $this->assertNotNull($textOnly);
+
+        // Log results
+        Log::debug("\nSpeech to Text Results:");
+        Log::debug("Text with timestamps: " . $textWithTimestamps);
+        Log::debug("Text only: " . $textOnly);
+    }
+
     public function testCanSpeechToText()
     {
         $audioFile = __DIR__ . '/files/test_audio.wav';
@@ -70,7 +113,6 @@ class AiServerTests extends TestCase
 
         /** @var GenerationResponse $response */
         $response = self::$client->postFilesWithRequest(
-            '/api/SpeechToText',
             $request,
             $upload
         );
