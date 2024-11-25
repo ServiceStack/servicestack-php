@@ -576,6 +576,16 @@ class JsonServiceClient
         return $this->sendUrl($path, method: HttpMethods::HEAD, responseAs: $responseAs, args: $args);
     }
 
+    public function postFileWithRequestUrl(string $requestUri, mixed $request, UploadFile $file): mixed
+    {
+        return $this->postFilesWithRequestUrl($requestUri, $request, $file);
+    }
+
+    public function postFileWithRequest(IReturn|IReturnVoid|string $request, UploadFile $file): mixed
+    {
+        return $this->postFilesWithRequest($request, $file);
+    }
+
     public function postFilesWithRequest(IReturn|IReturnVoid|string $request, UploadFile|array $files): mixed
     {
         return $this->postFilesWithRequestUrl($this->createUrlFromDto("POST", $request), $request, $files);
